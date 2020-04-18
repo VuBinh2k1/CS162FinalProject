@@ -24,12 +24,18 @@
     <ClCompile Include="routes\sha256.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="layout\layout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="routes\login.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="routes\sha256.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="layout\layout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

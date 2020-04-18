@@ -1,5 +1,6 @@
 #ifndef SHA256_H
 #define SHA256_H
+#pragma warning(disable : 4996)
 #include <string>
  
 class SHA256
