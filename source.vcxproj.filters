@@ -24,7 +24,10 @@
     <ClCompile Include="routes\sha256.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="layout\layout.cpp">
+    <ClCompile Include="routes\layout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="routes\define_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +38,10 @@
     <ClInclude Include="routes\sha256.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="layout\layout.h">
+    <ClInclude Include="routes\layout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="routes\define_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

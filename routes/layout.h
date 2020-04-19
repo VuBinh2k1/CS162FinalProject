@@ -3,7 +3,6 @@
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
-#include <utility>
 #define default_code 7
 #define blue_code 1
 #define green_code 10
@@ -22,9 +21,8 @@ typedef struct mess {
 }mess;
 
 typedef struct layout {
-	int image_count, input_count;
+	int image_count;
 	mess* data;
-	std::pair <int, int>* in;
 
 	layout(std::istream& inp);
 	~layout();
@@ -33,5 +31,3 @@ typedef struct layout {
 
 void colorizing(WORD color_code);
 void gotoxy(int column, int line, WORD color_code = default_code);
-
-void print_login_layout(char*& user, char*& pass, bool has_invalid = 0);

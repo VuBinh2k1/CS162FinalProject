@@ -1,5 +1,4 @@
 #pragma once
-class login
-{
-};
+#include "define_data.h"
 
+void login(user_data& user);

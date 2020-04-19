@@ -1,13 +1,15 @@
 #include <iostream>
-#include "layout/layout.h"
 #include "routes/login.h"
 
 using std::cin;
 using std::cout;
 
 int main(int argc, char* agrv[]) {
-    char* a, * b;
-    print_login_layout(a, b);
-    while (strcmp(a, "vubinh"))print_login_layout(a, b, 1);
+    user_data user;
+    login(user);
+
+    //puser Student(".\\data\\student_data.csv");
+    //puser User(".\\data\\account.csv");
+    
     return 0;
 }
