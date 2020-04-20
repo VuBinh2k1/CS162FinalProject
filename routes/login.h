@@ -1,4 +1,6 @@
-#pragma once
-#include "define_data.h"
+#ifndef LOGIN_H
+#define LOGIN_H
+#include "csv.h"
 
-void login(user_data& user);
+void login(csv_line& user);
+#endif

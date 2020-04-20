@@ -1,7 +1,7 @@
 #include "login.h"
 #include "layout.h"
 
-void login(user_data& user) {
+void login(csv_line& user) {
 	std::ifstream inp(".\\layout\\login.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("login.layout is not exist"), TEXT("error layout"), MB_OK);
@@ -12,7 +12,7 @@ void login(user_data& user) {
 	layout error_layout(inp);
 	inp.close();
 
-	puser user_list(".\\data\\account.csv");
+	csv_file user_list(".\\data\\account.csv", 4);
 
 	login_layout.print();
 	user_pass_layout.print();

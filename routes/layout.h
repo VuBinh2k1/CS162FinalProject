@@ -1,4 +1,5 @@
-#pragma one
+#ifndef LAYOUT_H
+#define LAYOUT_H
 #pragma warning(disable : 4996)
 #include <Windows.h>
 #include <iostream>
@@ -31,3 +32,4 @@ typedef struct layout {
 
 void colorizing(WORD color_code);
 void gotoxy(int column, int line, WORD color_code = default_code);
+#endif
