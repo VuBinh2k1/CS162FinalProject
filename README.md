@@ -11,7 +11,7 @@ End Project Date:
 
 - **`19127226` Hoàng Văn Nguyên**
 
-- **`19127348` Danh Bùi**
+- **`19127348` Bùi Công Danh**
 ## Project Planner
 - [ ] **All roles**
 - [ ] **Academic staff-Class**
