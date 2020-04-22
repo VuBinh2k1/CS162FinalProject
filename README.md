@@ -10,8 +10,6 @@ End Project Date:
 - **`19127186` Lê Thành Khôi**
 
 - **`19127226` Hoàng Văn Nguyên**
-
-- **`19127348` Danh Bùi**
 ## Project Planner
 - [ ] **All roles**
 - [ ] **Academic staff-Class**
