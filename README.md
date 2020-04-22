@@ -5,13 +5,15 @@ Start Project Date: April 18, 2020
 
 End Project Date:
 ## Team
-- **`19127012` Vũ Nguyễn Thái Bình**
+++ **`19127012` Vũ Nguyễn Thái Bình**
 
-- **`19127186` Lê Thành Khôi**
+++ **`19127186` Lê Thành Khôi**
+- ** SĐT: 0904074894 **
+- " Facebook: Khôi L Thành "
+- " Email: lethanhkhoi081001@gmail.com " 
+++ **`19127226` Hoàng Văn Nguyên**
 
-- **`19127226` Hoàng Văn Nguyên**
-
-- **`19127348` Bùi Công Danh**
+++ **`19127348` Bùi Công Danh**
 ## Project Planner
 - [ ] **All roles**
 - [ ] **Academic staff-Class**
