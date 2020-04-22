@@ -13,9 +13,13 @@ End Project Date:
 - " Email: lethanhkhoi081001@gmail.com " 
 
 ++ **`19127226` Hoàng Văn Nguyên**
+
 -**Contact: 0973961360**
+
 -"Facebook: Hoàng Nguyên"
+
 -"Email: nguyenthai242200@gmail.com"
+
 ++ **`19127348` Bùi Công Danh**
 ## Project Planner
 - [ ] **All roles**
