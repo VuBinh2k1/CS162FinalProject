@@ -8,7 +8,7 @@ End Project Date:
 ++ **`19127012` Vũ Nguyễn Thái Bình**
 - **" SĐT:0946687733 "**
 - **" Facebook: Vũ Bình "**
--**" Email: binh161905@gmail.com "**
+- **" Email: binh161905@gmail.com "**
 
 ++ **`19127186` Lê Thành Khôi**
 - **" SĐT: 0904074894 "**
