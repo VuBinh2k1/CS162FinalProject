@@ -16,8 +16,6 @@ End Project Date:
   - **Email:** lethanhkhoi081001@gmail.com
 
 - **`19127226` Hoàng Văn Nguyên**
-<<<<<<< HEAD
-=======
   - **Contact:** 0973961360
   - **Facebook:** [Hoàng Nguyên](https://www.facebook.com/hoangvannguyen24)
   - **Email:** nguyenthai242200@gmail.com
@@ -26,7 +24,6 @@ End Project Date:
   - **Contact:**
   - **Facebook:**
   - **Email:**
->>>>>>> cef44466e6b4f578fa15f69133cc0917d6e6f90f
 ## Project Planner
 - [ ] **All roles**
 - [ ] **Academic staff-Class**
