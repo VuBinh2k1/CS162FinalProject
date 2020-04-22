@@ -8,7 +8,7 @@
 
 class csv_line {
 public:
-	int count;
+	int count;		// Number of columns
 	char* data;
 	char** pdata;
 	void init(std::istream& inp, int mark_count);
@@ -18,7 +18,7 @@ public:
 
 class csv_file {
 public:
-	int count;
+	int count;		// Number of cows
 	csv_line mark;
 	csv_line* data;
 	csv_file(const char* FILE, int mark_count);
