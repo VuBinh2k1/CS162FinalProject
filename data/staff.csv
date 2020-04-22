@@ -1,4 +1,4 @@
-﻿No,StaffID,Last name,First name,Gender,Password
-1,hatu,Hoang Anh,Tu,Female,123456
-2,ltathao,Le Thi Anh,Thao,Female,654321
-3,ntmphuc,Nguyen Thi Minh,Phuc,Female,135792468
+﻿No,StaffID,Last name,First name,Gender
+1,hatu,Hoang Anh,Tu,Female
+2,ltathao,Le Thi Anh,Thao,Female
+3,ntmphuc,Nguyen Thi Minh,Phuc,Female
