@@ -1,5 +1,4 @@
-#include "login.h"
-#include "layout.h"
+#include "roles.h"
 
 void login(csv_line& user) {
 	std::ifstream inp(".\\layout\\login.layout");
@@ -38,7 +37,7 @@ void login(csv_line& user) {
 				if (password) free(password);
 				user.init(user_list.data[i]);
 
-				colorizing(default_code);
+				colorizing(COLOR_DEFAULT);
 				return;
 			}
 		}
@@ -49,4 +48,16 @@ void login(csv_line& user) {
 		if (username) free(username);
 		if (password) free(password);
 	}
+}
+
+void menu(csv_line& user) {
+
+}
+
+void profile(csv_line& user) {
+
+}
+
+void password(csv_line& user) {
+
 }
