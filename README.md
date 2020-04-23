@@ -21,9 +21,9 @@ End Project Date:
   - **Email:** nguyenthai242200@gmail.com
   
 - **`19127348` Bùi Công Danh**
-  - **Contact:**
-  - **Facebook:**
-  - **Email:**
+  - **Contact:** 0906366463
+  - **Facebook:** Dank Bùi
+  - **Email:** buicongdanh213@gmail.com
 ## Project Planner
 - [ ] **All roles**
 - [ ] **Academic staff-Class**
