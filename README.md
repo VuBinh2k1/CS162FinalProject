@@ -22,7 +22,7 @@ End Project Date:
   
 - **`19127348` Bùi Công Danh**
   - **Contact:** 0906366463
-  - **Facebook:** Dank Bùi
+  - **Facebook:** .[Dank Bùi]. (https://www.facebook.com/buicong.danh21)
   - **Email:** buicongdanh213@gmail.com
 ## Project Planner
 - [ ] **All roles**
