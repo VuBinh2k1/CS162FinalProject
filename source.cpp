@@ -9,5 +9,6 @@ int main(int argc, char* agrv[]) {
 
     csv_line user;
     login(user);
+    password(user);
     return 0;
 }

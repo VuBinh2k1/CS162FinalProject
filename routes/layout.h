@@ -9,15 +9,20 @@
 
 #define COLOR_DEFAULT 7
 #define COLOR_BLUE 1
-#define COLOR_GREEN 10
 #define COLOR_RED 4
+#define COLOR_YELLOW 6
+#define COLOR_GREEN 10
 #define COLOR_WHITE 15
+#define COLOR_WHITE_BACKGROUND 240
 
+#define KEY_BACKSPACE 8
+#define KEY_ENTER 13
 #define KEY_ESC 27
 #define KEY_UP 72
-#define KEY_DOWN 80
 #define KEY_LEFT 75
 #define KEY_RIGHT 77
+#define KEY_DOWN 80
+#define KEY_DELETE 83
 
 typedef struct mess {
 	int xo, yo, height, width, color_code;
