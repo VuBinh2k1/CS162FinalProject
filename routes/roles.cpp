@@ -80,7 +80,7 @@ void password(csv_line& user) {
 		exit(0);
 	}
 	layout password_layout(inp);
-	layout change_password_lauout(inp);
+	layout change_password_layout(inp);
 	inp.close();
 
 	char* username = user.pdata[1];
@@ -91,7 +91,7 @@ void password(csv_line& user) {
 
 	password_layout.print();
 	while (1) {
-		change_password_lauout.print();
+		change_password_layout.print();
 
 		if (read(32, 9, pw_old, HIDE) == KEY_ESC) return;
 		if (read(32, 11, pw_new, HIDE) == KEY_ESC) return;
