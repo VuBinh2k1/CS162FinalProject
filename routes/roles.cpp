@@ -47,11 +47,10 @@ void login(csv_line& user) {
 	csv_file user_list(".\\data\\account.csv", 4);
 
 	login_layout.print();
-	user_pass_layout.print();
 	for(std::string username, password;;) {
-		char temp[20];
+		user_pass_layout.print();
 
-		gotoxy(24, 13);
+		gotoxy(24, 13); char temp[20];
 		std::cin.get(temp, 20); username = temp;
 		std::cin.clear(); std::cin.ignore(100, '\n');
 		char_pass(24, 14, password);
@@ -70,7 +69,6 @@ void login(csv_line& user) {
 		}
 		error_layout.print(); 
 		Sleep(2000);
-		user_pass_layout.print();
 	}
 }
 
@@ -91,6 +89,7 @@ void password(csv_line& user) {
 		exit(0);
 	}
 	layout password_layout(inp);
+	layout change_password_lauout(inp);
 	inp.close();
 
 	char* username = user.pdata[1];
@@ -99,8 +98,9 @@ void password(csv_line& user) {
 	std::string pw_new;
 	std::string pw_new_confirm;
 
+	password_layout.print();
 	while (1) {
-		password_layout.print();
+		change_password_lauout.print();
 
 		if (char_pass(32, 9, pw_old) == KEY_ESC) return;
 		if (char_pass(32, 11, pw_new) == KEY_ESC) return;
