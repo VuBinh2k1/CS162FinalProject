@@ -1,62 +1,53 @@
 #include "roles.h"
 
-char char_pass(int x, int y, std::string& pw) {
-	gotoxy(x, y);
-	uint8_t c = -1;
-	pw.resize(0);
-	while (c != KEY_ENTER && c != KEY_ESC) {
-		c = getch();
-		// Keyboard: Printable characters
-		if (c > 32 && c < 127) {
-			if (pw.size() < 52) {
-				std::cout << "*"; pw.push_back(c);
-			}
-			continue;
-		}
-		// Keyboard: BACKSPACE: 8
-		if (c == KEY_BACKSPACE && pw.size()) {
-			std::cout << "\b \b"; pw.pop_back();
-			continue;
-		}
-		// Keyboard: DELETE: 224 83
-		if (c == 0 || c == 224) {
-			if (getch() == 83) {
-				while (pw.size()) {
-					std::cout << "\b \b"; pw.pop_back();
-				}
-			}
-			continue;
-		}
-	}
-	return c;
-}
-
 void login(csv_line& user) {
 	system("cls");
 
 	std::ifstream inp(".\\layout\\login.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("login.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("login.layout is not exist"), TEXT("error layout"), MB_OK); 
 		exit(0);
 	}
 	layout login_layout(inp);
 	layout user_pass_layout(inp);
-	layout error_layout(inp);
 	inp.close();
 
 	csv_file user_list(".\\data\\account.csv", 4);
 
 	login_layout.print();
 	for(std::string username, password;;) {
-		user_pass_layout.print();
+	LOGIN:
 
-		gotoxy(24, 13); char temp[20];
-		std::cin.get(temp, 20); username = temp;
-		std::cin.clear(); std::cin.ignore(100, '\n');
-		char_pass(24, 14, password);
+		user_pass_layout.print();
+		if (read(24, 12, username, SHOW) == KEY_ESC) EXIT(0,20);
+		if (read(24, 13, password, HIDE) == KEY_ESC) EXIT(0,20);
+
+		// Choose Left-right: [Login][Cancel]
+		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
+			gotoxy(40, 17, C1); std::cout << "[Login]";
+			gotoxy(48, 17, C2);  std::cout << "[Cancel]";
+			colorizing(COLOR_DEFAULT);
+
+			uint8_t c = getch();
+			if (c == KEY_ESC) EXIT(0,20);
+			if (c == KEY_ENTER) {
+				if (C1 == 240) break;
+				else {
+					gotoxy(34, 17, COLOR_YELLOW); std::cout << "Pls login to use the program";
+					PAUSE; goto LOGIN;
+				}
+			}
+			if (c == 224 || c == 0) {
+				if (C1 == 240 && getch() == KEY_RIGHT ||
+					C2 == 240 && getch() == KEY_LEFT) {
+					WORD temp = C1;
+					C1 = C2;
+					C2 = temp;
+				}
+			}
+		}
 
 		for (int i = 0; i < user_list.count; ++i) {
-
 			char* _username = user_list.data[i].pdata[1];
 			char* _password = user_list.data[i].pdata[2];
 			if (strcmp(username.c_str(), _username) == 0 && 
@@ -67,8 +58,8 @@ void login(csv_line& user) {
 				return;
 			}
 		}
-		error_layout.print(); 
-		Sleep(2000);
+		gotoxy(33, 17, COLOR_RED); std::cout << "Incorrect username or password";
+		PAUSE;
 	}
 }
 
@@ -85,7 +76,7 @@ void password(csv_line& user) {
 	
 	std::ifstream inp(".\\layout\\password.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("password.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("password.layout is not exist"), TEXT("error layout"), MB_OK); 
 		exit(0);
 	}
 	layout password_layout(inp);
@@ -102,10 +93,11 @@ void password(csv_line& user) {
 	while (1) {
 		change_password_lauout.print();
 
-		if (char_pass(32, 9, pw_old) == KEY_ESC) return;
-		if (char_pass(32, 11, pw_new) == KEY_ESC) return;
-		if (char_pass(32, 13, pw_new_confirm) == KEY_ESC) return;
+		if (read(32, 9, pw_old, HIDE) == KEY_ESC) return;
+		if (read(32, 11, pw_new, HIDE) == KEY_ESC) return;
+		if (read(32, 13, pw_new_confirm, HIDE) == KEY_ESC) return;
 
+		// Choose Left-right: [Save change][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
 			gotoxy(37, 17, C1); std::cout << "[Save change]";
 			gotoxy(51, 17, C2);  std::cout << "[Cancel]";
@@ -128,12 +120,16 @@ void password(csv_line& user) {
 		}
 		
 		if (strcmp(password, pw_old.c_str())) {
-			gotoxy(32, 10, COLOR_RED); std::cout << "Current password is incorrect";
-			Sleep(2000); continue;
+			gotoxy(32, 10, COLOR_RED); std::cout << "Current Password is incorrect.";
+			PAUSE; continue;
+		}
+		if (pw_new.size() < 5) {
+			gotoxy(32, 12, COLOR_RED); std::cout << "The Password field must be least 5 characters.";
+			PAUSE; continue;
 		}
 		if (pw_new != pw_new_confirm) {
-			gotoxy(32, 14, COLOR_RED); std::cout << "The Confirm Password confirmation does not match";
-			Sleep(2000); continue;
+			gotoxy(32, 14, COLOR_RED); std::cout << "The Confirm Password confirmation does not match.";
+			PAUSE; continue;
 		}
 		break;
 	}
@@ -158,5 +154,5 @@ void password(csv_line& user) {
 	}
 	out.close();
 	gotoxy(36, 17, COLOR_GREEN); std::cout << "Save changes successfully.";
-	gotoxy(0, 20); Sleep(2000);
+	gotoxy(0, 20); PAUSE;
 }

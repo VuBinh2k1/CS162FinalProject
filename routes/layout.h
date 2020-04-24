@@ -4,8 +4,11 @@
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
-#define MAX_WIDTH = 100
-#define MAX_HEIGHT = 30
+#include <conio.h>
+#define MAX_WIDTH 100
+#define MAX_HEIGHT 30
+#define SHOW 0
+#define HIDE 1
 
 #define COLOR_DEFAULT 7
 #define COLOR_BLUE 1
@@ -23,6 +26,9 @@
 #define KEY_RIGHT 77
 #define KEY_DOWN 80
 #define KEY_DELETE 83
+
+#define EXIT(x,y) { gotoxy(x,y); exit(0); }
+#define PAUSE Sleep(2000)
 
 typedef struct mess {
 	int xo, yo, height, width, color_code;
@@ -57,4 +63,7 @@ void colorizing(WORD color_code);
 
 // Move console pointer
 void gotoxy(int column, int line, WORD color_code = COLOR_DEFAULT);
+
+// Read std::string with conio.h
+char read(int x, int y, std::string& pw, bool status = SHOW);
 #endif
