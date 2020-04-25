@@ -147,17 +147,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="routes\control.cpp" />
+    <ClCompile Include="routes\course.cpp" />
     <ClCompile Include="routes\csv.cpp" />
     <ClCompile Include="routes\layout.cpp" />
     <ClCompile Include="routes\roles.cpp" />
     <ClCompile Include="routes\sha256.cpp" />
+    <ClCompile Include="routes\student.cpp" />
     <ClCompile Include="source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="routes\control.h" />
+    <ClInclude Include="routes\course.h" />
     <ClInclude Include="routes\csv.h" />
     <ClInclude Include="routes\layout.h" />
     <ClInclude Include="routes\roles.h" />
     <ClInclude Include="routes\sha256.h" />
+    <ClInclude Include="routes\student.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
