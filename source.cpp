@@ -11,6 +11,7 @@ int main(int argc, char* agrv[]) {
     csv_line user;
     role::login(user);
     //role::password(user);
-    npstudent::check_in(user);
+    //npstudent::check_in(user);
+    npstudent::check_in_result(user);
     return 0;
 }

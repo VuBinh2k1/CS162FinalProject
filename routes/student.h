@@ -9,5 +9,6 @@
 namespace npstudent {
 	void menu(csv_line& user);
 	void check_in(csv_line& user);
+	void check_in_result(csv_line& user);
 }
 #endif

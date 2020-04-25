@@ -26,7 +26,6 @@ void role::login(csv_line& user) {
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
 			gotoxy(40, 17, C1); std::cout << "[Login]";
 			gotoxy(48, 17, C2);  std::cout << "[Cancel]";
-			colorizing(COLOR_DEFAULT);
 
 			uint8_t c = getch();
 			if (c == KEY_ESC) EXIT(0,20);
@@ -103,7 +102,6 @@ bool role::password(csv_line& user) {
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
 			gotoxy(37, 17, C1); std::cout << "[Save change]";
 			gotoxy(51, 17, C2);  std::cout << "[Cancel]";
-			colorizing(COLOR_DEFAULT);
 
 			uint8_t c = getch();
 			if (c == KEY_ESC) return 0;
