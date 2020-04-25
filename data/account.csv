@@ -1,8 +1,8 @@
-Status,User ID,Password,Position,
-1,hatu,0,staff,
-1,ntmphuc,654321,staff,
-1,ltathao,13579,staff,
-1,19127012,12345,student,
-1,19127186,13579,student,
-1,19127226,02468,student,
-1,19127348,12357,student,
+Status,User ID,Password,Position
+1,hatu,0,staff
+1,ntmphuc,654321,staff
+1,ltathao,13579,staff
+1,19127012,12345,student
+1,19127186,13579,student
+1,19127226,02468,student
+1,19127348,12357,student

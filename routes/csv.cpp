@@ -5,9 +5,10 @@ void csv_line::init(std::istream& inp) {
 	inp.getline(temp, 1000);
 
 	count = std::count(temp, temp + strlen(temp), ',') + 1;
-	data = strdup(temp);
+	data = new char[strlen(temp) + 1];
 	pdata = new char* [count];
 
+	strcpy_s(data, strlen(temp) + 1, temp);
 	pdata[0] = data;
 	for (int i = 0, cnt = 1; data[i] != '\0'; ++i) {
 		if (data[i] == ',') {
@@ -23,11 +24,11 @@ csv_line& csv_line::operator=(const csv_line& x) {
 		data_size += strlen(x.pdata[i]) + 1;
 	}
 
-	if (data != NULL) free(data);
-	if (pdata != nullptr) delete[] pdata;
+	delete[] data;
+	delete[] pdata;
 
 	count = x.count;
-	data = (char*)malloc(data_size);
+	data = new char[data_size];
 	pdata = new char* [count];
 
 	pdata[0] = data;
@@ -59,7 +60,8 @@ csv_file::csv_file(const char* FILE) {
 }
 
 csv_file& csv_file::operator=(const csv_file& x) {
-	if (data != nullptr) delete[] data;
+	delete[] data;
+
 	count = x.count;
 	mark = x.mark;
 	data = new csv_line[count];
@@ -69,7 +71,7 @@ csv_file& csv_file::operator=(const csv_file& x) {
 	return *this;
 }
 
-void csv::update(const char* FILE, int row, int column, std::string val) {
+void npcsv::update(const char* FILE, int row, int column, const char* val) {
 	csv_file user_list(FILE);
 	std::ofstream out(FILE);
 
@@ -78,13 +80,14 @@ void csv::update(const char* FILE, int row, int column, std::string val) {
 	}
 	out << "\n";
 	for (int i = 0; i < user_list.count; out << "\n", ++i) {
-		for (int j = 0; j < user_list.mark.count; ++j) {
+		for (int j = 0; j < user_list.data[i].count; ++j) {
 			if (i == row && j == column) {
-				out << val << ",";
+				out << val;
 			}
 			else {
-				out << user_list.data[i].pdata[j] << ",";
+				out << user_list.data[i].pdata[j];
 			}
+			if (j + 1 != user_list.mark.count) out << ',';
 		}
 	}
 	out.close();

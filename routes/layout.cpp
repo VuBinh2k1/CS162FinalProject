@@ -63,9 +63,9 @@ void mess::realease() {
 }
 
 void mess::print() {
-	gotoxy(xo, yo, color_code);
 	for (int i = 0; i < height; ++i) {
-		std::cout << data[i] << "\n";
+		gotoxy(xo, yo + i, color_code); 
+		std::cout << data[i];
 	}
 }
 

@@ -56,7 +56,7 @@ void role::login(csv_line& user) {
 
 				user = user_list.data[i];
 				colorizing(COLOR_DEFAULT);
-				if (role::password(user) == 0) EXIT(0,20);
+				if (password.size() < 5 && role::password(user) == 0) EXIT(0,20);
 				return;
 			}
 		}
@@ -137,7 +137,7 @@ bool role::password(csv_line& user) {
 	}
 
 	// Update "account.csv"
-	csv::update(".\\data\\account.csv", user.id, 2, pw_new);
+	npcsv::update(".\\data\\account.csv", user.id, 2, pw_new.c_str());
 	gotoxy(36, 17, COLOR_GREEN); std::cout << "Save changes successfully.";
 	gotoxy(0, 20); PAUSE;
 	return 1;

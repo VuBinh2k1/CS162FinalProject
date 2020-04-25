@@ -9,14 +9,12 @@
 class csv_line {
 public:
 	int id, count;		// Number of columns
+	char* data;
 	char** pdata;
 
 	void init(std::istream& inp);
-	~csv_line() { free(data); delete[] pdata; }
+	~csv_line() { delete[] data; delete[] pdata; }
 	csv_line& operator=(const csv_line& x);
-
-private:
-	char* data;
 };
 
 class csv_file {
@@ -24,13 +22,13 @@ public:
 	int count;		// Number of cows
 	csv_line mark;
 	csv_line* data;
+
 	csv_file(const char* FILE);
 	~csv_file() { delete[] data; }
-
 	csv_file& operator=(const csv_file& x);
 };
 
-namespace csv {
-	void update(const char* FILE, int row, int column, std::string val);
+namespace npcsv {
+	void update(const char* FILE, int row, int column, const char* val);
 }
 #endif
