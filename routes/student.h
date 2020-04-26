@@ -1,10 +1,10 @@
 #ifndef STUDENT_H
 #define STUDENT_H
-#include "config.h"
 #include "control.h"
 #include "csv.h"
 #include "layout.h"
 #include "course.h"
+#include "roles.h"
 
 namespace npstudent {
 	void menu(csv_line& user);

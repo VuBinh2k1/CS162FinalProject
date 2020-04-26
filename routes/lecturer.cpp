@@ -22,7 +22,7 @@ void nplecturer::menu(csv_line& user) {
 	int choose = 0;
 
 MENU:
-	system("cls");
+	colorizing(COLOR_DEFAULT); system("cls");
 	menu_layout.print();
 	if (infouser == nullptr) {
 		gotoxy(33, 9, COLOR_RED); std::cout << "Sorry, I don't have your information.";
@@ -50,11 +50,12 @@ MENU:
 		gotoxy(2,13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Scoreboard      ";
 		gotoxy(2,28, (choose == 5) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
+	NO_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) choose = 5;
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
-				
+				role::profile(user);
 				goto MENU;
 			}
 			if (choose == 1) {
@@ -78,7 +79,8 @@ MENU:
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) choose--;
-			if (c == KEY_DOWN && choose < 5) choose++;
+			else if (c == KEY_DOWN && choose < 5) choose++;
+			else goto NO_CHANGE;
 		}
 	}
 }

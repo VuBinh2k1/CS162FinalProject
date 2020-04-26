@@ -4,6 +4,7 @@
 #include "csv.h"
 #include "layout.h"
 #include "course.h"
+#include "roles.h"
 
 namespace nplecturer {
 	void menu(csv_line& user);

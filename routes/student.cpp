@@ -22,7 +22,7 @@ void npstudent::menu(csv_line& user) {
 	int choose = 0;
 
 MENU:
-	system("cls");
+	colorizing(COLOR_DEFAULT); system("cls");
 	menu_layout.print();
 	if (infouser == nullptr) {
 		gotoxy(33, 9, COLOR_RED); std::cout << "Sorry, I don't have your information.";
@@ -57,19 +57,20 @@ MENU:
 		gotoxy(2,13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My scoreboard   ";
 		gotoxy(2,28, (choose == 5) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
+	NO_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) choose = 5;
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
-				
+				role::profile(user);
 				goto MENU;
 			}
 			if (choose == 1) {
-				
+				npstudent::check_in(user);
 				goto MENU;
 			}
 			if (choose == 2) {
-
+				npstudent::check_in_result(user);
 				goto MENU;
 			}
 			if (choose == 3) {
@@ -85,13 +86,14 @@ MENU:
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) choose--;
-			if (c == KEY_DOWN && choose < 5) choose++;
+			else if (c == KEY_DOWN && choose < 5) choose++;
+			else goto NO_CHANGE;
 		}
 	}
 }
 
 void npstudent::check_in(csv_line& user) {
-	system("cls");
+	colorizing(COLOR_DEFAULT); system("cls");
 	std::ifstream inp(".\\layout\\course.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("course.layout is not exist"), TEXT("error layout"), MB_OK);
@@ -108,7 +110,6 @@ void npstudent::check_in(csv_line& user) {
 	csv_file my_course(stupath.c_str());
 
 	course_layout.print();
-	gotoxy(5, 9, COLOR_YELLOW); std::cout << "[My courses]";
 	int chs1 = 0, id = -1;
 
 LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
@@ -182,8 +183,7 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 }
 
 void npstudent::check_in_result(csv_line& user) {
-	system("cls");
-
+	colorizing(COLOR_DEFAULT); system("cls");
 	std::ifstream inp(".\\layout\\course.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("student_schedule.layout is not exist"), TEXT("error layout"), MB_OK);

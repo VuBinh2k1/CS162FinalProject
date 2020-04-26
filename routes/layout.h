@@ -1,6 +1,7 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 #pragma warning(disable : 4996)
+#include "config.h"
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
