@@ -1,12 +1,11 @@
 #include "roles.h"
 
-void role::login(csv_line& user) {
+bool role::login(csv_line& user) {
 	system("cls");
-
 	std::ifstream inp(".\\layout\\login.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("login.layout is not exist"), TEXT("error layout"), MB_OK); 
-		exit(0);
+		return 0;
 	}
 	layout login_layout(inp);
 	layout user_pass_layout(inp);
@@ -19,8 +18,8 @@ void role::login(csv_line& user) {
 	LOGIN:
 
 		user_pass_layout.print();
-		if (read(24, 12, username, SHOW) == KEY_ESC) EXIT(0,20);
-		if (read(24, 13, password, HIDE) == KEY_ESC) EXIT(0,20);
+		if (read(24, 12, username, SHOW) == KEY_ESC) return 0;
+		if (read(24, 13, password, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Login][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
@@ -28,7 +27,7 @@ void role::login(csv_line& user) {
 			gotoxy(48, 17, C2);  std::cout << "[Cancel]";
 
 			uint8_t c = getch();
-			if (c == KEY_ESC) EXIT(0,20);
+			if (c == KEY_ESC) return 0;
 			if (c == KEY_ENTER) {
 				if (C1 == 240) break;
 				else {
@@ -55,8 +54,8 @@ void role::login(csv_line& user) {
 
 				user = user_list.data[i];
 				colorizing(COLOR_DEFAULT);
-				if (password.size() < 5 && role::password(user) == 0) EXIT(0,20);
-				return;
+				if (password.size() < 5 && role::new_password(user) == 0) return 0;
+				return 1;
 			}
 		}
 		gotoxy(33, 17, COLOR_RED); std::cout << "Incorrect username or password";
@@ -64,17 +63,8 @@ void role::login(csv_line& user) {
 	}
 }
 
-void role::menu(csv_line& user) {
-
-}
-
-void role::profile(csv_line& user) {
-
-}
-
-bool role::password(csv_line& user) {
+bool role::new_password(csv_line& user) {
 	system("cls");
-	
 	std::ifstream inp(".\\layout\\password.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("password.layout is not exist"), TEXT("error layout"), MB_OK); 
