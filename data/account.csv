@@ -1,5 +1,5 @@
-Status,User ID,Password,Position
-1,hatu,0,staff
+Status,User ID,Password,Position,
+1,hatu,123456,staff
 1,ntmphuc,654321,staff
 1,ltathao,13579,staff
 1,19127012,12345,student
