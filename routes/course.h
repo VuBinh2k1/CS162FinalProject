@@ -5,7 +5,7 @@
 #include "layout.h"
 
 namespace npcourse {
-	bool layout(const csv_file& my_course, char*& course_id, char*& course_cs, int& choose, int& id);
+	bool list(const csv_file& my_course, char*& course_id, char*& course_cs, int& choose, int& id);
 	bool info(const char* course_id, const char* course_cs, int x, int y, int n = 5);
 }
 #endif
