@@ -60,18 +60,6 @@ csv_file::csv_file(const char* FILE) {
 	inp.close();
 }
 
-csv_file& csv_file::operator=(const csv_file& x) {
-	delete[] data;
-
-	count = x.count;
-	mark = x.mark;
-	data = new csv_line[count];
-	for (int i = 0; i < count; ++i) {
-		data[i] = x.data[i];
-	}
-	return *this;
-}
-
 void npcsv::update(const char* FILE, int row, int column, const char* val) {
 	csv_file user_list(FILE);
 	std::ofstream out(FILE);

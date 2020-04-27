@@ -12,7 +12,7 @@ void gotoxy(int column, int line, WORD color_code) {
 	colorizing(color_code);
 }
 
-char read(int x, int y, std::string& pw, bool status) {
+char read(int x, int y, std::string& pw, int max_size, bool status) {
 	gotoxy(x, y);
 	uint8_t c = -1;
 	pw.resize(0);
@@ -20,7 +20,7 @@ char read(int x, int y, std::string& pw, bool status) {
 		c = getch();
 		// Keyboard: Printable characters
 		if (c > 32 && c < 127) {
-			if (pw.size() < 52) {
+			if (pw.size() < max_size) {
 				if (status == SHOW) std::cout << (char)c;
 				else std::cout << "*";
 				pw.push_back(c);

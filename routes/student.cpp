@@ -50,16 +50,17 @@ MENU:
 
 	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "     Student      ";
 	while (1) {
+		int E = 5;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Profile         ";
 		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My course       ";
 		gotoxy(2,11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Checkin result  ";
 		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My schedule     ";
 		gotoxy(2,13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My scoreboard   ";
-		gotoxy(2,28, (choose == 5) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
+		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
 	NO_CHANGE:
 		uint8_t c = getch();
-		if (c == KEY_ESC) choose = 5;
+		if (c == KEY_ESC) if (choose != E) choose = E; else goto NO_CHANGE;
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				role::profile(user);
@@ -81,7 +82,7 @@ MENU:
 
 				goto MENU;
 			}
-			if (choose == 5) return;
+			if (choose == E) return;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();

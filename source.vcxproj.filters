@@ -45,6 +45,9 @@
     <ClCompile Include="routes\staff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="routes\class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="routes\sha256.h">
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="routes\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="routes\class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

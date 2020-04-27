@@ -25,7 +25,6 @@ public:
 
 	csv_file(const char* FILE);
 	~csv_file() { delete[] data; }
-	csv_file& operator=(const csv_file& x);
 };
 
 namespace npcsv {
