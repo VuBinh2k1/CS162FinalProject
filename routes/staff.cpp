@@ -1,4 +1,7 @@
 #include "staff.h"
+#include<string>
+#include <sstream>
+void editstudent(csv_line& user);
 
 void npstaff::menu(csv_line& user) {
 	std::ifstream inp(".\\layout\\menu.layout");
@@ -81,4 +84,117 @@ MENU:
 			else goto NO_CHANGE;
 		}
 	}
+}
+
+void editstudent(csv_line& user)
+{
+	system("cls");
+	csv_file infofile(".\\data\\student\\__student.csv");
+	int count = 0;
+	std::cout << "Enter student ID you want to change: ";
+	std::string chr;
+	std::getline(std::cin, chr);
+	for (int i = 0; i < infofile.count; i++) {
+		char* ID = infofile.data[i].pdata[1];
+		if (strcmp(chr.c_str(), ID) == 0)
+		{
+			count++;
+			std::cout << "Student ID: " << infofile.data[i].pdata[1] << std::endl;
+			std::cout << "Last name: " << infofile.data[i].pdata[2] << std::endl;
+			std::cout << "First name: " << infofile.data[i].pdata[3] << std::endl;
+			std::cout << "Day of birth: " << infofile.data[i].pdata[4] << std::endl;
+			std::cout << "What infomation do you want to change: \n1 - Student ID	  2 - First name     3 - Last name	 	 4 - Gender      5 - DoB\n";
+			int Key;
+			std::cin >> Key;
+			std::cin.ignore(100, '\n');
+			switch (Key)
+			{
+			case 1: {
+				std::string result;
+				std::ostringstream convert;
+				int temp;				
+				std::cout << "Enter new ID: ";
+				std::cin >> temp;
+				convert << temp;
+				result = convert.str();
+				if (temp == 0) {
+					std::cout << "Sorry but student ID cannot = 0 ";
+				}
+				npcsv::update(".\\data\\student\\__student.csv", i, 1, result.c_str());
+				std::cout << "Successfully!!";
+				system("cls");
+				break;
+			}
+			case 2: {
+				std::string temp;
+				std::cout << "Enter new first name: ";
+				std::getline(std::cin, temp);
+				npcsv::update(".\\data\\student\\__student.csv", i, 2, temp.c_str());
+				std::cout << "Successfully.\n";
+				system("cls");
+				break;
+			}
+			case 3: {
+				std::string temp;
+				std::cout << "Enter new last name: ";				
+				std:getline(std::cin, temp);
+				npcsv::update(".\\data\\student\\__student.csv", i, 3, temp.c_str());
+				std::cout << "Successfully.\n";
+				system("cls");
+				break;
+			}
+			case 4: {
+				std::string temp;
+				std::cout << "Enter new Gender: ";
+				std::getline(std::cin, temp);
+				npcsv::update(".\\data\\student\\__student.csv", i, 4, temp.c_str());
+				std::cout << "Successfully.\n";
+				system("cls");
+				break;
+			}
+			case 5: {
+				std::string temp;
+				std::cout << "Enter new DoB (DD/MM/YYYY): ";				
+				std::getline(std::cin, temp);
+				npcsv::update(".\\data\\student\\__student.csv", i, 5, temp.c_str());
+				std::cout << "Successfully.\n";
+				system("cls");
+				break;
+			}
+			default:
+				break;
+			}
+			break;
+		}
+	}
+	if (count == 0) {
+		std::cout << "Cannot find student ID you want!!!!";
+	}
+	else {
+
+	}
+}
+
+void removestudent(csv_line& user)
+{
+	system("cls");
+	csv_file infofile(".\\data\\student\\__student.csv");
+	int count = 0;
+	std::cout << "Enter student ID you want to change: ";
+	std::string chr;
+	std::getline(std::cin, chr);
+	for (int i = 0; i < infofile.count; i++) {
+		char* ID = infofile.data[i].pdata[1];
+		if (strcmp(chr.c_str(), ID) == 0)
+		{
+			count++;
+			if (infofile.data[i].pdata[0] == 0) {
+				std::cout << "remove roi con doi remove nua -_-* \n";
+			}
+			npcsv::update(".\\data\\student\\__student.csv", i, 0, 0);
+			std::cout << "Successfully. \n";
+		}
+	}
+	if (count == 0)
+		std::cout << "cannot find student ID!!!!!! \n";
 }
