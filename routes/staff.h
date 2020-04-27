@@ -1,7 +1,5 @@
 #ifndef STAFF_H
 #define STAFF_H
-
-#pragma warning(disable : 4996)
 #include "control.h"
 #include "csv.h"
 #include "layout.h"
