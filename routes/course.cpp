@@ -1,22 +1,26 @@
 #include "course.h"
 
-bool npcourse::layout(const csv_file& my_course, char*& course_id, char*& course_cs, int& choose, int& id) {
-	for (int u = -1;; u = -1) {	// Choose Up-down: [COURSE]
+bool npcourse::list(const csv_file& my_course, char*& course_id, char*& course_cs, int& choose, int& id) {
+	gotoxy(2, 9, COLOR_YELLOW_BACKGROUND); std::cout << "    My courses    ";
+	int cur, overflow = 0;
+	for (;cur = -1;) {	// Choose Up-down: [COURSE]
 		for (int i = 0; i < my_course.count; ++i) {
 			if (strcmp(my_course.data[i].pdata[0], "0") == 0) continue;		// Status: 0/1
+			if (++cur + overflow < 0 || cur + overflow > 15) continue;		// Overflow menu
 
-			if (choose == ++u) id = i, gotoxy(7, 11 + u, COLOR_WHITE_BACKGROUND);
-			else gotoxy(7, 11 + u, COLOR_WHITE);
-			std::cout << my_course.data[i].pdata[1];
+			if (choose == cur) id = i, gotoxy(2, 10 + cur + overflow, COLOR_WHITE_BACKGROUND);
+			else gotoxy(2, 10 + cur + overflow, COLOR_WHITE);
+			std::cout << "     " << my_course.data[i].pdata[1] << "     ";
 		}
 
-		if (u == -1) {		// If dont student dont have any course
+		if (cur == -1) {		// If dont student dont have any course
 			gotoxy(7, 11, 8); std::cout << "(empty)";
 			uint8_t c = getch();
 			while (c != KEY_ENTER && c != KEY_ESC) c = getch();
 			colorizing(COLOR_DEFAULT); return 0;
 		}
 
+	UN_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
 		if (c == KEY_ENTER) {
@@ -26,8 +30,13 @@ bool npcourse::layout(const csv_file& my_course, char*& course_id, char*& course
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
-			if (c == KEY_UP && choose > 0) choose--;
-			if (c == KEY_DOWN && choose < u) choose++;
+			if (c == KEY_UP && choose > 0) {
+				if (--choose + overflow < 0) overflow++;
+			} else
+			if (c == KEY_DOWN && choose < cur) {
+				if (++choose + overflow > 15) overflow--;
+			} else goto UN_CHANGE;
+
 		}
 	}
 }
