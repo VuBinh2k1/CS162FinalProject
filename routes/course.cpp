@@ -1,19 +1,19 @@
 #include "course.h"
 
 bool npcourse::list(const csv_file& my_course, char*& course_id, char*& course_cs, int& choose, int& id) {
-	gotoxy(2, 9, COLOR_YELLOW_BACKGROUND); std::cout << "    My courses    ";
+	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "    My courses    ";
 	int cur, overflow = 0;
 	for (;cur = -1;) {	// Choose Up-down: [COURSE]
 		for (int i = 0; i < my_course.count; ++i) {
 			if (strcmp(my_course.data[i].pdata[0], "0") == 0) continue;		// Status: 0/1
-			if (++cur + overflow < 0 || cur + overflow > 15) continue;		// Overflow menu
+			if (++cur + overflow < 0 || cur + overflow > 16) continue;		// Overflow menu
 
-			if (choose == cur) id = i, gotoxy(2, 10 + cur + overflow, COLOR_WHITE_BACKGROUND);
-			else gotoxy(2, 10 + cur + overflow, COLOR_WHITE);
+			WORD COLOR_CODE = (choose == cur) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE;
+			gotoxy(2, 9 + cur + overflow, COLOR_CODE);
 			std::cout << "     " << my_course.data[i].pdata[1] << "     ";
 		}
 
-		if (cur == -1) {		// If dont student dont have any course
+		if (cur == -1) {		// If student dont have any course
 			gotoxy(7, 11, 8); std::cout << "(empty)";
 			uint8_t c = getch();
 			while (c != KEY_ENTER && c != KEY_ESC) c = getch();
@@ -34,7 +34,7 @@ bool npcourse::list(const csv_file& my_course, char*& course_id, char*& course_c
 				if (--choose + overflow < 0) overflow++;
 			} else
 			if (c == KEY_DOWN && choose < cur) {
-				if (++choose + overflow > 15) overflow--;
+				if (++choose + overflow > 16) overflow--;
 			} else goto UN_CHANGE;
 
 		}

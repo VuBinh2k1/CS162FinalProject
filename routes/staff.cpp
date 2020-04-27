@@ -49,22 +49,23 @@ MENU:
 
 	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "      Staff       ";
 	while (1) {
+		int E = 4;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Profile         ";
 		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit student    ";
 		gotoxy(2,11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit courses    ";
 		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Scoreboard      ";
-		gotoxy(2,28, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
+		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
 	NO_CHANGE:
 		uint8_t c = getch();
-		if (c == KEY_ESC) choose = 4;
+		if (c == KEY_ESC) if (choose != E) choose = E; else goto NO_CHANGE;
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				role::profile(user);
 				goto MENU;
 			}
 			if (choose == 1) {
-				
+				npstaff::edit_student();
 				goto MENU;
 			}
 			if (choose == 2) {
@@ -75,7 +76,7 @@ MENU:
 				
 				goto MENU;
 			}
-			if (choose == 4) return;
+			if (choose == E) return;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
@@ -197,4 +198,74 @@ void removestudent(csv_line& user)
 	}
 	if (count == 0)
 		std::cout << "cannot find student ID!!!!!! \n";
+}
+
+void npstaff::edit_student() {
+	std::ifstream inp(".\\layout\\student.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("student.layout is not exist"), TEXT("error layout"), MB_OK);
+		exit(0);
+	}
+	layout student_layout(inp);
+	layout student_info_layout(inp);
+	inp.close();
+
+	int choose = 0;
+
+	colorizing(COLOR_DEFAULT); system("cls");
+	student_layout.print();
+
+MENU:
+	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "   Edit student   ";
+	while (1) {
+		int E = 6;	// END MENU
+		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Classes list    ";
+		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  View student    ";
+		gotoxy(2,11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Add student     ";
+		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit info       ";
+		gotoxy(2,13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Change class    ";
+		gotoxy(2,14, (choose == 5) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Remove student  ";
+		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "    Main menu     ";
+
+	NO_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) if (choose != E) choose = E; else goto NO_CHANGE;
+		if (c == KEY_ENTER) {
+			if (choose == 0) {
+				student_info_layout.print();
+				gotoxy(2, 9); std::cout << "  Classes list    ";
+				npclass::info();
+				goto MENU;
+			}
+			if (choose == 1) {
+
+				goto MENU;
+			}
+			if (choose == 2) {
+
+				goto MENU;
+			}
+			if (choose == 3) {
+
+				goto MENU;
+			}
+			if (choose == 4) {
+				student_info_layout.print();
+				gotoxy(2, 13); std::cout << "  Change class    ";
+				npclass::change();
+				goto MENU;
+			}
+			if (choose == 5) {
+
+				goto MENU;
+			}
+			if (choose == E) return;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) choose--;
+			else if (c == KEY_DOWN && choose < 6) choose++;
+			else goto NO_CHANGE;
+		}
+	}
 }

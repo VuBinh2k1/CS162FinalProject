@@ -1,6 +1,7 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 #pragma warning(disable : 4996)
+#include <algorithm>
 #include <fstream>
 #include <ctime>
 #include <stdlib.h>
