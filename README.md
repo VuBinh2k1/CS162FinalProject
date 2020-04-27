@@ -25,7 +25,7 @@ End Project Date:
   - **Facebook:** [Dank Bùi](https://www.facebook.com/buicong.danh21)
   - **Email:** buicongdanh213@gmail.com
 ## Project Planner
-- [ ] **All roles**
+- [x] **All roles**
 - [ ] **Academic staff-Class**
 - [ ] **Academic staff-Course**
 - [ ] **Academic staff-Score board**

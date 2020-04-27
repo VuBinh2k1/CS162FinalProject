@@ -151,18 +151,23 @@
     <ClCompile Include="routes\course.cpp" />
     <ClCompile Include="routes\csv.cpp" />
     <ClCompile Include="routes\layout.cpp" />
+    <ClCompile Include="routes\lecturer.cpp" />
     <ClCompile Include="routes\roles.cpp" />
     <ClCompile Include="routes\sha256.cpp" />
+    <ClCompile Include="routes\staff.cpp" />
     <ClCompile Include="routes\student.cpp" />
     <ClCompile Include="source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="routes\config.h" />
     <ClInclude Include="routes\control.h" />
     <ClInclude Include="routes\course.h" />
     <ClInclude Include="routes\csv.h" />
     <ClInclude Include="routes\layout.h" />
+    <ClInclude Include="routes\lecturer.h" />
     <ClInclude Include="routes\roles.h" />
     <ClInclude Include="routes\sha256.h" />
+    <ClInclude Include="routes\staff.h" />
     <ClInclude Include="routes\student.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

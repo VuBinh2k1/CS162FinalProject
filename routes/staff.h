@@ -1,14 +1,12 @@
-#ifndef STUDENT_H
-#define STUDENT_H
+#ifndef STAFF_H
+#define STAFF_H
 #include "control.h"
 #include "csv.h"
 #include "layout.h"
 #include "course.h"
 #include "roles.h"
 
-namespace npstudent {
+namespace npstaff {
 	void menu(csv_line& user);
-	void check_in(csv_line& user);
-	void check_in_result(csv_line& user);
 }
 #endif

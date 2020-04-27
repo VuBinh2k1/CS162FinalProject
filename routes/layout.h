@@ -1,6 +1,7 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 #pragma warning(disable : 4996)
+#include "config.h"
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
@@ -31,7 +32,6 @@
 #define KEY_DOWN 80
 #define KEY_DELETE 83
 
-#define EXIT(x,y) { gotoxy(x,y); exit(0); }
 #define PAUSE Sleep(2000)
 
 typedef struct mess {
