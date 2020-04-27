@@ -3,7 +3,7 @@
 #include "routes/lecturer.h"
 #include "routes/staff.h"
 #include "routes/student.h"
-
+#include "routes/staff.h"
 using std::cin;
 using std::cout;
 
