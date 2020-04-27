@@ -27,6 +27,7 @@ csv_line& csv_line::operator=(const csv_line& x) {
 	delete[] data;
 	delete[] pdata;
 
+	id = x.id;
 	count = x.count;
 	data = new char[data_size];
 	pdata = new char* [count];
@@ -76,7 +77,8 @@ void npcsv::update(const char* FILE, int row, int column, const char* val) {
 	std::ofstream out(FILE);
 
 	for (int j = 0; j < user_list.mark.count; ++j) {
-		out << user_list.mark.pdata[j] << ",";
+		out << user_list.mark.pdata[j];
+		if (j + 1 != user_list.mark.count) out << ',';
 	}
 	out << "\n";
 	for (int i = 0; i < user_list.count; out << "\n", ++i) {
@@ -87,7 +89,7 @@ void npcsv::update(const char* FILE, int row, int column, const char* val) {
 			else {
 				out << user_list.data[i].pdata[j];
 			}
-			if (j + 1 != user_list.mark.count) out << ',';
+			if (j + 1 != user_list.data[i].count) out << ',';
 		}
 	}
 	out.close();
