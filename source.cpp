@@ -1,5 +1,7 @@
 #include <iostream>
 #include "routes/roles.h"
+#include "routes/lecturer.h"
+#include "routes/staff.h"
 #include "routes/student.h"
 #include "routes/staff.h"
 using std::cin;
@@ -9,11 +11,13 @@ int main(int argc, char* agrv[]) {
     SetConsoleTitle(TEXT("Student management system"));
 
     csv_line user;
-    //role::login(user);
-    //role::password(user);
-    //npstudent::check_in(user);
-    //npstudent::check_in_result(user);
-	//classes::viewofclass();
-	classes::changeclass();
-	return 0;
+    while (role::login(user)) {
+        if (strcmp(user.pdata[3], "staff") == 0) npstaff::menu(user);
+        else if (strcmp(user.pdata[3], "lecturer") == 0) nplecturer::menu(user);
+        else npstudent::menu(user);
+
+        colorizing(COLOR_DEFAULT);
+    }
+    gotoxy(0, 20);
+    return 0;
 }
