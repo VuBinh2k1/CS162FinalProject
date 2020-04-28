@@ -190,6 +190,7 @@ void npstudent::edit(csv_line& user) {
 		gotoxy(33, 16); std::cout << "Class       : "; colorizing(8); std::cout << user.pdata[6];
 		gotoxy(33, 18); std::cout << "Day of birth: "; colorizing(8); std::cout << user.pdata[5];
 		gotoxy(33, 20); std::cout << "Gender      : "; colorizing(8); std::cout << user.pdata[4];
+		gotoxy(46, 27); std::cout << "[Save change] [  Cancel   ]";
 
 		if (read(47, 11, fname, 20, SHOW, user.pdata[3]) == KEY_ESC) return;
 		if (read(47, 12, lname, 20, SHOW, user.pdata[2]) == KEY_ESC) return;

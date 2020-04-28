@@ -1,8 +1,6 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 #include "control.h"
-#include "csv.h"
-#include "layout.h"
 #include "class.h"
 #include "course.h"
 #include "roles.h"

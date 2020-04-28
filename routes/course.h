@@ -2,8 +2,6 @@
 #define COURSE_H
 #define MAX_WEEK 11
 #include "control.h"
-#include "csv.h"
-#include "layout.h"
 
 namespace npcourse {
 	bool list(const csv_file& my_course, int& choose, int& id);

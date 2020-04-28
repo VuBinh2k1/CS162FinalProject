@@ -39,7 +39,7 @@ bool npcourse::list(const csv_file& my_course, int& choose, int& id) {
 
 
 bool npcourse::info(const char* course_id, const char* course_cs, int x, int y, int n) {
-	csv_file course_list(".\\data\\course\\__course.csv");
+	csv_file course_list(COURSE_PATH("__course.csv").c_str());
 	csv_line* course = nullptr;
 	for (int i = 0; i < course_list.count; ++i) {
 		if (strcmp(course_id, course_list.data[i].pdata[1])) continue;
@@ -93,7 +93,7 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 	}
 
 	// Load SCHEDULE: COURSE_CLASS.csv or make __dafault
-	std::string schpath = (std::string)".\\data\\course\\SCHEDULE\\" + course_id + "_" + course_cs + ".csv";
+	std::string schpath = COURSE_PATH("SCHEDULE\\") + course_id + "_" + course_cs + ".csv";
 	if (!exists(schpath.c_str())) {
 		// If .\\SCHEDULE\\COURSEID_COURSECLASS.csv does not exist
 		goto LABLE_COURSE;
@@ -105,7 +105,7 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 		csv_line* mycou = &my_course.data[id];
 
 		if (strcmp(date->pdata[1], "0") == 0) continue;
-		int now = nptime::now(date->pdata[1], date->pdata[2], date->pdata[3]);
+		int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
 
 		if (now == 0) {
 			gotoxy(33, 19); std::cout << "Date        : " << date->pdata[1] << " (" << date->pdata[2] << " - " << date->pdata[3] << ")";
@@ -190,7 +190,7 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 	gotoxy(80, 27, COLOR_WHITE_BACKGROUND);  std::cout << "  UPCOMING  ";
 
 	// Load SCHEDULE: COURSE_CLASS.csv or make __dafault
-	std::string schpath = (std::string)".\\data\\course\\SCHEDULE\\" + course_id + "_" + course_cs + ".csv";
+	std::string schpath = COURSE_PATH("SCHEDULE\\") + course_id + "_" + course_cs + ".csv";
 	if (!exists(schpath.c_str())) {
 		// If .\\SCHEDULE\\COURSEID_COURSECLASS.csv does not exist
 		goto LABLE_COURSE;
@@ -205,7 +205,7 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 		WORD COLOR_CODE = COLOR_WHITE_BACKGROUND;
 
 		if (strcmp(date->pdata[1], "0") != 0) {
-			int now = nptime::now(date->pdata[1], date->pdata[2], date->pdata[3]);
+			int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
 			if (strcmp(mycou->pdata[3 + i], "1") == 0) COLOR_CODE = COLOR_GREEN_BACKGROUND;
 			else if (now == 0) COLOR_CODE = COLOR_YELLOW_BACKGROUND;
 			else if (now == 1) COLOR_CODE = COLOR_RED_BACKGROUND;

@@ -19,7 +19,6 @@ int main(int argc, char* agrv[]) {
         colorizing(COLOR_DEFAULT);
     }
     //*/
-    //npstudent::info();
     gotoxy(0, 20);
     return 0;
 }

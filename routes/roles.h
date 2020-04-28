@@ -1,7 +1,6 @@
 #ifndef ROLES_H
 #define ROLES_H
-#include "csv.h"
-#include "layout.h"
+#include "control.h"
 
 namespace role {
 	bool login(csv_line& user);
