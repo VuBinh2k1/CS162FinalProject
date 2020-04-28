@@ -82,3 +82,20 @@ void npcsv::update(const char* FILE, int row, int column, const char* val) {
 	}
 	out.close();
 }
+
+csv_line* npcsv::exists(csv_file& file, const char* username, const bool status) {
+	for (int i = 0; i < file.count; ++i) {
+		if (strcmp(file.data[i].pdata[1], username) == 0) {
+			if (status && file.data[i].pdata[0][0] == '0') return nullptr;
+			return &file.data[i];
+		}
+
+	}
+	return nullptr;
+}
+
+bool exists(const char* FILE) {
+	std::ifstream inp(FILE);
+	if (!inp.is_open()) return 0;
+	inp.close(); return 1;
+}

@@ -108,10 +108,11 @@ PROFILE:
 		}
 
 		gotoxy(33, 11); std::cout << infofile.mark.pdata[1]; gotoxy(45, 11); std::cout << ": " << infouser->pdata[1];
-		gotoxy(33, 13); std::cout << infofile.mark.pdata[4]; gotoxy(45, 13); std::cout << ": " << infouser->pdata[4];
-		if (infofile.mark.count > 5 && strlen(infofile.mark.pdata[5]) != 0) {
-			gotoxy(33, 15); std::cout << infofile.mark.pdata[5];
-			gotoxy(45, 15); std::cout << ": " << infouser->pdata[5];
+		for (int i = 4; i < infofile.mark.count; ++i) {
+			if (strlen(infofile.mark.pdata[i]) == 0) continue;
+			gotoxy(33, 13 + 2 * (i - 4)); std::cout << infofile.mark.pdata[i];
+			if (infouser->count < i) continue;
+			gotoxy(45, 13 + 2 * (i - 4)); std::cout << ": " << infouser->pdata[i];
 		}
 	}
 
@@ -140,7 +141,7 @@ PROFILE:
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) choose--;
-			else if (c == KEY_DOWN && choose < 2) choose++;
+			else if (c == KEY_DOWN && choose < E) choose++;
 			else goto NO_CHANGE;
 		}
 	}

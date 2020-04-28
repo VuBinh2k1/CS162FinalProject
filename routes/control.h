@@ -10,6 +10,4 @@ namespace nptime {
 	std::tm gtime(char* _date, char* _time);
 	int now(char* date, char* start, char* end);
 }
-
-bool exists(const char* FILE);
 #endif

@@ -32,9 +32,3 @@ int nptime::now(char* date, char* start, char* end) {
 	if (ltm.tm_hour == etm.tm_hour && ltm.tm_min > etm.tm_min) return 1;
 	return 0;
 }
-
-bool exists(const char* FILE) {
-	std::ifstream inp(FILE);
-	if (!inp.is_open()) return 0;
-	inp.close(); return 1;
-}
