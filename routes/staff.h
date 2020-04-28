@@ -3,17 +3,12 @@
 #include "control.h"
 #include "csv.h"
 #include "layout.h"
+#include "class.h"
 #include "course.h"
 #include "roles.h"
-using namespace std;
-namespace classes
-{
-	void viewofclass();
-	void changeclass();
-	bool checkstudent(string id,char *c1);
-}
-
+void editstudent(csv_line& user);
 namespace npstaff {
 	void menu(csv_line& user);
+	void edit_student();
 }
 #endif

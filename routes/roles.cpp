@@ -1,7 +1,6 @@
 #include "roles.h"
 
 bool role::login(csv_line& user) {
-	colorizing(COLOR_DEFAULT); system("cls");
 	std::ifstream inp(".\\layout\\login.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("login.layout is not exist"), TEXT("error layout"), MB_OK); 
@@ -13,13 +12,14 @@ bool role::login(csv_line& user) {
 
 	csv_file user_list(".\\data\\account.csv");
 
+	colorizing(COLOR_DEFAULT); system("cls");
 	login_layout.print();
 	for(std::string username, password;;) {
 	LOGIN:
 
 		user_pass_layout.print();
-		if (read(24, 12, username, SHOW) == KEY_ESC) return 0;
-		if (read(24, 13, password, HIDE) == KEY_ESC) return 0;
+		if (read(24, 12, username, 52, SHOW) == KEY_ESC) return 0;
+		if (read(24, 13, password, 52, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Login][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
@@ -117,13 +117,14 @@ PROFILE:
 
 	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "     Profile      ";
 	while (1) {
+		int E = 2;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit profile    ";
 		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Change password ";
-		gotoxy(2,28, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "    Main menu     ";
+		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "    Main menu     ";
 
 	NO_CHANGE:
 		uint8_t c = getch();
-		if (c == KEY_ESC) choose = 2;
+		if (c == KEY_ESC) if (choose != E) choose = E; else goto NO_CHANGE;
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				profile_info_layout.print();
@@ -134,7 +135,7 @@ PROFILE:
 				role::password(user);
 				goto PROFILE;
 			}
-			if (choose == 2) return 1;
+			if (choose == E) return 1;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
@@ -146,7 +147,6 @@ PROFILE:
 }
 
 bool role::new_password(csv_line& user) {
-	colorizing(COLOR_DEFAULT); system("cls");
 	std::ifstream inp(".\\layout\\password1.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("password1.layout is not exist"), TEXT("error layout"), MB_OK); 
@@ -162,13 +162,14 @@ bool role::new_password(csv_line& user) {
 	std::string pw_new;
 	std::string pw_new_confirm;
 
+	colorizing(COLOR_DEFAULT); system("cls");
 	password_layout.print();
 	while (1) {
 		change_password_layout.print();
 
-		if (read(32, 9, pw_old, HIDE) == KEY_ESC) return 0;
-		if (read(32, 11, pw_new, HIDE) == KEY_ESC) return 0;
-		if (read(32, 13, pw_new_confirm, HIDE) == KEY_ESC) return 0;
+		if (read(32,  9, pw_old, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 11, pw_new, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 13, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Save change][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
@@ -219,7 +220,6 @@ bool role::new_password(csv_line& user) {
 }
 
 bool role::password(csv_line& user) {
-	colorizing(COLOR_DEFAULT);
 	std::ifstream inp(".\\layout\\password2.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("password2.layout is not exist"), TEXT("error layout"), MB_OK);
@@ -238,9 +238,9 @@ bool role::password(csv_line& user) {
 		change_password_layout.print();
 		gotoxy(52, 9, COLOR_YELLOW_BACKGROUND); std::cout << " Change Password ";
 
-		if (read(42, 12, pw_old, HIDE) == KEY_ESC) return 0;
-		if (read(42, 15, pw_new, HIDE) == KEY_ESC) return 0;
-		if (read(42, 18, pw_new_confirm, HIDE) == KEY_ESC) return 0;
+		if (read(42, 12, pw_old, 52, HIDE) == KEY_ESC) return 0;
+		if (read(42, 15, pw_new, 52, HIDE) == KEY_ESC) return 0;
+		if (read(42, 18, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Save change][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
