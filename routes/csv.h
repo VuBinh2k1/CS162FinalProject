@@ -29,5 +29,8 @@ public:
 
 namespace npcsv {
 	void update(const char* FILE, int row, int column, const char* val);
+	csv_line* exists(csv_file& file, const char* username, bool status = 1);
 }
+
+bool exists(const char* FILE);
 #endif

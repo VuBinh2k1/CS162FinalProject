@@ -9,7 +9,7 @@ using std::cout;
 
 int main(int argc, char* agrv[]) {
     SetConsoleTitle(TEXT("Student management system"));
-
+    //*/
     csv_line user;
     while (role::login(user)) {
         if (strcmp(user.pdata[3], "staff") == 0) npstaff::menu(user);
@@ -18,6 +18,8 @@ int main(int argc, char* agrv[]) {
 
         colorizing(COLOR_DEFAULT);
     }
+    //*/
+    //npstudent::info();
     gotoxy(0, 20);
     return 0;
 }

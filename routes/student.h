@@ -3,12 +3,14 @@
 #include "control.h"
 #include "csv.h"
 #include "layout.h"
+#include "class.h"
 #include "course.h"
 #include "roles.h"
 
 namespace npstudent {
 	void menu(csv_line& user);
-	void check_in(csv_line& user);
-	void check_in_result(csv_line& user);
+	void info();
+	void edit(csv_line& user);
+	bool remove(csv_line& user);
 }
 #endif

@@ -12,33 +12,44 @@ void gotoxy(int column, int line, WORD color_code) {
 	colorizing(color_code);
 }
 
-char read(int x, int y, std::string& pw, int max_size, bool status) {
-	gotoxy(x, y);
-	uint8_t c = -1;
-	pw.resize(0);
-	while (c != KEY_ENTER && c != KEY_ESC) {
-		c = getch();
+char read(int x, int y, std::string& str, int max_size, bool status, const char* comment) {
+	str.resize(0);
+
+	uint8_t c;
+	gotoxy(x, y, 8); std::cout << comment; gotoxy(x, y);
+	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
 		// Keyboard: Printable characters
-		if (c > 32 && c < 127) {
-			if (pw.size() < max_size) {
+		if (c > 31 && c < 127) {
+			if (str.size() < max_size) {
+				if (str.size() == 0) {
+					std::cout << "                                          ";
+					gotoxy(x, y);
+				}
 				if (status == SHOW) std::cout << (char)c;
 				else std::cout << "*";
-				pw.push_back(c);
+				str.push_back(c);
 			}
 			continue;
 		}
 		// Keyboard: BACKSPACE: 8
-		if (c == KEY_BACKSPACE && pw.size()) {
-			std::cout << "\b \b"; pw.pop_back();
+		if (c == KEY_BACKSPACE && str.size()) {
+			std::cout << "\b \b"; str.pop_back();
+			if (str.size() == 0) {
+				colorizing(8); std::cout << comment;
+				gotoxy(x, y);
+			}
 			continue;
 		}
 		// Keyboard: DELETE: 224 83
 		if (c == 0 || c == 224) {
-			if (getch() == 83) {
-				while (pw.size()) {
-					std::cout << "\b \b"; pw.pop_back();
+			if ((c = getch()) == KEY_DELETE) {
+				while (str.size()) {
+					std::cout << "\b \b"; str.pop_back();
 				}
+				colorizing(8); std::cout << comment;
+				gotoxy(x, y);
 			}
+			if (c == KEY_DOWN) return c;
 			continue;
 		}
 	}

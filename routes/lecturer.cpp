@@ -80,7 +80,7 @@ MENU:
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) choose--;
-			else if (c == KEY_DOWN && choose < 5) choose++;
+			else if (c == KEY_DOWN && choose < E) choose++;
 			else goto NO_CHANGE;
 		}
 	}
