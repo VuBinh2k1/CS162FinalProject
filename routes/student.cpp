@@ -77,7 +77,7 @@ MENU:
 			}
 			if (choose == 3) {
 				gotoxy(2, 12, 8); std::cout << "  My schedule     ";
-				npstudent::calender(user);
+				npstudent::calendar(user);
 				goto MENU;
 			}
 			if (choose == 4) {
@@ -267,7 +267,7 @@ bool npstudent::remove(csv_line& user) {
 	}
 }
 
-void npstudent::calender(csv_line& user) {
+void npstudent::calendar(csv_line& user) {
 	std::ifstream inp(".\\layout\\minibox.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
