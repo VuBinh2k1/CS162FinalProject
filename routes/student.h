@@ -10,5 +10,6 @@ namespace npstudent {
 	void info();
 	void edit(csv_line& user);
 	bool remove(csv_line& user);
+	void calender(csv_line& user);
 }
 #endif

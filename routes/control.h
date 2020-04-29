@@ -12,18 +12,21 @@
 #include "layout.h"
 #include "sha256.h"
 
-#define ENGLISHNAME atoi(control::config("English_name").c_str())
-#define ACADEMIC_YEAR control::config("Academic_year")
-#define SEMESTER control::config("Semester")
+#define ENGLISHNAME atoi(control::config("ENGLISHNAME").c_str())
+#define ACADEMICYEAR control::config("ACADEMICYEAR")
+#define SEMESTER control::config("SEMESTER")
 
 
 namespace control {
-	std::tm gtime(char* _date, char* _time);
+	std::tm gtime(char* _date, char* _time = nullptr);
 	int now(char* date, char* start, char* end);
+	int now(std::tm ltm, char* date);
+	void print(std::tm date);
 
 	std::string config(const char* DEFINE);
 }
 
 bool exists(const char* FILE);
 std::string COURSE_PATH(const char* FILE);
+void academicmark();
 #endif

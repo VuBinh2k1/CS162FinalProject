@@ -1,24 +1,21 @@
 #include "course.h"
 
-bool npcourse::list(const csv_file& my_course, int& choose, int& id) {
+bool npcourse::list(const csv_file& my_course, int& choose) {
 	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "    My courses    ";
-	int cur, overflow = 0;
-	for (;cur = -1;) {	// Choose Up-down: [COURSE]
+	if (my_course.count < 1) {
+		gotoxy(7, 11, 8); std::cout << "(empty)";
+		uint8_t c = getch();
+		while (c != KEY_ENTER && c != KEY_ESC) c = getch();
+		colorizing(COLOR_DEFAULT); return 0;
+	}
+
+	int overflow = 0;
+	while (1) {	// Choose Up-down: [COURSE]
 		for (int i = 0; i < my_course.count; ++i) {
-			if (strcmp(my_course.data[i].pdata[0], "0") == 0) continue;		// Status: 0/1
-			if (++cur + overflow < 0 || cur + overflow > 16) continue;		// Overflow menu
-			if (choose == cur) id = i;										// Found course
-
-			WORD COLOR_CODE = (choose == cur) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE;
-			gotoxy(2, 9 + cur + overflow, COLOR_CODE);
-			std::cout << "     " << my_course.data[i].pdata[1] << "     ";
-		}
-
-		if (cur == -1) {		// If student dont have any course
-			gotoxy(7, 11, 8); std::cout << "(empty)";
-			uint8_t c = getch();
-			while (c != KEY_ENTER && c != KEY_ESC) c = getch();
-			colorizing(COLOR_DEFAULT); return 0;
+			if (i + overflow < 0 || i + overflow > 16) continue;		// Overflow menu
+			WORD COLOR_CODE = (choose == i) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE;
+			gotoxy(2, 9 + i + overflow, COLOR_CODE);
+			std::cout << "     " << my_course.data[i].pdata[2] << "     ";
 		}
 
 	UN_CHANGE:
@@ -30,7 +27,7 @@ bool npcourse::list(const csv_file& my_course, int& choose, int& id) {
 			if (c == KEY_UP && choose > 0) {
 				if (--choose + overflow < 0) overflow++;
 			} else
-			if (c == KEY_DOWN && choose < cur) {
+			if (c == KEY_DOWN && choose < my_course.count - 1) {
 				if (++choose + overflow > 16) overflow--;
 			} else goto UN_CHANGE;
 		}
@@ -61,6 +58,16 @@ bool npcourse::info(const char* course_id, const char* course_cs, int x, int y, 
 	return 1;
 }
 
+bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
+	std::string path = COURSE_PATH("SCHEDULE\\") + course_id + "_" + course_cs + ".csv";
+	if (!exists(path.c_str())) return 0;
+	csv_file schedule(path.c_str());
+	for (int i = 0; i < schedule.count; ++i) {
+		if (control::now(day, schedule.data[i].pdata[1]) == 0) return 1;
+	}
+	return 0;
+}
+
 void npcourse::check_in(csv_line& user) {
 	colorizing(COLOR_DEFAULT); system("cls");
 	std::ifstream inp(".\\layout\\course.layout");
@@ -79,12 +86,13 @@ void npcourse::check_in(csv_line& user) {
 	csv_file my_course(stupath.c_str());
 
 	course_layout.print();
-	int chs1 = 0, id = -1;
+	academicmark();
+	int chs1 = 0;
 
 LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
-	if (npcourse::list(my_course, chs1, id) == 0) return;
-	course_id = my_course.data[id].pdata[1];
-	course_cs = my_course.data[id].pdata[2];
+	if (npcourse::list(my_course, chs1) == 0) return;
+	course_id = my_course.data[chs1].pdata[2];
+	course_cs = my_course.data[chs1].pdata[3];
 
 	// Print Course Info:
 	course_info_layout.print();
@@ -102,7 +110,7 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 
 	for (int i = 0; i < schedule.count; ++i) {
 		csv_line* date = &schedule.data[i];
-		csv_line* mycou = &my_course.data[id];
+		csv_line* mycou = &my_course.data[chs1];
 
 		if (strcmp(date->pdata[1], "0") == 0) continue;
 		int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
@@ -110,12 +118,12 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 		if (now == 0) {
 			gotoxy(33, 19); std::cout << "Date        : " << date->pdata[1] << " (" << date->pdata[2] << " - " << date->pdata[3] << ")";
 
-			if (strcmp(mycou->pdata[3 + i], "1") != 0) {
+			if (strcmp(mycou->pdata[4 + i], "1") != 0) {
 
 				int chs = 0;
-				while (1) {	// Choose Left-right: [Checkin][Cancel]
-					gotoxy(51, 27, (chs == 0) ? COLOR_GREEN_BACKGROUND : COLOR_WHITE); std::cout << "[Checkin]";
-					gotoxy(61, 27, (chs == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[Cancel]";
+				while (1) {	// Choose Left-right: [Check in][ Cancel ]
+					gotoxy(50, 27, (chs == 0) ? COLOR_GREEN_BACKGROUND : COLOR_WHITE); std::cout << "[Check in]";
+					gotoxy(61, 27, (chs == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[ Cancel ]";
 					colorizing(COLOR_DEFAULT);
 
 					uint8_t c = getch();
@@ -134,8 +142,8 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 					goto LABLE_COURSE;
 				}
 
-				mycou->pdata[3 + i][0] = '1';
-				npcsv::update(stupath.c_str(), mycou->id, 3 + i, "1");
+				mycou->pdata[4 + i][0] = '1';
+				npcsv::update(stupath.c_str(), mycou->id, 4 + i, "1");
 			}
 
 			gotoxy(40, 27, COLOR_GREEN); std::cout << "You have already checked in this course.";
@@ -171,13 +179,14 @@ void npcourse::check_in_result(csv_line& user) {
 	csv_file my_course(stupath.c_str());
 
 	course_layout.print();
+	academicmark();
 	gotoxy(7, 9, COLOR_YELLOW); std::cout << "[COURSE]";
-	int chs1 = 0, id = -1;
+	int chs1 = 0;
 
 LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
-	if (npcourse::list(my_course, chs1, id) == 0) return;
-	course_id = my_course.data[id].pdata[1];
-	course_cs = my_course.data[id].pdata[2];
+	if (npcourse::list(my_course, chs1) == 0) return;
+	course_id = my_course.data[chs1].pdata[2];
+	course_cs = my_course.data[chs1].pdata[3];
 
 	// Print Course Info:
 	course_info_layout.print();
@@ -199,14 +208,14 @@ LABLE_COURSE:	// Label: LABLE_COURSE (use goto)
 
 	for (int i = 0, x = 12, y = 12; i < schedule.count; ++i) {
 		csv_line* date = &schedule.data[i];
-		csv_line* mycou = &my_course.data[id];
+		csv_line* mycou = &my_course.data[chs1];
 		if ((x += 11) > 90) x = 23, y += 2;
 
 		WORD COLOR_CODE = COLOR_WHITE_BACKGROUND;
 
 		if (strcmp(date->pdata[1], "0") != 0) {
 			int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
-			if (strcmp(mycou->pdata[3 + i], "1") == 0) COLOR_CODE = COLOR_GREEN_BACKGROUND;
+			if (strcmp(mycou->pdata[4 + i], "1") == 0) COLOR_CODE = COLOR_GREEN_BACKGROUND;
 			else if (now == 0) COLOR_CODE = COLOR_YELLOW_BACKGROUND;
 			else if (now == 1) COLOR_CODE = COLOR_RED_BACKGROUND;
 		}

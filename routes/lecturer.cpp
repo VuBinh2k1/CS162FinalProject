@@ -24,6 +24,7 @@ void nplecturer::menu(csv_line& user) {
 MENU:
 	colorizing(COLOR_DEFAULT); system("cls");
 	menu_layout.print();
+	academicmark();
 	if (infouser == nullptr) {
 		gotoxy(33, 9, COLOR_RED); std::cout << "Sorry, I don't have your information.";
 	}
