@@ -22,11 +22,13 @@ namespace control {
 	int now(char* date, char* start, char* end);
 	int now(std::tm ltm, char* date);
 	void print(std::tm date);
-
 	std::string config(const char* DEFINE);
 }
 
+void back(uint8_t KEY_ARROW_BREAK);
 bool exists(const char* FILE);
 std::string COURSE_PATH(const char* FILE);
 void academicmark();
+const char* US_GPA(double score);
+const char* US_Grade(double score);
 #endif

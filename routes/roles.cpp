@@ -280,7 +280,7 @@ bool role::password(csv_line& user) {
 
 	// Update "account.csv"
 	npcsv::update(".\\data\\account.csv", user.id, 2, pw_new.c_str());
-	gotoxy(47, 27, COLOR_GREEN); std::cout << "Save changes successfully.";
+	gotoxy(46, 27, COLOR_GREEN); std::cout << " Save changes successfully. ";
 	
 	// Update current user
 	csv_file user_list(".\\data\\account.csv");
