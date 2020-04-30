@@ -1,10 +1,5 @@
 Status,Student ID,Lastname,Firstname,Gender,DoB,Class
-<<<<<<< Updated upstream
 1,19127012,Vu Nguyen Thai,Binh,male,30/12/2001,19CLC1
-1,19127186,Le Thanh,Khoi,male,30/02/2001,19CLC1
-=======
-0,19127012,Vu Nguyen Thai,Binh,male,30/12/2001,19clc1
 1,19127186,Le Thanh,Khoi,male,08/10/2001,19CLC1
->>>>>>> Stashed changes
-1,19127226,Hoang,Van Nguyen,male,30/02/2001,19CLC2
+1,19127226,Hoang,Van Nguyen,male,24/02/2001,19CLC2
 1,19127348,Bui Cong,Dang,male,30/02/2001,19CLC2
