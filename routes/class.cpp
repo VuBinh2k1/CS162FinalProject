@@ -91,3 +91,22 @@ bool npclass::change(csv_line& user, const char* from, const char* to) {
 	out.close();
 	return 1;
 }
+void npclass::studentlist()
+{
+	std::ifstream inp(".\\layout\\minibox.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return;
+	}
+	layout minibox_layout(inp);
+	inp.close();
+	minibox_layout.print();
+	std::string class1;
+	gotoxy(33, 9);
+	std::cout << "Input the class you want to view: "; std::cin.ignore(); getline(std::cin, class1);
+	std::transform(class1.begin(),class1.end(),class1.begin(),::toupper);	
+	std::string filename;
+	filename = (std::string)(".\\data\\class\\" + class1 + ".csv");
+	gotoxy(33, 9, COLOR_YELLOW_BACKGROUND); std::cout << "    Status     |       ID                        ";
+	csv_file file1(filename.c_str());
+}
