@@ -22,7 +22,7 @@ char read(int x, int y, std::string& str, int max_size, bool status, const char*
 		if (c > 31 && c < 127) {
 			if (str.size() < max_size) {
 				if (str.size() == 0) {
-					std::cout << "                                          ";
+					for (int i = 0; i < max_size; ++i) std::cout << ' ';
 					gotoxy(x, y);
 				}
 				if (status == SHOW) std::cout << (char)c;
@@ -49,7 +49,7 @@ char read(int x, int y, std::string& str, int max_size, bool status, const char*
 				colorizing(8); std::cout << comment;
 				gotoxy(x, y);
 			}
-			if (c == KEY_DOWN) return c;
+			//if (c == KEY_DOWN) return c;
 			continue;
 		}
 	}

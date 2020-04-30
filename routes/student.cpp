@@ -24,6 +24,7 @@ void npstudent::menu(csv_line& user) {
 MENU:
 	colorizing(COLOR_DEFAULT); system("cls");
 	menu_layout.print();
+	academicmark();
 	if (infouser == nullptr) {
 		gotoxy(33, 9, COLOR_RED); std::cout << "Sorry, I don't have your information.";
 	}
@@ -75,7 +76,8 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 3) {
-
+				gotoxy(2, 12, 8); std::cout << "  My schedule     ";
+				npstudent::calendar(user);
 				goto MENU;
 			}
 			if (choose == 4) {
@@ -190,6 +192,7 @@ void npstudent::edit(csv_line& user) {
 		gotoxy(33, 16); std::cout << "Class       : "; colorizing(8); std::cout << user.pdata[6];
 		gotoxy(33, 18); std::cout << "Day of birth: "; colorizing(8); std::cout << user.pdata[5];
 		gotoxy(33, 20); std::cout << "Gender      : "; colorizing(8); std::cout << user.pdata[4];
+		gotoxy(46, 27); std::cout << "[Save change] [  Cancel   ]";
 
 		if (read(47, 11, fname, 20, SHOW, user.pdata[3]) == KEY_ESC) return;
 		if (read(47, 12, lname, 20, SHOW, user.pdata[2]) == KEY_ESC) return;
@@ -260,6 +263,84 @@ bool npstudent::remove(csv_line& user) {
 			c = getch();
 			if (c == KEY_LEFT && choose == 1) choose--;
 			else if (c == KEY_RIGHT && choose == 0) choose++;
+		}
+	}
+}
+
+void npstudent::calendar(csv_line& user) {
+	std::ifstream inp(".\\layout\\minibox.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return;
+	}
+	layout minibox_layout(inp);
+	inp.close();
+
+	std::time_t now = time(0);
+	std::tm ltm = *localtime(&now); ltm.tm_hour = 0; std::mktime(&ltm);
+	
+
+	minibox_layout.print();
+	gotoxy(27, 9, COLOR_YELLOW_BACKGROUND); std::cout << "     Date     | Course                             | Start |  End  ";\
+	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str());
+	csv_file course_list((COURSE_PATH("__course.csv").c_str()));
+
+	int choose = 0, maxChoose = 13; bool has_change = 0;
+	while (1) {
+		int cur = 0;
+		std::tm day = ltm; day.tm_mday -= 7;
+		for (int i = 0; cur < choose + 18 && i < 31; i++)
+		{
+			int y = 10 + cur - choose;
+			day.tm_mday++; std::mktime(&day);
+
+			WORD COLOR_CODE = (day.tm_mday % 2) ? 112 : 240;
+			if (day.tm_mday == ltm.tm_mday) COLOR_CODE = COLOR_RED_BACKGROUND;
+			if (9 < y && y < 28) {
+				gotoxy(27, y, COLOR_CODE); std::cout << "              |                                    |       |       ";
+				gotoxy(29, y, COLOR_CODE); control::print(day);
+			}
+
+			csv_line* course = nullptr;
+			
+			bool empty = 1;
+			for (int j = 0; j < my_course.count; ++j) {
+				course = &my_course.data[j];
+				if (strcmp(course->pdata[0], ACADEMICYEAR.c_str())) continue;
+				if (strcmp(course->pdata[1], SEMESTER.c_str())) continue;
+				if (npcourse::now(course->pdata[2], course->pdata[3], day) == 0) continue;
+
+				y = 10 + cur - choose;		
+				if (y < 10) { cur++; empty = 0; continue; }
+				if (y > 27) {
+					if (!has_change && choose == 13) maxChoose++;
+					continue;
+				}
+				
+				if (!empty) { gotoxy(27, y, COLOR_CODE); std::cout << "              |                                    |       |       "; }
+				cur++;  empty = 0;
+				gotoxy(43, y, COLOR_CODE); std::cout << course->pdata[2] << ": ";
+				for (int k = 0; k < course_list.count; ++k) {
+					if (strcmp(course->pdata[2], course_list.data[k].pdata[1])) continue;
+					std::cout << course_list.data[k].pdata[2];
+					gotoxy(80, y, COLOR_CODE); std::cout << course_list.data[k].pdata[8];
+					gotoxy(88, y, COLOR_CODE); std::cout << course_list.data[k].pdata[9];
+					break;
+				}
+			} 
+			if (empty) cur++;
+			if (maxChoose != 13) has_change = 1;
+		}
+	NO_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) break;
+		if (c == KEY_ENTER) goto NO_CHANGE;
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) choose--;
+			else if (c == KEY_DOWN && choose < maxChoose) choose++;
+			else if (c == KEY_LEFT) break;
+			else goto NO_CHANGE;
 		}
 	}
 }

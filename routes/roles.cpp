@@ -38,9 +38,7 @@ bool role::login(csv_line& user) {
 			if (c == 224 || c == 0) {
 				if (C1 == 240 && getch() == KEY_RIGHT ||
 					C2 == 240 && getch() == KEY_LEFT) {
-					WORD temp = C1;
-					C1 = C2;
-					C2 = temp;
+					WORD temp = C1; C1 = C2; C2 = temp;
 				}
 			}
 		}
@@ -70,7 +68,6 @@ bool role::profile(csv_line& user) {
 		return 0;
 	}
 	layout profile_layout(inp);
-	layout profile_info_layout(inp);
 	inp.close();
 
 	std::string position = user.pdata[3];
@@ -89,6 +86,7 @@ bool role::profile(csv_line& user) {
 PROFILE:
 	colorizing(COLOR_DEFAULT); system("cls");
 	profile_layout.print();
+	academicmark();
 	if (infouser == nullptr) {
 		gotoxy(33, 9, COLOR_RED); std::cout << "Sorry, I don't have your information.";
 	}
@@ -128,11 +126,11 @@ PROFILE:
 		if (c == KEY_ESC) if (choose != E) choose = E; else goto NO_CHANGE;
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
-				profile_info_layout.print();
-
+				goto NO_CHANGE;
 				goto PROFILE;
 			}
 			if (choose == 1) {
+				gotoxy(2, 10, 8); std::cout << "  Change password ";
 				role::password(user);
 				goto PROFILE;
 			}
@@ -148,9 +146,9 @@ PROFILE:
 }
 
 bool role::new_password(csv_line& user) {
-	std::ifstream inp(".\\layout\\password1.layout");
+	std::ifstream inp(".\\layout\\password.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("password1.layout is not exist"), TEXT("error layout"), MB_OK); 
+		MessageBox(NULL, TEXT("password.layout is not exist"), TEXT("error layout"), MB_OK); 
 		return 0;
 	}
 	layout password_layout(inp);
@@ -186,9 +184,7 @@ bool role::new_password(csv_line& user) {
 			if (c == 224 || c == 0) {
 				if (C1 == 240 && getch() == KEY_RIGHT ||
 					C2 == 240 && getch() == KEY_LEFT) {
-					WORD temp = C1;
-					C1 = C2;
-					C2 = temp;
+					WORD temp = C1; C1 = C2; C2 = temp;
 				}
 			}
 		}
@@ -221,12 +217,12 @@ bool role::new_password(csv_line& user) {
 }
 
 bool role::password(csv_line& user) {
-	std::ifstream inp(".\\layout\\password2.layout");
+	std::ifstream inp(".\\layout\\minibox.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("password2.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
 		return 0;
 	}
-	layout change_password_layout(inp);
+	layout minibox_layout(inp);
 	inp.close();
 
 	char* username = user.pdata[1];
@@ -236,8 +232,13 @@ bool role::password(csv_line& user) {
 	std::string pw_new_confirm;
 
 	while (1) {
-		change_password_layout.print();
-		gotoxy(52, 9, COLOR_YELLOW_BACKGROUND); std::cout << " Change Password ";
+		minibox_layout.print();
+		gotoxy(52, 9, COLOR_YELLOW); std::cout << " Change Password ";
+		gotoxy(24, 12); std::cout << "Current password:[                                                     ]";
+		gotoxy(24, 15); std::cout << "New password    :[                                                     ]";
+		gotoxy(24, 18); std::cout << "Confirm password:[                                                     ]";
+		gotoxy(47, 27); std::cout << "[Save change] [  Cancel   ]";
+
 
 		if (read(42, 12, pw_old, 52, HIDE) == KEY_ESC) return 0;
 		if (read(42, 15, pw_new, 52, HIDE) == KEY_ESC) return 0;
@@ -245,8 +246,8 @@ bool role::password(csv_line& user) {
 
 		// Choose Left-right: [Save change][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
-			gotoxy(49, 27, C1); std::cout << "[Save change]";
-			gotoxy(63, 27, C2);  std::cout << "[Cancel]";
+			gotoxy(47, 27, C1); std::cout << "[Save change]";
+			gotoxy(61, 27, C2); std::cout << "[  Cancel   ]";
 
 			uint8_t c = getch();
 			if (c == KEY_ESC) return 0;
@@ -257,9 +258,7 @@ bool role::password(csv_line& user) {
 			if (c == 224 || c == 0) {
 				if (C1 == 240 && getch() == KEY_RIGHT ||
 					C2 == 240 && getch() == KEY_LEFT) {
-					WORD temp = C1;
-					C1 = C2;
-					C2 = temp;
+					WORD temp = C1; C1 = C2; C2 = temp;
 				}
 			}
 		}

@@ -94,8 +94,3 @@ csv_line* npcsv::exists(csv_file& file, const char* username, const bool status)
 	return nullptr;
 }
 
-bool exists(const char* FILE) {
-	std::ifstream inp(FILE);
-	if (!inp.is_open()) return 0;
-	inp.close(); return 1;
-}

@@ -22,7 +22,7 @@ void npclass::info() {
 			csv_line* clas = &class_list.data[i];
 
 			gotoxy(33, y, COLOR_CODE); std::cout << "       |            |                                  ";
-			gotoxy(34, y, COLOR_CODE); std::cout << class_list.data[i].pdata[0];
+			gotoxy(34, y, COLOR_CODE); std::cout << i;
 			gotoxy(42, y, COLOR_CODE); std::cout << class_list.data[i].pdata[1];
 			if (class_list.data[i].count > 2) {
 				gotoxy(55, y, COLOR_CODE);
