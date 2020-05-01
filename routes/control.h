@@ -6,6 +6,7 @@
 #include <fstream>
 #include <ctime>
 #include <string>
+#include <map>
 #include <stdlib.h>
 
 #include "csv.h"
@@ -22,11 +23,12 @@ namespace control {
 	int now(char* date, char* start, char* end);
 	int now(std::tm ltm, char* date);
 	void print(std::tm date);
-
 	std::string config(const char* DEFINE);
 }
 
-bool exists(const char* FILE);
+//void back(uint8_t KEY_ARROW_BREAK);
 std::string COURSE_PATH(const char* FILE);
 void academicmark();
+const char* US_GPA(double score);
+const char* US_Grade(double score);
 #endif

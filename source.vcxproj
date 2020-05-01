@@ -154,6 +154,7 @@
     <ClCompile Include="routes\layout.cpp" />
     <ClCompile Include="routes\lecturer.cpp" />
     <ClCompile Include="routes\roles.cpp" />
+    <ClCompile Include="routes\scoreboard.cpp" />
     <ClCompile Include="routes\sha256.cpp" />
     <ClCompile Include="routes\staff.cpp" />
     <ClCompile Include="routes\student.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="routes\layout.h" />
     <ClInclude Include="routes\lecturer.h" />
     <ClInclude Include="routes\roles.h" />
+    <ClInclude Include="routes\scoreboard.h" />
     <ClInclude Include="routes\sha256.h" />
     <ClInclude Include="routes\staff.h" />
     <ClInclude Include="routes\student.h" />

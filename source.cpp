@@ -15,7 +15,6 @@ int main(int argc, char* agrv[]) {
         if (strcmp(user.pdata[3], "staff") == 0) npstaff::menu(user);
         else if (strcmp(user.pdata[3], "lecturer") == 0) nplecturer::menu(user);
         else npstudent::menu(user);
-
         colorizing(COLOR_DEFAULT);
     }
     //*/

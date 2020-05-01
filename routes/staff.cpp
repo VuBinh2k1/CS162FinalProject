@@ -72,7 +72,7 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 3) {
-				
+				npscoreboard::staff();
 				goto MENU;
 			}
 			if (choose == 4) {
@@ -171,7 +171,7 @@ void npstaff::settings() {
 	gotoxy(46, 27); std::cout << "[Save change] [  Cancel   ]";
 	if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << "[Spring]"; }
 	if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << "[Summer]"; }
-	if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << "[ Fall ]"; }
+	if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << "[Autumn]"; }
 	if (chsAS == 4) { gotoxy(72, 18, 176); std::cout << "[Winter]"; }
 	
 	while (1) {
@@ -191,7 +191,7 @@ void npstaff::settings() {
 	while (1) {
 		if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << "[Spring]"; }
 		if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << "[Summer]"; }
-		if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << "[ Fall ]"; }
+		if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << "[Autumn]"; }
 		if (chsAS == 4) { gotoxy(72, 18, 176); std::cout << "[Winter]"; }
 
 		uint8_t c = getch();

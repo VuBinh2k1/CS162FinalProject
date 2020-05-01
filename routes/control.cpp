@@ -66,11 +66,7 @@ std::string control::config(const char* DEFINE) {
 	return std::string(0);
 }
 
-bool exists(const char* FILE) {
-	std::ifstream inp(FILE);
-	if (!inp.is_open()) return 0;
-	inp.close(); return 1;
-}
+//void back(uint8_t KEY_ARROW_BREAK) { uint8_t c; while ((c = getch()) != KEY_ESC && (c != 224 || getch() != KEY_ARROW_BREAK)); }
 
 std::string COURSE_PATH(const char* FILE) {
 	return std::string(".\\data\\course\\") + ACADEMICYEAR + "-" + SEMESTER + "\\" + FILE;
@@ -81,6 +77,33 @@ void academicmark() {
 	gotoxy(4, 1, 95); std::cout << ACADEMICYEAR;
 	if (atoi(SEMESTER.c_str()) == 1) { gotoxy(2, 2, 192); std::cout << " Spring "; }
 	if (atoi(SEMESTER.c_str()) == 2) { gotoxy(2, 2, 160); std::cout << " Summer "; }
-	if (atoi(SEMESTER.c_str()) == 3) { gotoxy(2, 2, 224); std::cout << "  Fall  "; }
+	if (atoi(SEMESTER.c_str()) == 3) { gotoxy(2, 2, 224); std::cout << " Autumn "; }
 	if (atoi(SEMESTER.c_str()) == 4) { gotoxy(2, 2, 176); std::cout << " Winter "; }
 }
+
+const char* US_GPA(double score) {
+	if (score >= 9.0) return "4.0";
+	if (score >= 8.0) return "3.5";
+	if (score >= 7.0) return "3.0";
+	if (score >= 6.0) return "2.5";
+	if (score >= 5.0) return "2.0";
+	if (score >= 4.0) return "1.5";
+	return "0.0";
+}
+
+const char* US_Grade(double score) {
+	if (score >= 9.5) return "A+";
+	if (score >= 9.0) return "A";
+	if (score >= 8.5) return "A-";
+	if (score >= 8.0) return "B+";
+	if (score >= 7.5) return "B";
+	if (score >= 7.0) return "B-";
+	if (score >= 6.5) return "C+";
+	if (score >= 6.0) return "C";
+	if (score >= 5.5) return "C-";
+	if (score >= 5.0) return "D+";
+	if (score >= 4.5) return "D";
+	if (score >= 4.0) return "D-";
+	return "F";
+}
+
