@@ -126,7 +126,8 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 1) {
-
+				gotoxy(2, 10); std::cout << "  Students list    ";
+				npclass::studentlist();
 				goto MENU;
 			}
 			if (choose == 2) {
