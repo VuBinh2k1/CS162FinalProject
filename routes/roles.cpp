@@ -18,8 +18,8 @@ bool role::login(csv_line& user) {
 	LOGIN:
 
 		user_pass_layout.print();
-		if (read(24, 12, username, 52, SHOW) == KEY_ESC) return 0;
-		if (read(24, 13, password, 52, HIDE) == KEY_ESC) return 0;
+		if (read(24, 12, COLOR_DEFAULT, username, 52, SHOW) == KEY_ESC) return 0;
+		if (read(24, 13, COLOR_DEFAULT, password, 52, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Login][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
@@ -166,9 +166,9 @@ bool role::new_password(csv_line& user) {
 	while (1) {
 		change_password_layout.print();
 
-		if (read(32,  9, pw_old, 52, HIDE) == KEY_ESC) return 0;
-		if (read(32, 11, pw_new, 52, HIDE) == KEY_ESC) return 0;
-		if (read(32, 13, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32,  9, COLOR_DEFAULT, pw_old, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 11, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 13, COLOR_DEFAULT, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Save change][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
@@ -240,9 +240,9 @@ bool role::password(csv_line& user) {
 		gotoxy(47, 27); std::cout << "[Save change] [  Cancel   ]";
 
 
-		if (read(42, 12, pw_old, 52, HIDE) == KEY_ESC) return 0;
-		if (read(42, 15, pw_new, 52, HIDE) == KEY_ESC) return 0;
-		if (read(42, 18, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
+		if (read(42, 12, COLOR_DEFAULT, pw_old, 52, HIDE) == KEY_ESC) return 0;
+		if (read(42, 15, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
+		if (read(42, 18, COLOR_DEFAULT, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Save change][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {

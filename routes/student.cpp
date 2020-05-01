@@ -118,7 +118,7 @@ ENTER_STUDENT_ID:
 		gotoxy(33, 26); std::cout << "~ Go to ";
 		colorizing(COLOR_WHITE_BACKGROUND); std::cout << " New student ";
 		colorizing(COLOR_DEFAULT); std::cout << " to add new student.";
-		if (read(47, 11, username, 8, SHOW) == KEY_ESC) return;
+		if (read(47, 11, COLOR_DEFAULT, username, 8, SHOW) == KEY_ESC) return;
 
 		csv_file infofile(".\\data\\student\\__student.csv");
 		if ((student = file::exists(infofile, username.c_str())) == nullptr) {
@@ -195,11 +195,11 @@ void npstudent::edit(csv_line& user) {
 		gotoxy(33, 20); std::cout << "Gender      : "; colorizing(8); std::cout << user.pdata[4];
 		gotoxy(46, 27); std::cout << "[Save change] [  Cancel   ]";
 
-		if (read(47, 11, fname, 20, SHOW, user.pdata[3]) == KEY_ESC) return;
-		if (read(47, 12, lname, 20, SHOW, user.pdata[2]) == KEY_ESC) return;
-		if (read(47, 16, newcs, 20, SHOW, user.pdata[6]) == KEY_ESC) return;
-		if (read(47, 18, birth, 20, SHOW, user.pdata[5]) == KEY_ESC) return;
-		if (read(47, 20, gende, 20, SHOW, user.pdata[4]) == KEY_ESC) return;
+		if (read(47, 11, COLOR_DEFAULT, fname, 20, SHOW, user.pdata[3]) == KEY_ESC) return;
+		if (read(47, 12, COLOR_DEFAULT, lname, 20, SHOW, user.pdata[2]) == KEY_ESC) return;
+		if (read(47, 16, COLOR_DEFAULT, newcs, 20, SHOW, user.pdata[6]) == KEY_ESC) return;
+		if (read(47, 18, COLOR_DEFAULT, birth, 20, SHOW, user.pdata[5]) == KEY_ESC) return;
+		if (read(47, 20, COLOR_DEFAULT, gende, 20, SHOW, user.pdata[4]) == KEY_ESC) return;
 
 		// Choose Left-right: [ Edit ][Remove]
 		for (int choose = 0;;) {
@@ -211,6 +211,7 @@ void npstudent::edit(csv_line& user) {
 			if (c == KEY_ENTER) {
 				if (choose == 0) {
 					if (newcs.size()) {
+						std::transform(newcs.begin(), newcs.end(), newcs.begin(), ::toupper);
 						if (npclass::change(user, user.pdata[6], newcs.c_str()) == 0) return;
 						file::update(FILE, user.id, 6, newcs.c_str());
 					}

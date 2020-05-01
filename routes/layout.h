@@ -68,5 +68,5 @@ void colorizing(WORD color_code);
 void gotoxy(int column, int line, WORD color_code = COLOR_DEFAULT);
 
 // Read std::string with conio.h
-char read(int x, int y, std::string& str, int max_size, bool status, const char* comment = "");
+char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool status, const char* comment = "");
 #endif

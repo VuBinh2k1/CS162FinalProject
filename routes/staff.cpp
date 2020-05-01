@@ -187,7 +187,7 @@ void npstaff::settings() {
 			}
 		}
 	}
-	read(72, 15, chsAY, 4, SHOW, ACADEMICYEAR.c_str());
+	read(72, 15, COLOR_DEFAULT, chsAY, 4, SHOW, ACADEMICYEAR.c_str());
 	while (1) {
 		if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << "[Spring]"; }
 		if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << "[Summer]"; }

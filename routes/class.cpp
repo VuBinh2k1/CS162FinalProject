@@ -46,38 +46,37 @@ void npclass::info() {
 }
 
 bool npclass::change(csv_line& user, const char* from, const char* to) {
-	std::string class1 = from;
-	std::string class2 = to;
-	std::string path1, path2;
-	std::transform(class1.begin(), class1.end(), class1.begin(), ::toupper);
-	std::transform(class2.begin(), class2.end(), class2.begin(), ::toupper);
-	path1 = (std::string)(".\\data\\class\\") + class1 + ".csv";
-	path2 = (std::string)(".\\data\\class\\") + class2 + ".csv";
-
 	csv_line* student = nullptr;
-
-	// Update class1.csv
-	csv_file file1(path1.c_str(), def_class);
-	student = file::exists(file1, user.pdata[1]);
-	if (student == nullptr) {
-		gotoxy(38, 27, COLOR_RED); std::cout << "This student could not be found in " << class1 << ".";
-		PAUSE; return 0;
+	
+	// Update class1.csv	[NULL: dont have class]
+	std::string name = from;
+	std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+	std::string path = (std::string)(".\\data\\class\\") + name + ".csv";
+	if (name.size()) {
+		csv_file file1(path.c_str(), def_class);
+		student = file::exists(file1, user.pdata[1]);
+		if (student == nullptr) {
+			gotoxy(38, 27, COLOR_RED); std::cout << "This student could not be found in " << name << ".";
+			PAUSE; return 0;
+		}
+		if (student->pdata[0][0] == '0') {
+			gotoxy(38, 27, COLOR_RED); std::cout << "This student had been removed from " << name << ".";
+			PAUSE; return 0;
+		}
+		file::update(path.c_str(), student->id, 0, "0");
 	}
-	if (student->pdata[0][0] == '0') {
-		gotoxy(38, 27, COLOR_RED); std::cout << "This student had been removed from " << class1 << ".";
-		PAUSE; return 0;
-	}
-	file::update(path1.c_str(), student->id, 0, "0");
-
 
 	// Update class2.csv
-	csv_file file2(path2.c_str(), def_class);
+	name = to;
+	std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+	path = (std::string)(".\\data\\class\\") + name + ".csv";
+	csv_file file2(path.c_str(), def_class);
 	student = file::exists(file2, user.pdata[1], 0);
 	if (student != nullptr) {
-		file::update(path2.c_str(), student->id, 0, "1");
+		file::update(path.c_str(), student->id, 0, "1");
 		return 1;
 	}
-	std::ofstream out(path2, std::ios::app);
+	std::ofstream out(path, std::ios::app);
 	out << "1," << user.pdata[1] << '\n';
 	out.close();
 	return 1;

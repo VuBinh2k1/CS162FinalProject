@@ -210,11 +210,15 @@ csv_line* npcourse::choose(const csv_file& my_course, int& choose, int id) {
 	UN_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return nullptr;
-		if (c == KEY_ENTER) return course;
+		if (c == KEY_ENTER) {
+			gotoxy(2, 9 + choose + overflow, 8); std::cout << "                  ";
+			gotoxy(7, 9 + choose + overflow, 8); std::cout << course->pdata[id];
+			return course;
+		}
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
-			else if (c == KEY_DOWN && choose < cur) { if (++choose - overflow > 18) overflow--; }
+			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 17) overflow--; }
 			else if (c == KEY_LEFT) return nullptr;
 			else goto UN_CHANGE;
 		}
