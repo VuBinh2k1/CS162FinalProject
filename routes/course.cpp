@@ -2,9 +2,7 @@
 #define WEEK_COLUMN 6
 
 bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
-	std::string path = COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv";
-	if (!exists(path.c_str())) return 0;
-	csv_file schedule(path.c_str());
+	csv_file schedule((COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv").c_str(), def_schedule);
 	for (int i = 0; i < schedule.count; ++i) {
 		if (control::now(day, schedule.data[i].pdata[1]) == 0) return 1;
 	}
@@ -12,7 +10,7 @@ bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
 }
 
 bool npcourse::info(const char* course_id, const char* course_cs, int x, int y, int n) {
-	csv_file course_list(COURSE_PATH("__course.csv").c_str());
+	csv_file course_list(COURSE_PATH("__course.csv").c_str(), def_course);
 	csv_line* course = nullptr;
 	for (int i = 0; i < course_list.count; ++i) {
 		if (strcmp(course_id, course_list.data[i].pdata[1])) continue;
@@ -21,7 +19,7 @@ bool npcourse::info(const char* course_id, const char* course_cs, int x, int y, 
 	}
 
 	if (course == nullptr) {
-		gotoxy(x, y, COLOR_RED); std::cout << "This course does not exist";
+		if (n > 0) { gotoxy(x, y, COLOR_RED); std::cout << "This course does not exist"; }
 		return 0;
 	}
 
@@ -32,38 +30,6 @@ bool npcourse::info(const char* course_id, const char* course_cs, int x, int y, 
 	if (n > 4) { gotoxy(x, y + 8); std::cout << "Room        : " << course->pdata[10]; }
 
 	return 1;
-}
-
-csv_line* npcourse::choose(const csv_file& my_course, int& choose) {
-	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "    My courses    ";
-
-	csv_line* course = nullptr; int overflow = 0;
-	while (1) {	// Choose Up-down: [COURSE]
-		int cur = -1;
-		for (int i = 0; i < my_course.count; ++i) {
-			if (strcmp(my_course.data[i].pdata[0], ACADEMICYEAR.c_str())) continue;
-			if (strcmp(my_course.data[i].pdata[1], SEMESTER.c_str())) continue;
-			int y = 9 + (++cur) + overflow;
-			if (y < 9 || y > 27) continue;
-			if (choose == cur) course = &my_course.data[i];
-
-			gotoxy(2, y, (choose == cur ? COLOR_WHITE_BACKGROUND : COLOR_WHITE)); std::cout << "                  ";
-			gotoxy(3, y, (choose == cur ? COLOR_WHITE_BACKGROUND : COLOR_WHITE)); std::cout << my_course.data[i].pdata[2] << "-" << my_course.data[i].pdata[3];
-		}
-		gotoxy(2, min(28, 10 + cur), 224); std::cout << "  <-- Main menu   ";
-
-	UN_CHANGE:
-		uint8_t c = getch();
-		if (c == KEY_ESC) return nullptr;
-		if (c == KEY_ENTER) return course;
-		if (c == 224 || c == 0) {
-			c = getch();
-			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
-			else if (c == KEY_DOWN && choose < cur) { if (++choose - overflow > 18) overflow--; }
-			else if (c == KEY_LEFT) return nullptr;
-			else goto UN_CHANGE;
-		}
-	}
 }
 
 void npcourse::check_in(csv_line& user) {
@@ -77,7 +43,7 @@ void npcourse::check_in(csv_line& user) {
 	inp.close();
 
 	char* username = user.pdata[1];
-	csv_file my_course(((std::string)".\\data\\student\\" + username + ".csv").c_str());
+	csv_file my_course(((std::string)".\\data\\student\\" + username + ".csv").c_str(), def_user);
 	csv_file course_list((COURSE_PATH("__course.csv").c_str()));
 	csv_line* course = nullptr;
 	int chs1 = 0;
@@ -90,18 +56,13 @@ COURSE:
 	minibox_layout.print();
 	if (npcourse::info(course->pdata[2], course->pdata[3], 33, 9) == 0) goto COURSE;
 
-	// Load SCHEDULE: COURSE_CLASS.csv or make __dafault
-	std::string schpath = COURSE_PATH("schedule\\") + course->pdata[2] + "_" + course->pdata[3] + ".csv";
 	std::string propath = COURSE_PATH("process\\") + course->pdata[2] + "_" + course->pdata[3] + ".csv";
-	if (!exists(schpath.c_str()) || !exists(propath.c_str())) {
-		// If .\\SCHEDULE\\COURSEID_COURSECLASS.csv does not exist
-		goto COURSE;
-	}
-	csv_file process(propath.c_str());
-	csv_file schedule(schpath.c_str());
+	std::string schpath = COURSE_PATH("schedule\\") + course->pdata[2] + "_" + course->pdata[3] + ".csv";
+	csv_file process(propath.c_str(), def_process);
+	csv_file schedule(schpath.c_str(), def_schedule);
 
 	csv_line* mycou = nullptr;
-	if ((mycou = npcsv::exists(process, user.pdata[1], 0)) == nullptr) goto COURSE;
+	if ((mycou = file::exists(process, user.pdata[1], 0)) == nullptr) goto COURSE;
 
 	for (int i = 0; i < schedule.count; ++i) {
 		csv_line* date = &schedule.data[i];
@@ -135,7 +96,7 @@ COURSE:
 				}
 
 				mycou->pdata[WEEK_COLUMN + i][0] = '1';
-				npcsv::update(propath.c_str(), mycou->id, WEEK_COLUMN + i, "1");
+				file::update(propath.c_str(), mycou->id, WEEK_COLUMN + i, "1");
 			}
 
 			gotoxy(40, 27, COLOR_GREEN); std::cout << "You have already checked in this course.";
@@ -164,7 +125,7 @@ void npcourse::check_in_result(csv_line& user) {
 	inp.close();
 
 	char* username = user.pdata[1];
-	csv_file my_course(((std::string)".\\data\\student\\" + username + ".csv").c_str());
+	csv_file my_course(((std::string)".\\data\\student\\" + username + ".csv").c_str(), def_user);
 	csv_file course_list((COURSE_PATH("__course.csv").c_str()));
 	csv_line* course = nullptr;
 	int chs1 = 0;
@@ -184,18 +145,13 @@ COURSE:
 	gotoxy(63, 27, COLOR_RED_BACKGROUND);    std::cout << "   MISSED   ";
 	gotoxy(80, 27, COLOR_WHITE_BACKGROUND);  std::cout << "  UPCOMING  ";
 
-	// Load SCHEDULE: COURSE_CLASS.csv or make __dafault
-	std::string schpath = COURSE_PATH("schedule\\") + course->pdata[2] + "_" + course->pdata[3] + ".csv";
 	std::string propath = COURSE_PATH("process\\") + course->pdata[2] + "_" + course->pdata[3] + ".csv";
-	if (!exists(schpath.c_str()) || !exists(propath.c_str())) {
-		// If .\\SCHEDULE\\COURSEID_COURSECLASS.csv does not exist
-		goto COURSE;
-	}
-	csv_file process(propath.c_str());
-	csv_file schedule(schpath.c_str());
+	std::string schpath = COURSE_PATH("schedule\\") + course->pdata[2] + "_" + course->pdata[3] + ".csv";
+	csv_file process(propath.c_str(), def_process);
+	csv_file schedule(schpath.c_str(), def_schedule);
 
 	csv_line* mycou = nullptr;
-	if ((mycou = npcsv::exists(process, user.pdata[1], 0)) == nullptr) goto COURSE;
+	if ((mycou = file::exists(process, user.pdata[1], 0)) == nullptr) goto COURSE;
 
 	for (int i = 0, x = 12, y = 12; i < schedule.count; ++i) {
 		csv_line* date = &schedule.data[i];
@@ -212,4 +168,55 @@ COURSE:
 		gotoxy(x, y, COLOR_CODE); std::cout << " " << date->pdata[0] << " ";
 	}
 	goto COURSE;
+}
+
+csv_line* npcourse::find(csv_line* beg, csv_line* end, const char* courseid, int id) {
+	for (csv_line* course = beg; course != end; ++course) {
+		if (id == 2 && strcmp(course->pdata[0], ACADEMICYEAR.c_str())) continue;
+		if (id == 2 && strcmp(course->pdata[1], SEMESTER.c_str())) continue;
+		if (strcmp(course->pdata[id], courseid) == 0) return course;
+	}
+	return nullptr;
+}
+
+csv_line* npcourse::choose(const csv_file& my_course, int& choose, int id) {
+	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "    My courses    ";
+
+	csv_line* course = nullptr; int overflow = 0;
+
+	// Course ID without class: O(len.logn)
+	std::map <std::string, bool> unClass;
+
+	while (1) {	// Choose Up-down: [COURSE]
+		int cur = -1;
+		for (int i = 0; i < my_course.count; ++i) {
+			if (id == 2 && strcmp(my_course.data[i].pdata[0], ACADEMICYEAR.c_str())) continue;
+			if (id == 2 && strcmp(my_course.data[i].pdata[1], SEMESTER.c_str())) continue;
+
+			std::string courseid = my_course.data[i].pdata[id];
+			if (unClass.find(courseid) != unClass.end()) continue;
+			int y = 9 + (++cur) + overflow;
+			if (y < 9 || y > 27) continue;
+			if (choose == cur) course = &my_course.data[i];
+			unClass[courseid] = i;
+
+			gotoxy(2, y, (choose == cur ? COLOR_WHITE_BACKGROUND : COLOR_WHITE)); std::cout << "                  ";
+			gotoxy(7, y, (choose == cur ? COLOR_WHITE_BACKGROUND : COLOR_WHITE)); std::cout << my_course.data[i].pdata[id];
+			
+		}
+		unClass.clear();
+		gotoxy(2, min(28, 10 + cur), 224); std::cout << "  <-- Main menu   ";
+
+	UN_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) return nullptr;
+		if (c == KEY_ENTER) return course;
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
+			else if (c == KEY_DOWN && choose < cur) { if (++choose - overflow > 18) overflow--; }
+			else if (c == KEY_LEFT) return nullptr;
+			else goto UN_CHANGE;
+		}
+	}
 }

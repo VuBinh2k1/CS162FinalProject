@@ -73,7 +73,7 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 4) {
-
+				npscoreboard::lecturer(user);
 				goto MENU;
 			}
 			if (choose == E) return;

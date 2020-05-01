@@ -66,12 +66,7 @@ std::string control::config(const char* DEFINE) {
 	return std::string(0);
 }
 
-void back(uint8_t KEY_ARROW_BREAK) { uint8_t c; while ((c = getch()) != KEY_ESC && (c != 224 || getch() != KEY_ARROW_BREAK)); }
-bool exists(const char* FILE) {
-	std::ifstream inp(FILE);
-	if (!inp.is_open()) return 0;
-	inp.close(); return 1;
-}
+//void back(uint8_t KEY_ARROW_BREAK) { uint8_t c; while ((c = getch()) != KEY_ESC && (c != 224 || getch() != KEY_ARROW_BREAK)); }
 
 std::string COURSE_PATH(const char* FILE) {
 	return std::string(".\\data\\course\\") + ACADEMICYEAR + "-" + SEMESTER + "\\" + FILE;

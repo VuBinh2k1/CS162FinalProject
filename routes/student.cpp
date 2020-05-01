@@ -82,7 +82,7 @@ MENU:
 			}
 			if (choose == 4) {
 				gotoxy(2, 13, 8); std::cout << "  My scoreboard   ";
-				npstudent::scoreboard(user);
+				npscoreboard::student(user);
 				goto MENU;
 			}
 			if (choose == E) return;
@@ -121,7 +121,7 @@ ENTER_STUDENT_ID:
 		if (read(47, 11, username, 8, SHOW) == KEY_ESC) return;
 
 		csv_file infofile(".\\data\\student\\__student.csv");
-		if ((student = npcsv::exists(infofile, username.c_str())) == nullptr) {
+		if ((student = file::exists(infofile, username.c_str())) == nullptr) {
 			gotoxy(47, 11, COLOR_RED); std::cout << "this student is does not exist.";
 			PAUSE; continue;
 		}
@@ -130,7 +130,7 @@ ENTER_STUDENT_ID:
 
 	while (1) {
 		csv_file infofile(".\\data\\student\\__student.csv");
-		student = npcsv::exists(infofile, username.c_str());
+		student = file::exists(infofile, username.c_str());
 
 		minibox_layout.print();
 		gotoxy(51, 9, COLOR_YELLOW);  std::cout << "Student information";
@@ -212,12 +212,12 @@ void npstudent::edit(csv_line& user) {
 				if (choose == 0) {
 					if (newcs.size()) {
 						if (npclass::change(user, user.pdata[6], newcs.c_str()) == 0) return;
-						npcsv::update(FILE, user.id, 6, newcs.c_str());
+						file::update(FILE, user.id, 6, newcs.c_str());
 					}
-					if (fname.size()) npcsv::update(FILE, user.id, 3, fname.c_str());
-					if (lname.size()) npcsv::update(FILE, user.id, 2, lname.c_str());
-					if (birth.size()) npcsv::update(FILE, user.id, 5, birth.c_str());
-					if (gende.size()) npcsv::update(FILE, user.id, 4, gende.c_str());
+					if (fname.size()) file::update(FILE, user.id, 3, fname.c_str());
+					if (lname.size()) file::update(FILE, user.id, 2, lname.c_str());
+					if (birth.size()) file::update(FILE, user.id, 5, birth.c_str());
+					if (gende.size()) file::update(FILE, user.id, 4, gende.c_str());
 					
 					csv_file file(FILE); user = file.data[user.id];
 					gotoxy(46, 27, COLOR_GREEN); std::cout << " Save changes successfully.";
@@ -247,14 +247,14 @@ bool npstudent::remove(csv_line& user) {
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				csv_file infofile(".\\data\\student\\__student.csv");
-				student = npcsv::exists(infofile, user.pdata[1]);
+				student = file::exists(infofile, user.pdata[1]);
 				if (student == nullptr) return 0;
-				npcsv::update(".\\data\\student\\__student.csv", student->id, 0, "0");
+				file::update(".\\data\\student\\__student.csv", student->id, 0, "0");
 
 				csv_file account(".\\data\\account.csv");
-				student = npcsv::exists(account, user.pdata[1]);
+				student = file::exists(account, user.pdata[1]);
 				if (student == nullptr) return 0;
-				npcsv::update(".\\data\\account.csv", student->id, 0, "0");
+				file::update(".\\data\\account.csv", student->id, 0, "0");
 
 				return 1;
 			}
@@ -281,10 +281,11 @@ void npstudent::calendar(csv_line& user) {
 	std::tm ltm = *localtime(&now); ltm.tm_hour = 0; std::mktime(&ltm);
 	
 	minibox_layout.print();
-	gotoxy(27, 9, COLOR_YELLOW_BACKGROUND); std::cout << "    Date    | Course                               | Start |  End  ";
+	gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "                            My Calendar                            ";
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << "    Date    | Course                               | Start |  End  ";
 
-	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str());
-	csv_file course_list((COURSE_PATH("__course.csv").c_str()));
+	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
+	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
 
 	int choose = 0, maxChoose = 13; bool has_change = 0;
 	while (1) {
@@ -345,58 +346,3 @@ void npstudent::calendar(csv_line& user) {
 	}
 }
 
-void npstudent::scoreboard(csv_line& user) {
-	std::ifstream inp(".\\layout\\minibox.layout");
-	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
-		return;
-	}
-	layout minibox_layout(inp);
-	inp.close();
-
-	minibox_layout.print();
-	gotoxy(27, 9, COLOR_YELLOW_BACKGROUND); std::cout << "   Semester    | Course ID     | Mid | Lab |Bonus|Final| GPA |GRADE";
-
-	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str());
-
-	int choose = 0;
-	while (1) {
-		int cur = 0;
-		for (int i = choose; i < min(choose + 18, my_course.count); ++i) {
-			int y = 10 + i - choose;
-			csv_line* course = &my_course.data[i];
-			WORD COLOR_CODE = (i % 2) ? 112 : 240;
-			gotoxy(27, y, COLOR_CODE); std::cout << "               |               |     |     |     |     |     |     ";
-			gotoxy(28, y, COLOR_CODE); std::cout << course->pdata[0] << " - ";
-			if (course->pdata[1][0] == '1') std::cout << "Spring";
-			if (course->pdata[1][0] == '2') std::cout << "Summer";
-			if (course->pdata[1][0] == '3') std::cout << "Autumn";
-			if (course->pdata[1][0] == '4') std::cout << "Winter";
-			gotoxy(44, y, COLOR_CODE); std::cout << course->pdata[2];
-
-			std::string scorepath = (std::string)".\\data\\course\\" + course->pdata[0] + "-" + course->pdata[1] + "\\process\\" + course->pdata[2] + "_" + course->pdata[3] + ".csv";
-			if (!exists(scorepath.c_str())) { colorizing(COLOR_CODE + 8); std::cout << "(hide)"; continue; }
-			csv_file score(scorepath.c_str());
-			csv_line* mycou = nullptr;
-			if ((mycou = npcsv::exists(score, user.pdata[1])) == nullptr) { colorizing(COLOR_CODE + 8); std::cout << "(hide)"; continue; }
-			gotoxy(60, y, COLOR_CODE); std::cout << mycou->pdata[2];	// Mid-term
-			gotoxy(66, y, COLOR_CODE); std::cout << mycou->pdata[3];	// Lab
-			gotoxy(72, y, COLOR_CODE); std::cout << mycou->pdata[4];	// Bonus
-			gotoxy(78, y, COLOR_CODE); std::cout << mycou->pdata[5];	// Final
-			std::string fscore = mycou->pdata[5];
-			gotoxy(84, y, COLOR_CODE); std::cout << US_GPA(std::stoi(fscore));
-			gotoxy(90, y, COLOR_CODE); std::cout << US_Grade(std::stoi(fscore));
-		}
-	NO_CHANGE:
-		uint8_t c = getch();
-		if (c == KEY_ESC) break;
-		if (c == KEY_ENTER) goto NO_CHANGE;
-		if (c == 224 || c == 0) {
-			c = getch();
-			if (c == KEY_UP && choose > 0) choose--;
-			else if (c == KEY_DOWN && choose < my_course.count - 18) choose++;
-			else if (c == KEY_LEFT) break;
-			else goto NO_CHANGE;
-		}
-	}
-}

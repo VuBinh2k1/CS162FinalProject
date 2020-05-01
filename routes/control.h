@@ -6,6 +6,7 @@
 #include <fstream>
 #include <ctime>
 #include <string>
+#include <map>
 #include <stdlib.h>
 
 #include "csv.h"
@@ -25,8 +26,7 @@ namespace control {
 	std::string config(const char* DEFINE);
 }
 
-void back(uint8_t KEY_ARROW_BREAK);
-bool exists(const char* FILE);
+//void back(uint8_t KEY_ARROW_BREAK);
 std::string COURSE_PATH(const char* FILE);
 void academicmark();
 const char* US_GPA(double score);

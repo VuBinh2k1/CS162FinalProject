@@ -1,1 +1,0 @@
-#status: 0: course end / 1: course continue

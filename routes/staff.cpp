@@ -72,7 +72,7 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 3) {
-				
+				npscoreboard::staff();
 				goto MENU;
 			}
 			if (choose == 4) {

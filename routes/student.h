@@ -1,9 +1,10 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 #include "control.h"
+#include "roles.h"
 #include "class.h"
 #include "course.h"
-#include "roles.h"
+#include "scoreboard.h"
 
 namespace npstudent {
 	void menu(csv_line& user);
@@ -11,6 +12,5 @@ namespace npstudent {
 	void edit(csv_line& user);
 	bool remove(csv_line& user);
 	void calendar(csv_line& user);
-	void scoreboard(csv_line& user);
 }
 #endif
