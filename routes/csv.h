@@ -38,6 +38,7 @@ public:
 namespace file {
 	void copy(const char* sre, const char* des);
 	void update(const char* FILE, int row, int column, const char* val);
+	void remove(const char* FILE, int row);
 	bool exists(const char* FILE);
 	csv_line* exists(csv_file& file, const char* username, bool status = 1);
 }

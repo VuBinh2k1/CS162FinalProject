@@ -70,23 +70,42 @@ void file::copy(const char* sre, const char* des) {
 }
 
 void file::update(const char* FILE, int row, int column, const char* val) {
-	csv_file user_list(FILE);
+	csv_file file(FILE);
 	std::ofstream out(FILE);
 
-	for (int j = 0; j < user_list.mark.count; ++j) {
-		out << user_list.mark.pdata[j];
-		if (j + 1 != user_list.mark.count) out << ',';
+	for (int j = 0; j < file.mark.count; ++j) {
+		out << file.mark.pdata[j];
+		if (j + 1 != file.mark.count) out << ',';
 	}
 	out << "\n";
-	for (int i = 0; i < user_list.count; out << "\n", ++i) {
-		for (int j = 0; j < user_list.data[i].count; ++j) {
+	for (int i = 0; i < file.count; out << "\n", ++i) {
+		for (int j = 0; j < file.data[i].count; ++j) {
 			if (i == row && j == column) {
 				out << val;
 			}
 			else {
-				out << user_list.data[i].pdata[j];
+				out << file.data[i].pdata[j];
 			}
-			if (j + 1 != user_list.data[i].count) out << ',';
+			if (j + 1 != file.data[i].count) out << ',';
+		}
+	}
+	out.close();
+}
+
+void file::remove(const char* FILE, int row) {
+	csv_file file(FILE);
+	std::ofstream out(FILE);
+
+	for (int j = 0; j < file.mark.count; ++j) {
+		out << file.mark.pdata[j];
+		if (j + 1 != file.mark.count) out << ',';
+	}
+	out << "\n";
+	for (int i = 0; i < file.count; out << "\n", ++i) {
+		if (i == row) continue;
+		for (int j = 0; j < file.data[i].count; ++j) {
+			out << file.data[i].pdata[j];
+			if (j + 1 != file.data[i].count) out << ',';
 		}
 	}
 	out.close();

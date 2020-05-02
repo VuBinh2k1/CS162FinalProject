@@ -1,5 +1,4 @@
 #include "course.h"
-#define WEEK_COLUMN 6
 
 bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
 	csv_file schedule((COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv").c_str(), def_schedule);

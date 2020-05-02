@@ -86,7 +86,7 @@ std::string get(int x, int y, WORD COLOR_CODE, int max_size, const char* type) {
 			continue;
 		}
 	}
-	if (c == KEY_ESC) return std::string(0);
+	if (c == KEY_ESC) return (std::string)"";
 	return str + type;
 }
 

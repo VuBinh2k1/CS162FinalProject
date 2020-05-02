@@ -2,6 +2,7 @@
 #define LECTURER_H
 #include "control.h"
 #include "roles.h"
+#include "attendance.h"
 #include "course.h"
 #include "scoreboard.h"
 

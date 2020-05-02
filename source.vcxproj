@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="routes\attendance.cpp" />
     <ClCompile Include="routes\class.cpp" />
     <ClCompile Include="routes\control.cpp" />
     <ClCompile Include="routes\course.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="routes\attendance.h" />
     <ClInclude Include="routes\class.h" />
     <ClInclude Include="routes\control.h" />
     <ClInclude Include="routes\course.h" />

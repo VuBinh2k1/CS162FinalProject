@@ -47,12 +47,13 @@ MENU:
 
 	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "      Staff       ";
 	while (1) {
-		int E = 5;	// END MENU
+		int E = 6;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Profile         ";
 		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit classes    ";
 		gotoxy(2,11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit courses    ";
 		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Scoreboard      ";
-		gotoxy(2,13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Settings        ";
+		gotoxy(2,13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Attendance      ";
+		gotoxy(2,14, (choose == 5) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Settings        ";
 		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
 	NO_CHANGE:
@@ -76,7 +77,11 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 4) {
-				gotoxy(2, 13, 8); std::cout << "  Settings        ";
+				npattendance::staff();
+				goto MENU;
+			}
+			if (choose == 5) {
+				gotoxy(2, 14, 8); std::cout << "  Settings        ";
 				npstaff::settings();
 				goto MENU;
 			}
