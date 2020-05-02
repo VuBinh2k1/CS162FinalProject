@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <conio.h>
 #define MAX_WIDTH 100
 #define MAX_HEIGHT 30
@@ -69,4 +70,5 @@ void gotoxy(int column, int line, WORD color_code = COLOR_DEFAULT);
 
 // Read std::string with conio.h
 char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool status, const char* comment = "");
+std::string get(int x, int y, WORD COLOR_CODE, int max_size, const char* type = ".csv");
 #endif

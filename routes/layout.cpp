@@ -49,11 +49,45 @@ char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool st
 				colorizing(8); std::cout << comment;
 				gotoxy(x, y, COLOR_CODE);
 			}
-			//if (c == KEY_DOWN) return c;
 			continue;
 		}
 	}
 	return c;
+}
+
+std::string get(int x, int y, WORD COLOR_CODE, int max_size, const char* type) {
+	uint8_t c;
+	std::string str; max_size -= strlen(type);
+	gotoxy(x, y, COLOR_CODE); std::cout << type; for (int i = 0; i < strlen(type); ++i) std::cout << '\b';
+	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
+		// Keyboard: Printable characters
+		if (c > 31 && c < 127) {
+			if (str.size() < max_size) {
+				std::cout << (char)c;
+				std::cout << type; for (int i = 0; i < strlen(type); ++i) std::cout << '\b';
+				str.push_back(c);
+			}
+			continue;
+		}
+		// Keyboard: BACKSPACE: 8
+		if (c == KEY_BACKSPACE && str.size()) {
+			std::cout << "\b \b"; str.pop_back();
+			std::cout << type << ' '; for (int i = 0; i <= strlen(type); ++i) std::cout << '\b';
+			continue;
+		}
+		// Keyboard: DELETE: 224 83
+		if (c == 0 || c == 224) {
+			if ((c = getch()) == KEY_DELETE) {
+				while (str.size()) {
+					std::cout << "\b \b"; str.pop_back();
+					std::cout << type << ' '; for (int i = 0; i <= strlen(type); ++i) std::cout << '\b';
+				}
+			}
+			continue;
+		}
+	}
+	if (c == KEY_ESC) return std::string(0);
+	return str + type;
 }
 
 // mess::funtion
