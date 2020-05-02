@@ -242,7 +242,7 @@ void npscoreboard::lecturer(csv_line& user) {
 
 				// Midterm score
 				if (imfile.mark.count > 3 || imfile.data[i].count > 3)
-				if (strcmp(imfile.mark.pdata[3], "Mid") || strcmp(imfile.mark.pdata[3], "Midterm") || strcmp(imfile.mark.pdata[3], "Mid-term") == 0) {
+				if (strcmp(imfile.mark.pdata[3], "Mid") == 0 || strcmp(imfile.mark.pdata[3], "Midterm") == 0 || strcmp(imfile.mark.pdata[3], "Mid-term") == 0) {
 					if (student == nullptr) app << imfile.data[i].pdata[3] << ','; 
 					else file::update(propath.c_str(), student->id, 2, imfile.data[i].pdata[3]);
 				} else { if (student == nullptr) app << ','; else file::update(propath.c_str(), student->id, 2, ""); }

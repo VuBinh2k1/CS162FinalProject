@@ -93,6 +93,7 @@ void file::update(const char* FILE, int row, int column, const char* val) {
 }
 
 bool file::exists(const char* FILE) {
+	if (FILE == nullptr) return 0;
 	std::ifstream inp(FILE);
 	if (!inp.is_open()) return 0;
 	inp.close(); return 1;

@@ -105,7 +105,6 @@ void npstudent::info() {
 	layout minibox_layout(inp);
 	inp.close();
 
-	
 	csv_line* student = nullptr;
 	std::string username;
 
@@ -172,6 +171,7 @@ ENTER_STUDENT_ID:
 		}
 	}
 }
+
 void npstudent::edit(csv_line& user) {
 	std::ifstream inp(".\\layout\\minibox.layout");
 	if (!inp.is_open()) {
