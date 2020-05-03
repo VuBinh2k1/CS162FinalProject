@@ -6,5 +6,6 @@
 namespace npattendance {
 	void staff();
 	void lecturer(csv_line& user);
+	void student(csv_line& user);
 }
 #endif

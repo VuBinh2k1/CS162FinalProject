@@ -48,10 +48,10 @@
     <ClCompile Include="routes\class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="routes\scoreboard.cpp">
+    <ClCompile Include="routes\attendance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="routes\attendance.cpp">
+    <ClCompile Include="routes\scoreboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,10 +86,10 @@
     <ClInclude Include="routes\class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\scoreboard.h">
+    <ClInclude Include="routes\attendance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\attendance.h">
+    <ClInclude Include="routes\scoreboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

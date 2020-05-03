@@ -40,6 +40,7 @@ namespace file {
 	void update(const char* FILE, int row, int column, const char* val);
 	void remove(const char* FILE, int row);
 	bool exists(const char* FILE);
+	const char* find(csv_file& file, int row, const char* mark);
 	csv_line* exists(csv_file& file, const char* username, bool status = 1);
 }
 #endif

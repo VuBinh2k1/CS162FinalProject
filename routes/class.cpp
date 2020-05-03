@@ -1,6 +1,6 @@
 #include "class.h"
 
-void npclass::info() {
+void npclass::list() {
 	std::ifstream inp(".\\layout\\minibox.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);

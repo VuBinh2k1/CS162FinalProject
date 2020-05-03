@@ -118,6 +118,15 @@ bool file::exists(const char* FILE) {
 	inp.close(); return 1;
 }
 
+const char* file::find(csv_file& file, int row, const char* mark) {
+	for (int col = 0; col < min(file.mark.count, file.data[row].count); ++col) {
+		if (strcmp(file.mark.pdata[col], mark) == 0) {
+			return file.data[row].pdata[col];
+		}
+	}
+	return nullptr;
+}
+
 csv_line* file::exists(csv_file& file, const char* username, const bool status) {
 	for (int i = 0; i < file.count; ++i) {
 		if (strcmp(file.data[i].pdata[1], username) == 0) {

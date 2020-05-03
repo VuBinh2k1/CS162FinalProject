@@ -19,7 +19,7 @@ void npattendance::staff() {
 
 	while ((course = npcourse::choose(course_list, chscrs, 1)) != nullptr) {
 		minibox_layout.print();
-		gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << "  No.  | Student ID   | Class     |01|02|03|04|05|06|07|08|09|10|11";
+		gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " No.   | Student ID   | Class     |01|02|03|04|05|06|07|08|09|10|11";
 		gotoxy(33, 28); std::cout << "[E]: Export to file";
 
 		csv_line* mycou = nullptr;
@@ -55,7 +55,7 @@ void npattendance::staff() {
 							else if (now > 0) color = COLOR_CODE + COLOR_RED;
 						}
 						gotoxy(x, y, color);
-						if (color == COLOR_CODE) std::cout << "UC";
+						if (color == COLOR_CODE) std::cout << "__";
 						if (color == COLOR_CODE + COLOR_GREEN) std::cout << "CK";
 						if (color == COLOR_CODE + COLOR_RED) std::cout << "MS";
 					}
@@ -116,12 +116,16 @@ void npattendance::staff() {
 							if (j < min(MAX_WEEK, schedule.count) - 1) out << ',';
 						}
 						out << '\n';
-					}	
+					}
 				}
 				mycou = npcourse::find(mycou + 1, course_list.data + course_list.count, courseid, 1);
 			}
 			out.close();
-			gotoxy(33, 17, 129); std::cout << "Export file success."; PAUSE;
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
+			gotoxy(33, 17, 129); std::cout << "Export to ";
+			colorizing(134); std::cout << ACADEMICYEAR << '-' << SEMESTER << '-' << course->pdata[1] << "_attendance.csv";
+			colorizing(129); std::cout << " success.";
+			PAUSE;
 			// Clear export file box
 			gotoxy(32, 15); std::cout << "                                                         ";
 			gotoxy(32, 16); std::cout << "                                                         ";
@@ -148,8 +152,7 @@ void npattendance::lecturer(csv_line& user) {
 	layout minibox_layout(inp);
 	inp.close();
 
-	char* username = user.pdata[1];
-	csv_file my_course(((std::string)".\\data\\lecturer\\" + username + ".csv").c_str(), def_user);
+	csv_file my_course(((std::string)".\\data\\lecturer\\" + user.pdata[1] + ".csv").c_str(), def_user);
 	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
 	csv_line* course = nullptr;
 	int chscrs = 0;
@@ -159,14 +162,14 @@ void npattendance::lecturer(csv_line& user) {
 
 	while ((course = npcourse::choose(my_course, chscrs)) != nullptr) {
 		minibox_layout.print();
-		gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << "  No.  | Student ID   | Class     |01|02|03|04|05|06|07|08|09|10|11";
-		gotoxy(33, 28); std::cout << "[E]: Edit score";
+		gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " No.   | Student ID   | Class     |01|02|03|04|05|06|07|08|09|10|11";
+		gotoxy(33, 28); std::cout << "[E]: Edit attendance";
 
 		csv_line* mycou = nullptr;
 		int choose = 0, cur = -1, overflow = 0;
-		std::string editpath; 
+		std::string editpath;
 		int editrow = -1;
-		
+
 	MENU_CHOOSEN:
 		mycou = course; cur = -1;
 		while (mycou != nullptr) {
@@ -199,7 +202,7 @@ void npattendance::lecturer(csv_line& user) {
 							else if (now > 0) color = COLOR_CODE + COLOR_RED;
 						}
 						gotoxy(x, y, color);
-						if (color == COLOR_CODE) std::cout << "UC";
+						if (color == COLOR_CODE) std::cout << "__";
 						if (color == COLOR_CODE + COLOR_GREEN) std::cout << "CK";
 						if (color == COLOR_CODE + COLOR_RED) std::cout << "MS";
 					}
@@ -216,7 +219,7 @@ void npattendance::lecturer(csv_line& user) {
 			csv_file schedule((COURSE_PATH("schedule\\") + editpath).c_str());
 			csv_line* student = &process.data[editrow];
 			int y = 10 + choose + overflow;
-			
+
 			for (int i = 0, x = 59; x += 3, i < min(MAX_WEEK, schedule.count); ++i) {
 				csv_line* date = &schedule.data[i];
 
@@ -256,5 +259,77 @@ void npattendance::lecturer(csv_line& user) {
 			else goto UN_CHANGE;
 		}
 		goto MENU_CHOOSEN;
+	}
+}
+
+void npattendance::student(csv_line& user) {
+	std::ifstream inp(".\\layout\\minibox.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return;
+	}
+	layout minibox_layout(inp);
+	inp.close();
+
+	minibox_layout.print();
+	gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "                           My Attendance                           ";
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " Semester    | Course ID       |01|02|03|04|05|06|07|08|09|10|11|  ";
+	gotoxy(29, 28, COLOR_YELLOW_BACKGROUND); std::cout << " UNREGISTER ";
+	gotoxy(46, 28, COLOR_GREEN_BACKGROUND);	 std::cout << " CHECKED IN ";
+	gotoxy(63, 28, COLOR_RED_BACKGROUND);    std::cout << "   MISSED   ";
+	gotoxy(80, 28, COLOR_WHITE_BACKGROUND);  std::cout << "  UPCOMING  ";
+
+	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
+	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
+
+	int choose = 0;
+	while (1) {
+		for (int i = choose; i < min(choose + 17, my_course.count); ++i) {
+			int y = 10 + i - choose;
+			csv_line* course = &my_course.data[i];
+			WORD COLOR_CODE = (i % 2) ? 112 : 240;
+			gotoxy(27, y, COLOR_CODE); std::cout << "             |                 |  |  |  |  |  |  |  |  |  |  |  |  ";
+			gotoxy(27, y, COLOR_CODE); std::cout << course->pdata[0] << " - ";
+			if (course->pdata[1][0] == '1') std::cout << "Spring";
+			if (course->pdata[1][0] == '2') std::cout << "Summer";
+			if (course->pdata[1][0] == '3') std::cout << "Autumn";
+			if (course->pdata[1][0] == '4') std::cout << "Winter";
+			gotoxy(42, y, COLOR_CODE); std::cout << course->pdata[2];
+
+			std::string propath = (std::string)".\\data\\course\\" + course->pdata[0] + "-" + course->pdata[1] + "\\process\\" + course->pdata[2] + "_" + course->pdata[3] + ".csv";
+			std::string schpath = (std::string)".\\data\\course\\" + course->pdata[0] + "-" + course->pdata[1] + "\\schedule\\" + course->pdata[2] + "_" + course->pdata[3] + ".csv";
+			csv_file process(propath.c_str(), def_process);
+			csv_file schedule(schpath.c_str(), def_schedule);
+
+			csv_line* mycou = nullptr;
+			if ((mycou = file::exists(process, user.pdata[1], 0)) == nullptr) continue;
+
+			for (int j = 0, x = 56; x += 3, j < min(MAX_WEEK, schedule.count); ++j) {
+				csv_line* date = &schedule.data[j];
+
+				WORD color = COLOR_CODE;
+				if (strcmp(date->pdata[1], "0") != 0) {
+					int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
+					if (strcmp(mycou->pdata[WEEK_COLUMN + j], "1") == 0) color = COLOR_CODE + COLOR_GREEN;
+					else if (now == 0) color = COLOR_CODE + COLOR_YELLOW;
+					else if (now == 1) color = COLOR_CODE + COLOR_RED;
+				}
+				gotoxy(x, y, color);
+				if (color == COLOR_CODE) std::cout << "__";
+				if (color == COLOR_CODE + COLOR_YELLOW) std::cout << "UR";
+				if (color == COLOR_CODE + COLOR_GREEN) std::cout << "CK";
+				if (color == COLOR_CODE + COLOR_RED) std::cout << "MS";
+			}
+		}
+	UN_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) break;
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) choose--;
+			else if (c == KEY_DOWN && choose < my_course.count - 17) choose++;
+			else if (c == KEY_LEFT) break;
+			else goto UN_CHANGE;
+		}
 	}
 }
