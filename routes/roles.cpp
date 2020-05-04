@@ -1,4 +1,4 @@
-#include "roles.h"
+#include "..\\controls\\roles.h"
 
 bool role::login(csv_line& user) {
 	std::ifstream inp(".\\layout\\login.layout");
@@ -289,8 +289,9 @@ bool role::password(csv_line& user) {
 	PAUSE; return 1;
 }
 
-void role::staff(csv_line& user) {
+// [Main menu]::allclass //=====================================================================================================================//
 
+void role::staff(csv_line& user) {
 	std::ifstream inp(".\\layout\\menu.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);

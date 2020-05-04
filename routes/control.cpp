@@ -1,4 +1,4 @@
-#include "control.h"
+#include "..\\controls\\control.h"
 
 std::tm control::gtime(char* _date, char* _time) {
 	std::tm ttm;
@@ -10,8 +10,8 @@ std::tm control::gtime(char* _date, char* _time) {
 
 	//_time: hh:mm\0
 	if (_time == nullptr) return ttm;
-	ttm.tm_hour = _time[0] * 10 + _time[1] - 11 * '0';
-	ttm.tm_min = _time[3] * 10 + _time[4] - 11 * '0';
+	ttm.tm_hour = _time[0] * 10 + _time[1] - 11 * '0' - 1;
+	ttm.tm_min = _time[3] * 10 + _time[4] - 11 * '0' - 1;
 	return ttm;
 }
 

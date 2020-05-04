@@ -1,4 +1,4 @@
-#include "class.h"
+#include "..\\controls\\class.h"
 
 void npclass::list() {
 	std::ifstream inp(".\\layout\\minibox.layout");

@@ -1,4 +1,4 @@
-#include "scoreboard.h"
+#include "..\\controls\\scoreboard.h"
 
 void npscoreboard::staff() {
 	std::ifstream inp(".\\layout\\course.layout");

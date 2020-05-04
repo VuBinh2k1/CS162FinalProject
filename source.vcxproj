@@ -162,18 +162,18 @@
     <ClCompile Include="source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="routes\attendance.h" />
-    <ClInclude Include="routes\class.h" />
-    <ClInclude Include="routes\control.h" />
-    <ClInclude Include="routes\course.h" />
-    <ClInclude Include="routes\csv.h" />
-    <ClInclude Include="routes\layout.h" />
-    <ClInclude Include="routes\lecturer.h" />
-    <ClInclude Include="routes\roles.h" />
-    <ClInclude Include="routes\scoreboard.h" />
-    <ClInclude Include="routes\sha256.h" />
-    <ClInclude Include="routes\staff.h" />
-    <ClInclude Include="routes\student.h" />
+    <ClInclude Include="controls\attendance.h" />
+    <ClInclude Include="controls\class.h" />
+    <ClInclude Include="controls\control.h" />
+    <ClInclude Include="controls\course.h" />
+    <ClInclude Include="controls\csv.h" />
+    <ClInclude Include="controls\layout.h" />
+    <ClInclude Include="controls\lecturer.h" />
+    <ClInclude Include="controls\roles.h" />
+    <ClInclude Include="controls\scoreboard.h" />
+    <ClInclude Include="controls\sha256.h" />
+    <ClInclude Include="controls\staff.h" />
+    <ClInclude Include="controls\student.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

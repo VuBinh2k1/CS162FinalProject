@@ -1,4 +1,4 @@
-#include "student.h"
+#include "..\\controls\\student.h"
 
 void npstudent::info() {
 	std::ifstream inp(".\\layout\\minibox.layout");

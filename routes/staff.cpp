@@ -1,4 +1,4 @@
-#include "staff.h"
+#include "..\\controls\\staff.h"
 
 void npstaff::menu_class() {
 	std::ifstream inp(".\\layout\\student.layout");

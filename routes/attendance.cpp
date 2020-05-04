@@ -1,4 +1,4 @@
-#include "attendance.h"
+#include "..\\controls\\attendance.h"
 
 void npattendance::staff() {
 	std::ifstream inp(".\\layout\\course.layout");

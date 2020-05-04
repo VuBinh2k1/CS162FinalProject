@@ -1,4 +1,4 @@
-Status,Course ID,Course name,Class,Lecturer ID,Start Date,End Date,Day of Week,Start Time,End Time,Room
+Self enrol,Course ID,Course name,Class,Lecturer ID,Start Date,End Date,Day of Week,Start Time,End Time,Room
 1,BAA00101,Marx-Lenin Philosophy,19CLC1,ngohuy83,17/02/2020,02/05/2020,Mon,07:30,11:30,C22
 1,BAA00101,Marx-Lenin Philosophy,19CLC2,ngohuy83,17/02/2020,02/05/2020,Thu,13:30,17:30,HTI
 1,CSC10002,Programming Techniques,19CLC1,nmhuy,17/02/2020,02/05/2020,Mon,13:30,17:30,I32

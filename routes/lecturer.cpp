@@ -1,2 +1,2 @@
-#include "lecturer.h"
+#include "..\\controls\\lecturer.h"
 
