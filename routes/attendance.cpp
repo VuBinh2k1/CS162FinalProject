@@ -49,9 +49,9 @@ void npattendance::staff() {
 						csv_line* date = &schedule.data[j];
 
 						WORD color = COLOR_CODE;
-						if (strcmp(date->pdata[1], "0") != 0) {
+						if (date->pdata[1][0] != '0') {
 							int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
-							if (strcmp(student->pdata[WEEK_COLUMN + j], "1") == 0) color = COLOR_CODE + COLOR_GREEN;
+							if (student->pdata[WEEK_COLUMN + j][0] == '1') color = COLOR_CODE + COLOR_GREEN;
 							else if (now > 0) color = COLOR_CODE + COLOR_RED;
 						}
 						gotoxy(x, y, color);
@@ -105,9 +105,9 @@ void npattendance::staff() {
 							csv_line* date = &schedule.data[j];
 
 							int status = 2;
-							if (strcmp(date->pdata[1], "0") != 0) {
+							if (date->pdata[1][0] != '0') {
 								int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
-								if (strcmp(student->pdata[WEEK_COLUMN + j], "1") == 0) status = 1;
+								if (student->pdata[WEEK_COLUMN + j][0] == '1') status = 1;
 								else if (now > 0) status = 0;
 							}
 							if (status == 2) out << "_";
@@ -196,9 +196,9 @@ void npattendance::lecturer(csv_line& user) {
 						csv_line* date = &schedule.data[j];
 
 						WORD color = COLOR_CODE;
-						if (strcmp(date->pdata[1], "0") != 0) {
+						if (date->pdata[1][0] != '0') {
 							int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
-							if (strcmp(student->pdata[WEEK_COLUMN + j], "1") == 0) color = COLOR_CODE + COLOR_GREEN;
+							if (student->pdata[WEEK_COLUMN + j][0] == '1') color = COLOR_CODE + COLOR_GREEN;
 							else if (now > 0) color = COLOR_CODE + COLOR_RED;
 						}
 						gotoxy(x, y, color);
@@ -224,9 +224,9 @@ void npattendance::lecturer(csv_line& user) {
 				csv_line* date = &schedule.data[i];
 
 				int status = 2;
-				if (strcmp(date->pdata[1], "0") != 0) {
+				if (date->pdata[1][0] != '0') {
 					int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
-					if (strcmp(student->pdata[WEEK_COLUMN + i], "1") == 0) status = 1;
+					if (student->pdata[WEEK_COLUMN + i][0] == '1') status = 1;
 					else if (now > 0) status = 0;
 				}
 				if (status == 2) continue;
@@ -308,9 +308,9 @@ void npattendance::student(csv_line& user) {
 				csv_line* date = &schedule.data[j];
 
 				WORD color = COLOR_CODE;
-				if (strcmp(date->pdata[1], "0") != 0) {
+				if (date->pdata[1][0] != '0') {
 					int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
-					if (strcmp(mycou->pdata[WEEK_COLUMN + j], "1") == 0) color = COLOR_CODE + COLOR_GREEN;
+					if (mycou->pdata[WEEK_COLUMN + j][0] == '1') color = COLOR_CODE + COLOR_GREEN;
 					else if (now == 0) color = COLOR_CODE + COLOR_YELLOW;
 					else if (now == 1) color = COLOR_CODE + COLOR_RED;
 				}

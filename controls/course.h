@@ -5,6 +5,8 @@
 #include "control.h"
 
 namespace npcourse {
+	void list(csv_line& user);
+	void enrol(csv_line& user);
 	bool now(const char* course_id, const char* course_cs, std::tm day);
 	bool info(const char* course_id, const char* course_cs, int x, int y, int n = 5);
 	csv_line* find(csv_line* beg, csv_line* end, const char* courseid, int id = 2);

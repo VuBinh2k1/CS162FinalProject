@@ -20,6 +20,7 @@ public:
 	void init(std::istream& inp);
 	~csv_line() { delete[] data; delete[] pdata; }
 	csv_line& operator=(const csv_line& x);
+	bool operator==(const char* position);
 
 private:
 	char* data;

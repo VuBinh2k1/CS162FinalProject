@@ -42,6 +42,10 @@ csv_line& csv_line::operator=(const csv_line& x) {
 	return *this;
 }
 
+bool csv_line::operator==(const char* position) {
+	return strcmp(pdata[3], position) == 0;
+}
+
 csv_file::csv_file(const char* FILE, const char* __def) {
 	if (!file::exists(FILE)) {	// load __default.csv of file
 		if (file::exists(__def)) file::copy(__def, FILE);

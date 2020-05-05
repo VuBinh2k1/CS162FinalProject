@@ -360,7 +360,7 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 2) {
-
+				npcourse::list(user);
 				goto MENU;
 			}
 			if (choose == 3) {
@@ -448,7 +448,7 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 1) {
-
+				npcourse::list(user);
 				goto MENU;
 			}
 			if (choose == 2) {
@@ -542,7 +542,8 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 1) {
-				npstudent::checkin(user);
+				npcourse::list(user);
+				//npstudent::checkin(user);
 				goto MENU;
 			}
 			if (choose == 2) {

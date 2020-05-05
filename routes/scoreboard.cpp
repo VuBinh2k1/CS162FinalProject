@@ -236,9 +236,10 @@ void npscoreboard::lecturer(csv_line& user) {
 			csv_file imfile(path.c_str());
 			if (file::find(imfile, 0, "Student ID") == nullptr) { gotoxy(33, 17, 132); std::cout << "Can't find \"Student ID\""; PAUSE; goto OPEN; }
 			if (file::find(imfile, 0, "Class") == nullptr) {
-				gotoxy(32, 16, 128); std::cout << " Course: BAA00101      Class:                            ";
-				gotoxy(41, 16, 128); std::cout << course->pdata[2];
-				if (read(62, 16, 128, defClass, 10, SHOW) == KEY_ESC) goto MENU_CHOOSEN;
+				gotoxy(32, 17, 128); std::cout << " Course ID :               Class:                        ";
+				gotoxy(45, 16, 128); std::cout << course->pdata[2];
+				if (read(66, 16, 128, defClass, 10, SHOW) == KEY_ESC) goto MENU_CHOOSEN;
+				std::transform(defClass.begin(), defClass.end(), defClass.begin(), ::toupper);
 			}
 
 			for (int i = 0; i < imfile.count; ++i) {

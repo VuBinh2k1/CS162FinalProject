@@ -206,13 +206,13 @@ COURSE:
 
 	for (int i = 0; i < schedule.count; ++i) {
 		csv_line* date = &schedule.data[i];
-		if (strcmp(date->pdata[1], "0") == 0) continue;
+		if (date->pdata[1][0] == '0') continue;
 
 		int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
 		if (now == 0) {
 			gotoxy(33, 17); std::cout << "Date        : " << date->pdata[1] << " (" << date->pdata[2] << " - " << date->pdata[3] << ")";
 
-			if (strcmp(mycou->pdata[WEEK_COLUMN + i], "1") != 0) {
+			if (mycou->pdata[WEEK_COLUMN + i][0] == '1') {
 				int chs = 0;
 				while (1) {	// Choose Left-right: [Check in][ Cancel ]
 					gotoxy(50, 27, (chs == 0) ? COLOR_GREEN_BACKGROUND : COLOR_WHITE); std::cout << "[Check in]";
