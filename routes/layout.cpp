@@ -1,4 +1,4 @@
-#include "layout.h"
+#include "..\\controls\\layout.h"
 
 void colorizing(WORD color_code) {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -12,18 +12,18 @@ void gotoxy(int column, int line, WORD color_code) {
 	colorizing(color_code);
 }
 
-char read(int x, int y, std::string& str, int max_size, bool status, const char* comment) {
+char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool status, const char* comment) {
+	uint8_t c; 
 	str.resize(0);
-
-	uint8_t c;
-	gotoxy(x, y, 8); std::cout << comment; gotoxy(x, y);
+	WORD COLOR_COMM = (COLOR_CODE == COLOR_DEFAULT) ? 8 : COLOR_CODE + 8;
+	gotoxy(x, y, COLOR_COMM); std::cout << comment; gotoxy(x, y, COLOR_CODE);
 	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
 		// Keyboard: Printable characters
 		if (c > 31 && c < 127) {
 			if (str.size() < max_size) {
 				if (str.size() == 0) {
 					for (int i = 0; i < max_size; ++i) std::cout << ' ';
-					gotoxy(x, y);
+					gotoxy(x, y, COLOR_CODE);
 				}
 				if (status == SHOW) std::cout << (char)c;
 				else std::cout << "*";
@@ -35,8 +35,8 @@ char read(int x, int y, std::string& str, int max_size, bool status, const char*
 		if (c == KEY_BACKSPACE && str.size()) {
 			std::cout << "\b \b"; str.pop_back();
 			if (str.size() == 0) {
-				colorizing(8); std::cout << comment;
-				gotoxy(x, y);
+				colorizing(COLOR_COMM); std::cout << comment;
+				gotoxy(x, y, COLOR_CODE);
 			}
 			continue;
 		}
@@ -47,13 +47,47 @@ char read(int x, int y, std::string& str, int max_size, bool status, const char*
 					std::cout << "\b \b"; str.pop_back();
 				}
 				colorizing(8); std::cout << comment;
-				gotoxy(x, y);
+				gotoxy(x, y, COLOR_CODE);
 			}
-			//if (c == KEY_DOWN) return c;
 			continue;
 		}
 	}
 	return c;
+}
+
+std::string get(int x, int y, WORD COLOR_CODE, int max_size, const char* type) {
+	uint8_t c;
+	std::string str; max_size -= strlen(type);
+	gotoxy(x, y, COLOR_CODE); std::cout << type; for (int i = 0; i < strlen(type); ++i) std::cout << '\b';
+	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
+		// Keyboard: Printable characters
+		if (c > 31 && c < 127) {
+			if (str.size() < max_size) {
+				std::cout << (char)c;
+				std::cout << type; for (int i = 0; i < strlen(type); ++i) std::cout << '\b';
+				str.push_back(c);
+			}
+			continue;
+		}
+		// Keyboard: BACKSPACE: 8
+		if (c == KEY_BACKSPACE && str.size()) {
+			std::cout << "\b \b"; str.pop_back();
+			std::cout << type << ' '; for (int i = 0; i <= strlen(type); ++i) std::cout << '\b';
+			continue;
+		}
+		// Keyboard: DELETE: 224 83
+		if (c == 0 || c == 224) {
+			if ((c = getch()) == KEY_DELETE) {
+				while (str.size()) {
+					std::cout << "\b \b"; str.pop_back();
+					std::cout << type << ' '; for (int i = 0; i <= strlen(type); ++i) std::cout << '\b';
+				}
+			}
+			continue;
+		}
+	}
+	if (c == KEY_ESC) return (std::string)"";
+	return str + type;
 }
 
 // mess::funtion

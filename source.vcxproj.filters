@@ -48,42 +48,48 @@
     <ClCompile Include="routes\class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="routes\attendance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="routes\scoreboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="routes\sha256.h">
+    <ClInclude Include="controls\attendance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\layout.h">
+    <ClInclude Include="controls\class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\csv.h">
+    <ClInclude Include="controls\control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\roles.h">
+    <ClInclude Include="controls\course.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\student.h">
+    <ClInclude Include="controls\csv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\control.h">
+    <ClInclude Include="controls\layout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\course.h">
+    <ClInclude Include="controls\lecturer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\lecturer.h">
+    <ClInclude Include="controls\roles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\staff.h">
+    <ClInclude Include="controls\scoreboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\class.h">
+    <ClInclude Include="controls\sha256.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="routes\scoreboard.h">
+    <ClInclude Include="controls\staff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\student.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -17,7 +17,6 @@
 #define ACADEMICYEAR control::config("ACADEMICYEAR")
 #define SEMESTER control::config("SEMESTER")
 
-
 namespace control {
 	std::tm gtime(char* _date, char* _time = nullptr);
 	int now(char* date, char* start, char* end);

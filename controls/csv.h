@@ -20,6 +20,7 @@ public:
 	void init(std::istream& inp);
 	~csv_line() { delete[] data; delete[] pdata; }
 	csv_line& operator=(const csv_line& x);
+	bool operator==(const char* position);
 
 private:
 	char* data;
@@ -38,7 +39,9 @@ public:
 namespace file {
 	void copy(const char* sre, const char* des);
 	void update(const char* FILE, int row, int column, const char* val);
+	void remove(const char* FILE, int row);
 	bool exists(const char* FILE);
+	const char* find(csv_file& file, int row, const char* mark);
 	csv_line* exists(csv_file& file, const char* username, bool status = 1);
 }
 #endif

@@ -3,7 +3,7 @@
 #include "control.h"
 
 namespace npclass {
-	void info();
+	void list();
 	bool change(csv_line& user, const char* class1, const char* class2);
 	void studentlist();
 }
