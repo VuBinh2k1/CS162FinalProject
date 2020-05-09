@@ -18,7 +18,10 @@ LAYOUT:
 	}
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << "  No.  | Course ID    | Class     | Lecturer ID  | Room   | Status ";
 	if (user == "student") { gotoxy(33, 28); std::cout << "[E]: Enrol in course"; }
-	else { gotoxy(33, 28); std::cout << "[E]: Enrol student on course"; }
+	else { 
+		gotoxy(33, 27); std::cout << "[V]: View student list of course";
+		gotoxy(33, 28); std::cout << "[E]: Enrol student on course"; 
+	}
 
 	csv_file course_list((COURSE_PATH("__course.csv")).c_str(), def_course);
 	int choose = 0;
@@ -63,6 +66,13 @@ LAYOUT:
 		if (c == KEY_ESC) break;
 		if (c == 'E' || c == 'e') {
 			npcourse::enrol(user);
+			gotoxy(32, 15); std::cout << "                                                         ";
+			gotoxy(32, 16); std::cout << "                                                         ";
+			gotoxy(32, 17); std::cout << "                                                         ";
+		}
+		if (c == 'V' || c == 'v')
+		{
+			npcourse::viewstudent(user);
 			gotoxy(32, 15); std::cout << "                                                         ";
 			gotoxy(32, 16); std::cout << "                                                         ";
 			gotoxy(32, 17); std::cout << "                                                         ";
@@ -234,6 +244,60 @@ csv_line* npcourse::choose(const csv_file& my_course, int& choose, int id) {
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 17) overflow--; }
 			else if (c == KEY_LEFT) return nullptr;
 			else goto UN_CHANGE;
+		}
+	}
+}
+void npcourse::viewstudent(csv_line& user)
+{
+	std::string file(".\\data\\course\\2020-2\\process\\");
+	gotoxy(32, 20, COLOR_RED_BACKGROUND);  std::cout << " View                                                    ";
+	gotoxy(32, 22, 128); std::cout << "                                                         ";
+	std::string  courseid, coursecs;
+VIEW_DATA:
+	while (1) {
+		gotoxy(32, 21, 128); std::cout << " Course ID :               Class:                        ";
+		if (read(45, 21, 128, courseid, 8, SHOW) == KEY_ESC)return;
+		if (read(66, 21, 128, coursecs, 8, SHOW) == KEY_ESC)return;
+		std::transform(courseid.begin(), courseid.end(), courseid.begin(), std::toupper);
+		if (courseid.empty())
+			continue;
+		std::transform(coursecs.begin(), coursecs.end(), coursecs.begin(), std::toupper);
+		if (coursecs.empty())
+			continue;
+		else
+			break;
+	}
+	gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "                           Student list                            ";
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << "  No.  |                    Student ID                             ";
+	csv_file student_list(((std::string)file + courseid + "_" + coursecs + ".csv").c_str());
+	bool course_exist = 0;
+	int choose = 0,cur=-1;
+	while (1)
+	{
+		for (int i = 10; i <= 26; i++)
+		{
+			gotoxy(27, i, 0); std::cout << "                                                                   ";
+		}
+		cur = -1;
+		for (int i = 0; i < student_list.count; i++)
+		{
+			int y = 10 + (++cur) - choose;
+			if (y < 10 || y>26)continue;
+			WORD COLOR_CODE = (cur % 2) ? 112 : 240;
+			gotoxy(27, y, COLOR_CODE); std::cout << "         |                                                         ";
+			gotoxy(28, y, COLOR_CODE); std::cout << cur;
+			gotoxy(56, y, COLOR_CODE); std::cout << student_list.data[i].pdata[1];
+		}
+	NO_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) break;
+		if (c == KEY_ENTER) goto NO_CHANGE;
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) choose--;
+			else if (c == KEY_DOWN && choose < cur - 17) choose++;
+			else if (c == KEY_LEFT) goto VIEW_DATA;
+			else goto NO_CHANGE;
 		}
 	}
 }
