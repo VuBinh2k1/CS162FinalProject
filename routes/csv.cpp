@@ -105,12 +105,14 @@ void file::remove(const char* FILE, int row) {
 		if (j + 1 != file.mark.count) out << ',';
 	}
 	out << "\n";
-	for (int i = 0; i < file.count; out << "\n", ++i) {
+	for (int i = 0; i < file.count; ++i) {
 		if (i == row) continue;
 		for (int j = 0; j < file.data[i].count; ++j) {
 			out << file.data[i].pdata[j];
 			if (j + 1 != file.data[i].count) out << ',';
+			
 		}
+		out << '\n';
 	}
 	out.close();
 }
@@ -131,11 +133,23 @@ const char* file::find(csv_file& file, int row, const char* mark) {
 	return nullptr;
 }
 
-csv_line* file::exists(csv_file& file, const char* username, const bool status) {
+int file::find(std::string path, const char* data1, const char* data2, bool status) {
+	csv_file file(path.c_str());
+
 	for (int i = 0; i < file.count; ++i) {
-		if (strcmp(file.data[i].pdata[1], username) == 0) {
-			if (status && file.data[i].pdata[0][0] == '0') return nullptr;
-			return &file.data[i];
+		if (status && file.data[i].pdata[0][0] == '0') continue;
+		if (strcmp(file.data[i].pdata[1], data1) == 0) {
+			if (data2 == nullptr || strcmp(file.data[i].pdata[3], data2) == 0) return i;
+		}
+	}
+	return -1;
+}
+
+csv_line* file::find(csv_file& file, const char* data1, const char* data2, bool status) {
+	for (int i = 0; i < file.count; ++i) {
+		if (status && file.data[i].pdata[0][0] == '0') continue;
+		if (strcmp(file.data[i].pdata[1], data1) == 0) {
+			if (data2 == nullptr || strcmp(file.data[i].pdata[3], data2) == 0) return &file.data[i];
 		}
 	}
 	return nullptr;

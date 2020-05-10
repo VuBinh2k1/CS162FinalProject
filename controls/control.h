@@ -28,6 +28,6 @@ namespace control {
 //void back(uint8_t KEY_ARROW_BREAK);
 std::string COURSE_PATH(const char* FILE);
 void academicmark();
-const char* US_GPA(double score);
-const char* US_Grade(double score);
+const char* US_GPA(const char* strsco);
+const char* US_Grade(const char* strsco);
 #endif

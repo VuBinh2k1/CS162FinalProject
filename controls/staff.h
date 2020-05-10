@@ -8,7 +8,6 @@
 #include "student.h"
 
 namespace npstaff {
-	void menu_class();
 	void settings();
 }
 #endif
