@@ -23,8 +23,8 @@ int control::now(char* date, char* start, char* end) {
 
 	if (ltm.tm_year < stm.tm_year) return -1;
 	if (ltm.tm_year > stm.tm_year) return 1;
-	if (ltm.tm_mon  < stm.tm_mon) return -1;
-	if (ltm.tm_mon  > stm.tm_mon) return 1;
+	if (ltm.tm_mon < stm.tm_mon) return -1;
+	if (ltm.tm_mon > stm.tm_mon) return 1;
 	if (ltm.tm_mday < stm.tm_mday) return -1;
 	if (ltm.tm_mday > stm.tm_mday) return 1;
 	if (ltm.tm_hour < stm.tm_hour) return -1;
@@ -38,8 +38,8 @@ int control::now(std::tm ltm, char* date) {
 	std::tm cur = control::gtime(date);
 	if (ltm.tm_year < cur.tm_year) return -1;
 	if (ltm.tm_year > cur.tm_year) return 1;
-	if (ltm.tm_mon  < cur.tm_mon) return -1;
-	if (ltm.tm_mon  > cur.tm_mon) return 1;
+	if (ltm.tm_mon < cur.tm_mon) return -1;
+	if (ltm.tm_mon > cur.tm_mon) return 1;
 	if (ltm.tm_mday < cur.tm_mday) return -1;
 	if (ltm.tm_mday > cur.tm_mday) return 1;
 	return 0;

@@ -1,100 +1,9 @@
 #include "..\\controls\\course.h"
 
-<<<<<<< HEAD
-void npcourse::list(csv_line& user) {
-	std::ifstream inp(".\\layout\\minibox.layout");
-	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
-		return;
-	}
-	layout minibox_layout(inp);
-	inp.close();
-
-LAYOUT:
-	minibox_layout.print();
-	if (user == "staff") { gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "                            Course list                            "; }
-	else {
-		gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "  Course list  ";
-		colorizing(COLOR_YELLOW); std::cout << "  My courses  ";
-	}
-	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << "  No.  | Course ID    | Class     | Lecturer ID  | Room   | Status ";
-	if (user == "student") { gotoxy(33, 28); std::cout << "[E]: Enrol in course"; }
-	else { 
-		gotoxy(33, 27); std::cout << "[V]: View student list of course";
-		gotoxy(33, 28); std::cout << "[E]: Enrol student on course"; 
-	}
-
-	csv_file course_list((COURSE_PATH("__course.csv")).c_str(), def_course);
-	int choose = 0;
-	while (1) {
-		for (int i = choose; i < min(choose + 18, course_list.count); i++)
-		{
-			int y = 10 + i - choose;
-			WORD COLOR_CODE = (i % 2) ? 112 : 240;
-			csv_line* course = &course_list.data[i];
-			if (user == "lecturer" && strcmp(user.pdata[1], course->pdata[4]) == 0) COLOR_CODE = (i % 2) ? 48 : 176;
-
-			gotoxy(27, y, COLOR_CODE); std::cout << "       |              |           |              |        |        ";
-			gotoxy(28, y, COLOR_CODE); std::cout << i;
-			gotoxy(36, y, COLOR_CODE); std::cout << course->pdata[1];
-			gotoxy(51, y, COLOR_CODE); std::cout << course->pdata[3];
-			gotoxy(63, y, COLOR_CODE); std::cout << course->pdata[4];
-			gotoxy(78, y, COLOR_CODE); std::cout << course->pdata[10];
-
-			// Status
-			if (user == "staff" || (user == "lecturer" && strcmp(user.pdata[1], course->pdata[4]) == 0)) {
-				if (course->pdata[0][0] == '0') {
-					gotoxy(87, y, COLOR_CODE + COLOR_RED); std::cout << "private";
-				}
-				else {
-					gotoxy(87, y, COLOR_CODE + 2); std::cout << "public";
-				}
-			}
-			if (user == "student") {
-				csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
-				for (int i = 0; i < my_course.count; ++i) {
-					if (strcmp(my_course.data[i].pdata[0], ACADEMICYEAR.c_str())) continue;
-					if (strcmp(my_course.data[i].pdata[1], SEMESTER.c_str())) continue;
-					if (strcmp(my_course.data[i].pdata[2], course->pdata[1]) == 0)
-						if (strcmp(my_course.data[i].pdata[3], course->pdata[3]) == 0) {
-							gotoxy(87, y, COLOR_CODE + 2); std::cout << "enrol";
-						}
-				}
-			}
-		}
-	NO_CHANGE:
-		uint8_t c = getch();
-		if (c == KEY_ESC) break;
-		if (c == 'E' || c == 'e') {
-			npcourse::enrol(user);
-			gotoxy(32, 15); std::cout << "                                                         ";
-			gotoxy(32, 16); std::cout << "                                                         ";
-			gotoxy(32, 17); std::cout << "                                                         ";
-		}
-		if (c == 'V' || c == 'v')
-		{
-			npcourse::viewstudent(user);
-			gotoxy(32, 15); std::cout << "                                                         ";
-			gotoxy(32, 16); std::cout << "                                                         ";
-			gotoxy(32, 17); std::cout << "                                                         ";
-			gotoxy(32, 18); std::cout << "                                                         ";
-		}
-		if (c == 224 || c == 0) {
-			c = getch();
-			if (c == KEY_UP && choose > 0) choose--;
-			else if (c == KEY_DOWN && choose < course_list.count - 18) choose++;
-			else if (c == KEY_RIGHT) {
-
-				goto NO_CHANGE;
-			}
-			else goto NO_CHANGE;
-		}
-=======
 bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
 	csv_file schedule((COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv").c_str(), def_schedule);
 	for (int i = 0; i < schedule.count; ++i) {
 		if (control::now(day, schedule.data[i].pdata[1]) == 0) return 1;
->>>>>>> master
 	}
 	return 0;
 }
@@ -118,7 +27,7 @@ ENROL_DATA:
 		gotoxy(33, 18, 132); std::cout << "Can't find Student ID: "; colorizing(134); std::cout << studentid;
 		goto ENROL_DATA;
 
-	}{// Check data of course "__course.csv"
+	} {// Check data of course "__course.csv"
 		csv_file course_list((COURSE_PATH("__course.csv")).c_str(), def_course);
 		for (int i = 0; i < course_list.count; ++i) {
 			if (strcmp(course_id, course_list.data[i].pdata[1]) == 0 && strcmp(course_cs, course_list.data[i].pdata[3]) == 0) {
@@ -133,7 +42,7 @@ ENROL_DATA:
 			}
 		}
 
-	}{// Add course to "studentID.csv"
+	} {// Add course to "studentID.csv"
 		csv_file my_course(((std::string)".\\data\\student\\" + studentid + ".csv").c_str(), def_user);
 		for (int i = 0; i < my_course.count; ++i) {
 			// Had enrol in this course (only enrol in 1 class of a course)
@@ -147,7 +56,7 @@ ENROL_DATA:
 		std::ofstream out((std::string)".\\data\\student\\" + studentid + ".csv", std::ios::app);
 		out << ACADEMICYEAR << ',' << SEMESTER << ',' << course_id << ',' << course_cs << '\n'; out.close();
 
-	}{// Add student to "courseID_courseCS.csv"
+	} {// Add student to "courseID_courseCS.csv"
 		csv_file process((COURSE_PATH("process\\") + course_id + '_' + course_cs + ".csv").c_str(), def_process);
 		for (int i = 0; i < process.count; ++i) {
 			// Old data (don't know why it here)
@@ -175,7 +84,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 	gotoxy(32, 17, 128); std::cout << " Date      :                                             ";
 	gotoxy(32, 18, 128); std::cout << "                                                         ";
 	gotoxy(45, 15, 128); std::cout << user.pdata[1];
-	gotoxy(45, 16, 128); std::cout << course_id; 
+	gotoxy(45, 16, 128); std::cout << course_id;
 	gotoxy(66, 16, 128); std::cout << course_cs;
 
 	std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
@@ -194,7 +103,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 		int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
 		if (now == 0) {
 			gotoxy(45, 17, 128); std::cout << date->pdata[1] << " (" << date->pdata[2] << " - " << date->pdata[3] << ")";
-			
+
 			if (mycou->pdata[WEEK_COLUMN + i][0] == '0') {
 				gotoxy(57, 18, COLOR_BLUE_BACKGROUND); std::cout << "[Check in]";
 				if (getch() != KEY_ENTER) {
@@ -396,10 +305,10 @@ LAYOUT:
 			csv_line* sche = &schedule.data[week];
 
 			gotoxy(32, 18, 128); std::cout << "                                                         ";
-			gotoxy(33, 18, 128); std::cout << sche->pdata[0] << "    : " << sche->pdata[1]; 
-			gotoxy(57, 18, 128); std::cout << "(" << sche->pdata[2];						
+			gotoxy(33, 18, 128); std::cout << sche->pdata[0] << "    : " << sche->pdata[1];
+			gotoxy(57, 18, 128); std::cout << "(" << sche->pdata[2];
 
-			gotoxy(64, 18, 128); std::cout << "- " << sche->pdata[3] << ")";				
+			gotoxy(64, 18, 128); std::cout << "- " << sche->pdata[3] << ")";
 			uint8_t c = getch();
 			if (c == KEY_ESC) break;
 			if (KEY_EDIT(c)) {
@@ -415,7 +324,7 @@ LAYOUT:
 				while (ftime != "1" && ftime.size() != 5) if (time(66, 18, 128, ftime) == KEY_ESC) goto SCHEDULE;
 				if (ftime.size() != 5) { gotoxy(66, 18, 128); std::cout << sche->pdata[3]; } std::cout << ")";
 
-				if (sdate.size() ==10) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 1, sdate.c_str());
+				if (sdate.size() == 10) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 1, sdate.c_str());
 				if (stime.size() == 5) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 2, stime.c_str());
 				if (ftime.size() == 5) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 3, ftime.c_str());
 				colorizing(128 + COLOR_BLUE); std::cout << " success.";
@@ -429,63 +338,6 @@ LAYOUT:
 		}
 		goto LAYOUT;
 	}
-<<<<<<< HEAD
-}
-void npcourse::viewstudent(csv_line& user)
-{
-	std::string file(".\\data\\course\\2020-2\\process\\");
-	gotoxy(32, 20, COLOR_RED_BACKGROUND);  std::cout << " View                                                    ";
-	gotoxy(32, 22, 128); std::cout << "                                                         ";
-	std::string  courseid, coursecs;
-VIEW_DATA:
-	while (1) {
-		gotoxy(32, 21, 128); std::cout << " Course ID :               Class:                        ";
-		if (read(45, 21, 128, courseid, 8, SHOW) == KEY_ESC)return;
-		if (read(66, 21, 128, coursecs, 8, SHOW) == KEY_ESC)return;
-		std::transform(courseid.begin(), courseid.end(), courseid.begin(), std::toupper);
-		if (courseid.empty())
-			continue;
-		std::transform(coursecs.begin(), coursecs.end(), coursecs.begin(), std::toupper);
-		if (coursecs.empty())
-			continue;
-		else
-			break;
-	}
-	gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "                           Student list                            ";
-	gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << "  No.  |                    Student ID                             ";
-	csv_file student_list(((std::string)file + courseid + "_" + coursecs + ".csv").c_str());
-	bool course_exist = 0;
-	int choose = 0,cur=-1;
-	while (1)
-	{
-		for (int i = 10; i <= 26; i++)
-		{
-			gotoxy(27, i, 0); std::cout << "                                                                   ";
-		}
-		cur = -1;
-		for (int i = 0; i < student_list.count; i++)
-		{
-			int y = 10 + (++cur) - choose;
-			if (y < 10 || y>26)continue;
-			WORD COLOR_CODE = (cur % 2) ? 112 : 240;
-			gotoxy(27, y, COLOR_CODE); std::cout << "         |                                                         ";
-			gotoxy(28, y, COLOR_CODE); std::cout << cur;
-			gotoxy(56, y, COLOR_CODE); std::cout << student_list.data[i].pdata[1];
-		}
-	NO_CHANGE:
-		uint8_t c = getch();
-		if (c == KEY_ESC) break;
-		if (c == KEY_ENTER) goto NO_CHANGE;
-		if (c == 224 || c == 0) {
-			c = getch();
-			if (c == KEY_UP && choose > 0) choose--;
-			else if (c == KEY_DOWN && choose < cur - 17) choose++;
-			else if (c == KEY_LEFT) goto VIEW_DATA;
-			else goto NO_CHANGE;
-		}
-	}
-}
-=======
 
 END:
 	gotoxy(32, 13); std::cout << "                                                         ";
@@ -498,4 +350,3 @@ END:
 	gotoxy(32, 20); std::cout << "                                                         ";
 	gotoxy(32, 21); std::cout << "                                                         ";
 }
->>>>>>> master

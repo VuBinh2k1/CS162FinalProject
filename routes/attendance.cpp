@@ -105,7 +105,7 @@ LAYOUT:
 				}
 				out << '\n';
 			}
-			
+
 			out.close();
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
 			gotoxy(33, 17, 129); std::cout << "Export to ";
@@ -258,7 +258,7 @@ int npattendance::student(csv_line& user) {
 	minibox_layout.print();
 	// Title
 	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    " << "  Calendar       ";
-	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Attendance     "; 
+	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Attendance     ";
 	colorizing(COLOR_YELLOW); std::cout << "  Scoreboard    ";
 	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " Semester    | Course ID       |01|02|03|04|05|06|07|08|09|10|11|  ";
