@@ -6,6 +6,15 @@
 #include <fstream>
 #include <string>
 
+#define ON 1
+#define OFF 0
+
+#define ACCOUNT ".\\data\\account.csv"
+#define __CLASS ".\\data\\class\\__class.csv"
+#define __STAFF ".\\data\\staff\\__staff.csv"
+#define __STUDENT ".\\data\\student\\__student.csv"
+#define __LECTURER ".\\data\\lecturer\\__lecturer.csv"
+
 #define def_user ".\\data\\__default\\user.csv"
 #define def_class ".\\data\\__default\\class.csv"
 #define def_course ".\\data\\__default\\course.csv"
@@ -42,6 +51,7 @@ namespace file {
 	void remove(const char* FILE, int row);
 	bool exists(const char* FILE);
 	const char* find(csv_file& file, int row, const char* mark);
-	csv_line* exists(csv_file& file, const char* username, bool status = 1);
+	int find(std::string path, const char* data1, const char* data2, bool status);
+	csv_line* find(csv_file& file, const char* data1, const char* data2, bool status);
 }
 #endif
