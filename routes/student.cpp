@@ -89,8 +89,8 @@ LAYOUT:
 			continue;
 		}
 		if (c == KEY_ENTER) {
-
-			//npstudent::info();
+			npstudent::info(student->pdata[1], ON);
+			goto LAYOUT;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
@@ -197,8 +197,8 @@ LAYOUT:
 		}
 		
 		if (c == KEY_ENTER) {
-
-			//npstudent::info();
+			npstudent::info(student->pdata[1], OFF);
+			continue;
 		}
 		if (KEY_EROL(c)) {
 			npcourse::enrol(user, course_id, course_cs);
@@ -224,69 +224,122 @@ LAYOUT:
 	delete[] row;
 }
 
-void npstudent::info() {
-	std::ifstream inp(".\\layout\\minibox.layout");
-	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
-		return;
-	}
-	layout minibox_layout(inp);
-	inp.close();
-
-	csv_line* student = nullptr;
-	std::string username;
-
-ENTER_STUDENT_ID:
-	while (1) {
-		minibox_layout.print();
-		gotoxy(51, 9, COLOR_YELLOW);  std::cout << "Student information";
-		gotoxy(33, 11); std::cout << "Student ID  : ";
-		gotoxy(33, 25); std::cout << "~ Could not find this student id.";
-		gotoxy(33, 26); std::cout << "~ Go to ";
-		colorizing(COLOR_WHITE_BACKGROUND); std::cout << " New student ";
-		colorizing(COLOR_DEFAULT); std::cout << " to add new student.";
-		if (read(47, 11, COLOR_DEFAULT, username, 8, SHOW) == KEY_ESC) return;
-
-		csv_file student_info(__STUDENT);
-		if ((student = file::find(student_info, username.c_str(), nullptr, ON)) == nullptr) {
-			gotoxy(47, 11, COLOR_RED); std::cout << "this student is does not exist.";
-			PAUSE; continue;
-		}
-		break;
+void npstudent::info(const char* student_id, bool EDIT) {
+LAYOUT:
+	csv_file student_list(__STUDENT);
+	csv_line* student = file::find(student_list, student_id, nullptr, ON);
+	if (student == nullptr) {
+		gotoxy(32, 15, COLOR_BLUE_BACKGROUND); std::cout << " Student info                                            ";
+		gotoxy(32, 16, 128); std::cout << "                                                         ";
+		gotoxy(33, 16, 132); std::cout << "This student does not exist";
+		goto END;
 	}
 
-	while (1) {
-		csv_file student_info(__STUDENT);
-		student = file::find(student_info, username.c_str(), nullptr, ON);
+	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " Student info                                            ";
+	gotoxy(32, 14, 128); std::cout << "                                                         ";
+	gotoxy(32, 15, 128); std::cout << "                                                         ";
+	gotoxy(32, 16, 128); std::cout << "                                                         ";
+	gotoxy(32, 17, 128); std::cout << "                                                         ";
+	gotoxy(32, 18, 128); std::cout << "                                                         ";
+	gotoxy(32, 19, 128); std::cout << "                                                         ";
+	gotoxy(32, 20, 128); std::cout << "                                                         ";
+	gotoxy(32, 21, 128); std::cout << "                                                         ";
 
-		minibox_layout.print();
-		gotoxy(51, 9, COLOR_YELLOW);  std::cout << "Student information";
-		gotoxy(33, 11); std::cout << "Student name: ";
-		if (ENGLISHNAME) {
-			std::cout << student->pdata[3] << ' ' << student->pdata[2];
-		}
-		else {
-			std::cout << student->pdata[2] << ' ' << student->pdata[3];
-		}
-		gotoxy(33, 14); std::cout << "Student ID  : " << student->pdata[1];
-		gotoxy(33, 16); std::cout << "Class       : " << student->pdata[6];
-		gotoxy(33, 18); std::cout << "Day of birth: " << student->pdata[5];
-		gotoxy(33, 20); std::cout << "Gender      : " << student->pdata[4];
+	gotoxy(33, 14, 143); std::cout << "Student name: ";
+	if (ENGLISHNAME) std::cout << student->pdata[3] << ' ' << student->pdata[2];
+	else std::cout << student->pdata[2] << ' ' << student->pdata[3];
+	gotoxy(33, 16, 128); std::cout << "Student id  : " << student->pdata[1];
+	gotoxy(33, 17, 128); std::cout << "Class       : " << student->pdata[6];
+	gotoxy(33, 18, 128); std::cout << "Day of birth: " << student->pdata[5];
+	gotoxy(33, 19, 128); std::cout << "Gender      : " << student->pdata[4];
 
-		// Choose Left-right: [ Edit ][Remove]
+	if (EDIT) {
 		for (int choose = 0;;) {
-			gotoxy(51, 27, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[ Edit ]";
-			gotoxy(60, 27, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[Remove]";
+			gotoxy(51, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "  Edit  ";
+			gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Remove ";
 
 			uint8_t c = getch();
-			if (c == KEY_ESC) return;
+			if (c == KEY_ESC) break;
 			if (c == KEY_ENTER) {
 				if (choose == 0) {
-					npstudent::edit(*student);
-					break;
+					gotoxy(46, 21, 128); std::cout << " Save change ";
+					gotoxy(60, 21, 128); std::cout << "   Cancel    ";
+					// Get detail
+					gotoxy(32, 14, 143); std::cout << "                                                         ";
+					gotoxy(32, 15, 143); std::cout << "                                                         ";
+					gotoxy(33, 14, 143); std::cout << "Firstname   : "; std::cout << student->pdata[3];
+					gotoxy(33, 15, 143); std::cout << "Lastname    : "; std::cout << student->pdata[2];
+
+					std::string fname, lname, newcs, birth, gende;
+
+					if (read(47, 14, 143, fname, 20, SHOW, student->pdata[3]) == KEY_ESC) goto LAYOUT;
+					if (read(47, 15, 143, lname, 20, SHOW, student->pdata[2]) == KEY_ESC) goto LAYOUT;
+					if (read(47, 17, 128, newcs, 20, SHOW, student->pdata[6]) == KEY_ESC) goto LAYOUT;
+					while (birth != "1" && birth.size() != 10) if (date(47, 18, 128, birth) == KEY_ESC) goto LAYOUT;
+					if (birth.size() != 10) { gotoxy(47, 18, 128); std::cout << student->pdata[5]; }
+					if (read(47, 19, 128, gende, 20, SHOW, student->pdata[4]) == KEY_ESC) goto LAYOUT;
+
+					// Save
+					for (int choose = 0;;) {
+						gotoxy(46, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Save change ";
+						gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "   Cancel    ";
+
+						uint8_t c = getch();
+						if (c == KEY_ESC) break;
+						if (c == KEY_ENTER) {
+							if (choose == 0) {
+								// Update: __student.csv
+								std::transform(newcs.begin(), newcs.end(), newcs.begin(), ::toupper);
+								std::transform(fname.begin(), fname.end(), fname.begin(), ::toupper);
+								std::transform(lname.begin(), lname.end(), lname.begin(), ::toupper);
+								if (npclass::change(*student, student->pdata[6], newcs.c_str()) == 0) {
+									gotoxy(46, 21, 128 + COLOR_RED); std::cout << " Save changes failed.      ";
+									PAUSE; goto LAYOUT;
+								}
+									
+								if (newcs.size()) file::update(__STUDENT, student->id, 6, newcs.c_str());
+								if (fname.size()) file::update(__STUDENT, student->id, 3, fname.c_str());
+								if (lname.size()) file::update(__STUDENT, student->id, 2, lname.c_str());
+								if (gende.size()) file::update(__STUDENT, student->id, 4, gende.c_str());
+								if (birth.size() == 10) file::update(__STUDENT, student->id, 5, birth.c_str());
+
+								gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Save changes successfully.";
+								PAUSE; goto LAYOUT;
+							}
+							break;
+						}
+						if (c == 224 || c == 0) {
+							c = getch();
+							if (c == KEY_LEFT && choose == 1) choose--;
+							else if (c == KEY_RIGHT && choose == 0) choose++;
+						}
+					}
+					goto LAYOUT;
+
 				}
 				if (choose == 1) {
-					if (npstudent::remove(*student) == 1) goto ENTER_STUDENT_ID;
+					gotoxy(33, 20, 128 + COLOR_RED); std::cout << "Are you sure to remove this student, cannot be undone.";
+					for (int choose = 1;;) {
+						gotoxy(51, 21, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
+						gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Cancel ";
+
+						uint8_t c = getch();
+						if (c == KEY_ESC) goto LAYOUT;
+						if (c == KEY_ENTER) {
+							if (choose == 0) {
+								file::remove(__STUDENT, student->id);
+								file::remove(ACCOUNT, file::find(ACCOUNT, student->pdata[1], nullptr, ON));
+								gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
+								PAUSE; goto END;
+							}
+							goto LAYOUT;
+						}
+						if (c == 224 || c == 0) {
+							c = getch();
+							if (c == KEY_LEFT && choose == 1) choose--;
+							else if (c == KEY_RIGHT && choose == 0) choose++;
+						}
+					}
 					break;
 				}
 			}
@@ -294,105 +347,25 @@ ENTER_STUDENT_ID:
 				c = getch();
 				if (c == KEY_LEFT && choose == 1) choose--;
 				else if (c == KEY_RIGHT && choose == 0) choose++;
-				else if (c == KEY_LEFT) goto ENTER_STUDENT_ID;
 			}
 		}
 	}
-}
-
-void npstudent::edit(csv_line& user) {
-	std::ifstream inp(".\\layout\\minibox.layout");
-	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
-		return;
-	}
-	layout minibox_layout(inp);
-	inp.close();
-
-	std::string fname, lname, newcs, birth, gende;
-	while (1) {
-		minibox_layout.print();
-		gotoxy(51, 9, COLOR_YELLOW);  std::cout << "Student information";
-		gotoxy(33, 11); std::cout << "First name  : "; colorizing(8); std::cout << user.pdata[3];
-		gotoxy(33, 12); std::cout << "Last  name  : "; colorizing(8); std::cout << user.pdata[2];
-		gotoxy(33, 14); std::cout << "Student ID  : " << user.pdata[1];
-		gotoxy(33, 16); std::cout << "Class       : "; colorizing(8); std::cout << user.pdata[6];
-		gotoxy(33, 18); std::cout << "Day of birth: "; colorizing(8); std::cout << user.pdata[5];
-		gotoxy(33, 20); std::cout << "Gender      : "; colorizing(8); std::cout << user.pdata[4];
-		gotoxy(46, 27); std::cout << "[Save change] [  Cancel   ]";
-
-		if (read(47, 11, COLOR_DEFAULT, fname, 20, SHOW, user.pdata[3]) == KEY_ESC) return;
-		if (read(47, 12, COLOR_DEFAULT, lname, 20, SHOW, user.pdata[2]) == KEY_ESC) return;
-		if (read(47, 16, COLOR_DEFAULT, newcs, 20, SHOW, user.pdata[6]) == KEY_ESC) return;
-		if (read(47, 18, COLOR_DEFAULT, birth, 20, SHOW, user.pdata[5]) == KEY_ESC) return;
-		if (read(47, 20, COLOR_DEFAULT, gende, 20, SHOW, user.pdata[4]) == KEY_ESC) return;
-
-		// Choose Left-right: [ Edit ][Remove]
-		for (int choose = 0;;) {
-			gotoxy(46, 27, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[Save change]";
-			gotoxy(60, 27, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[  Cancel   ]";
-
-			uint8_t c = getch();
-			if (c == KEY_ESC) return;
-			if (c == KEY_ENTER) {
-				if (choose == 0) {
-					if (newcs.size()) {
-						std::transform(newcs.begin(), newcs.end(), newcs.begin(), ::toupper);
-						if (npclass::change(user, user.pdata[6], newcs.c_str()) == 0) return;
-						file::update(__STUDENT, user.id, 6, newcs.c_str());
-					}
-					if (fname.size()) file::update(__STUDENT, user.id, 3, fname.c_str());
-					if (lname.size()) file::update(__STUDENT, user.id, 2, lname.c_str());
-					if (birth.size()) file::update(__STUDENT, user.id, 5, birth.c_str());
-					if (gende.size()) file::update(__STUDENT, user.id, 4, gende.c_str());
-
-					csv_file student_info(__STUDENT); user = student_info.data[user.id];
-					gotoxy(46, 27, COLOR_GREEN); std::cout << " Save changes successfully.";
-					PAUSE; return;
-				}
-				if (choose == 1) return;
-			}
-			if (c == 224 || c == 0) {
-				c = getch();
-				if (c == KEY_LEFT && choose == 1) choose--;
-				else if (c == KEY_RIGHT && choose == 0) choose++;
-			}
-		}
-	}
-}
-
-bool npstudent::remove(csv_line& user) {
-	gotoxy(33, 25); std::cout << "Are you sure to remove this student, cannot be undone.";
-
-	for (int choose = 1;;) {
-		gotoxy(51, 27, (choose == 0) ? COLOR_RED_BACKGROUND : COLOR_WHITE); std::cout << "[Remove]";
-		gotoxy(60, 27, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[Cancel]";
-
+	else {
+		gotoxy(54, 21, COLOR_WHITE_BACKGROUND); std::cout << "    Back    ";
 		uint8_t c = getch();
-		csv_line* student = nullptr;
-		if (c == KEY_ESC) return 0;
-		if (c == KEY_ENTER) {
-			if (choose == 0) {
-				csv_file student_info(__STUDENT);
-				student = file::find(student_info, user.pdata[1], nullptr, ON);
-				if (student == nullptr) return 0;
-				file::update(__STUDENT, student->id, 0, "0");
-
-				csv_file account(ACCOUNT);
-				student = file::find(account, user.pdata[1], nullptr, ON);
-				if (student == nullptr) return 0;
-				file::update(ACCOUNT, student->id, 0, "0");
-
-				return 1;
-			}
-			return 0;
-		}
-		if (c == 224 || c == 0) {
-			c = getch();
-			if (c == KEY_LEFT && choose == 1) choose--;
-			else if (c == KEY_RIGHT && choose == 0) choose++;
-		}
+		while (c != KEY_ESC && c != KEY_ENTER) c = getch();
 	}
+
+END:
+	gotoxy(32, 13); std::cout << "                                                         ";
+	gotoxy(32, 14); std::cout << "                                                         ";
+	gotoxy(32, 15); std::cout << "                                                         ";
+	gotoxy(32, 16); std::cout << "                                                         ";
+	gotoxy(32, 17); std::cout << "                                                         ";
+	gotoxy(32, 18); std::cout << "                                                         ";
+	gotoxy(32, 19); std::cout << "                                                         ";
+	gotoxy(32, 20); std::cout << "                                                         ";
+	gotoxy(32, 21); std::cout << "                                                         ";
 }
 
 int npstudent::calendar(csv_line& user) {

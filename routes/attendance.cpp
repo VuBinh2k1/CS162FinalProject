@@ -56,10 +56,11 @@ LAYOUT:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
 		if (c == 'E' || c == 'e') {
-		SAVE_AS:
 			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Save as                                                 ";
-			gotoxy(32, 16, 128); std::cout << " Path:                                                   ";
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
+
+		SAVE_AS:
+			gotoxy(32, 16, 128); std::cout << " Path:                                                   ";
 			std::string path;
 			if (read(39, 16, 128, path, 48, SHOW) == KEY_ESC) {
 				// Clear export file box
@@ -68,6 +69,7 @@ LAYOUT:
 				gotoxy(32, 17); std::cout << "                                                         ";
 				continue;
 			}
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
 			if (path.empty()) goto SAVE_AS;
 			if (path.back() != '\\') path += '\\'; path += ACADEMICYEAR + '-' + SEMESTER + '-' + course_id + '_' + course_cs + "_attendance.csv";
 
@@ -116,6 +118,7 @@ LAYOUT:
 			gotoxy(32, 15); std::cout << "                                                         ";
 			gotoxy(32, 16); std::cout << "                                                         ";
 			gotoxy(32, 17); std::cout << "                                                         ";
+			continue;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
@@ -228,6 +231,7 @@ LAYOUT:
 				}
 				if (status == -1) break;
 			}
+			continue;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();

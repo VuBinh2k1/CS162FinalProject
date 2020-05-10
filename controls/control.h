@@ -13,6 +13,9 @@
 #include "layout.h"
 #include "sha256.h"
 
+#define MAX_WEEK 11
+#define WEEK_COLUMN 6
+
 #define ENGLISHNAME atoi(control::config("ENGLISHNAME").c_str())
 #define ACADEMICYEAR control::config("ACADEMICYEAR")
 #define SEMESTER control::config("SEMESTER")

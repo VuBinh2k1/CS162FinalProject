@@ -137,6 +137,7 @@ END:
 }
 
 void npcourse::info(csv_line& user, const char* course_id, const char* course_cs) {
+LAYOUT:
 	csv_file course_list(COURSE_PATH("__course.csv").c_str(), def_course);
 	csv_line* course = file::find(course_list, course_id, course_cs, OFF);
 
@@ -147,7 +148,6 @@ void npcourse::info(csv_line& user, const char* course_id, const char* course_cs
 		return;
 	}
 
-LAYOUT:
 	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " Course info                                             ";
 	gotoxy(32, 14, 128); std::cout << "                                                         ";
 	gotoxy(32, 15, 128); std::cout << "                                                         ";
@@ -176,12 +176,13 @@ LAYOUT:
 			if (c == KEY_ESC) break;
 			if (c == KEY_ENTER) {
 				if (choose == 0) {
+					gotoxy(46, 21, 128); std::cout << " Save change ";
+					gotoxy(60, 21, 128); std::cout << "   Cancel    ";
 					// Get detail
-					gotoxy(32, 14, 128); std::cout << "                                                         ";
-					std::string cname = get(33, 14, 143, 40, ((std::string)" - " + course->pdata[1] + "(" + course->pdata[3] + ")").c_str());
-					if (cname.size() < 27) { gotoxy(33, 14, 143); std::cout << course->pdata[2] << " - " << course->pdata[1] << "(" << course->pdata[3] << ")"; }
+					gotoxy(32, 14, 143); std::cout << "                                                         ";
+					std::string cname, lectu, sdate, fdate, wdays, stime, ftime, iroom;
 
-					std::string lectu, sdate, fdate, wdays, stime, ftime, iroom;
+					if (read(33, 14, 143, cname, 30, SHOW, course->pdata[2]) == KEY_ESC) goto LAYOUT; std::cout << " - " << course->pdata[1] << "(" << course->pdata[3] << ")";
 					if (read(46, 15, 128, lectu, 42, SHOW, course->pdata[4]) == KEY_ESC) goto LAYOUT;
 					while (sdate != "1" && sdate.size() != 10) if (date(46, 16, 128, sdate) == KEY_ESC) goto LAYOUT;
 					if (sdate.size() != 10) { gotoxy(46, 16, 128); std::cout << course->pdata[5]; } std::cout << " to ";
@@ -266,7 +267,7 @@ LAYOUT:
 						if (c == KEY_ENTER) {
 							if (choose == 0) {
 								file::remove(COURSE_PATH("__course.csv").c_str(), course->id);
-								gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " remove successfully.";
+								gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
 								PAUSE; goto END;
 							}
 							goto LAYOUT;

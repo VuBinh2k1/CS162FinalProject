@@ -97,6 +97,7 @@ void file::update(const char* FILE, int row, int column, const char* val) {
 }
 
 void file::remove(const char* FILE, int row) {
+	if (!file::exists(FILE)) return;
 	csv_file file(FILE);
 	std::ofstream out(FILE);
 

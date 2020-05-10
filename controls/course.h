@@ -1,7 +1,5 @@
 #ifndef COURSE_H
 #define COURSE_H
-#define MAX_WEEK 11
-#define WEEK_COLUMN 6
 #include "control.h"
 
 namespace npcourse {
