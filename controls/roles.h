@@ -15,5 +15,8 @@ namespace role {
 	void staff(csv_line& user);
 	void lecturer(csv_line& user);
 	void student(csv_line& user);
+	// Sub menu
+	int cls(csv_line& user);
+	int crs(csv_line& user);
 }
 #endif

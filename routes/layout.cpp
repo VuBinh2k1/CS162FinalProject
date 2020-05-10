@@ -16,6 +16,7 @@ char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool st
 	uint8_t c; 
 	str.resize(0);
 	WORD COLOR_COMM = (COLOR_CODE == COLOR_DEFAULT) ? 8 : COLOR_CODE + 8;
+	if (COLOR_CODE == 128) COLOR_COMM = COLOR_CODE;
 	gotoxy(x, y, COLOR_COMM); std::cout << comment; gotoxy(x, y, COLOR_CODE);
 	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
 		// Keyboard: Printable characters
@@ -46,7 +47,7 @@ char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool st
 				while (str.size()) {
 					std::cout << "\b \b"; str.pop_back();
 				}
-				colorizing(8); std::cout << comment;
+				colorizing(COLOR_COMM); std::cout << comment;
 				gotoxy(x, y, COLOR_CODE);
 			}
 			continue;
@@ -88,6 +89,121 @@ std::string get(int x, int y, WORD COLOR_CODE, int max_size, const char* type) {
 	}
 	if (c == KEY_ESC) return (std::string)"";
 	return str + type;
+}
+
+char date(int x, int y, WORD COLOR_CODE, std::string& str) {
+	uint8_t c; str = '0';
+
+	gotoxy(x, y, COLOR_CODE); std::cout << "  /  /    "; gotoxy(x, y, COLOR_CODE);
+	std::string day, mon, year;
+	std::string* cur = &day;
+	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
+		// Keyboard: Printable characters
+		if (c >= '0' && c <= '9') {
+			if (cur == &day) {
+				if (day.size() == 2) cur = &mon, std::cout << '/';
+				else day.push_back(c), std::cout << (char)c;
+			}
+			if (cur == &mon) {
+				if (mon.size() == 2) cur = &year, std::cout << '/';
+				else mon.push_back(c), std::cout << (char)c;
+			}
+			if (cur == &year) {
+				if (year.size() == 4) continue;
+				else year.push_back(c), std::cout << (char)c;
+			}
+		}
+		// Keyboard: BACKSPACE: 8
+		if (c == KEY_BACKSPACE) {
+			if (cur->size()) {
+				std::cout << "\b \b"; cur->pop_back();
+			}
+			if (cur->size() == 0) {
+				if (cur == &day) { continue; }
+				if (cur == &mon) { std::cout << "\b"; cur = &day; }
+				if (cur == &year) { std::cout << "\b"; cur = &mon; }
+			}
+			continue;
+		}
+		// Keyboard: DELETE: 224 83
+		if (c == 0 || c == 224) {
+			if ((c = getch()) == KEY_DELETE) {
+				day.resize(0); mon.resize(0); year.resize(0); cur = &day;
+				gotoxy(x, y, COLOR_CODE); std::cout << "  /  /    "; gotoxy(x, y, COLOR_CODE);
+			}
+			continue;
+		}
+	}
+	if (c == KEY_ESC) return c;
+
+	// Config date:
+	if (day.empty() && mon.empty() && year.empty()) str = "1";
+	if (day.size() == 2 && mon.size() == 2 && year.size() == 4) {
+		if (day[0] > '3' || mon[0] > '1' || std::stoi(year) < 1900 || std::stoi(year) > 3000) return c;
+
+		std::time_t now = time(0);
+		std::tm date = *localtime(&now);
+		date.tm_mday = std::stoi(day);
+		date.tm_mon = std::stoi(mon) - 1;
+		date.tm_year = std::stoi(year) - 1900;
+		std::mktime(&date);
+		
+		if (date.tm_mday != std::stoi(day) || date.tm_mon != std::stoi(mon) - 1 || date.tm_year != std::stoi(year) - 1900) return c;
+		str = day + '/' + mon + '/' + year;
+	}
+	return c;
+}
+
+char time(int x, int y, WORD COLOR_CODE, std::string& str) {
+	uint8_t c; str = '0';
+
+	gotoxy(x, y, COLOR_CODE); std::cout << "  :  "; gotoxy(x, y, COLOR_CODE);
+
+	std::string hour, min;
+	std::string* cur = &hour;
+	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
+		// Keyboard: Printable characters
+		if (c >= '0' && c <= '9') {
+			if (cur == &hour) {
+				if (hour.size() == 2) cur = &min, std::cout << ':';
+				else hour.push_back(c), std::cout << (char)c;
+			}
+			if (cur == &min) {
+				if (min.size() == 2) continue;
+				else min.push_back(c), std::cout << (char)c;
+			}
+		}
+		// Keyboard: BACKSPACE: 8
+		if (c == KEY_BACKSPACE) {
+			if (cur->size()) {
+				std::cout << "\b \b"; cur->pop_back();
+			}
+			if (cur->size() == 0) {
+				if (cur == &hour) { continue; }
+				if (cur == &min) { std::cout << "\b"; cur = &hour; }
+			}
+			continue;
+		}
+		// Keyboard: DELETE: 224 83
+		if (c == 0 || c == 224) {
+			if ((c = getch()) == KEY_DELETE) {
+				hour.resize(0); min.resize(0); cur = &hour;
+				gotoxy(x, y, COLOR_CODE); std::cout << "  :  "; gotoxy(x, y, COLOR_CODE);
+			}
+			continue;
+		}
+	}
+	if (c == KEY_ESC) return c;
+
+	// Config time:
+	if (hour.empty() && min.empty()) str = "1";
+	if (hour.size() == 2 && min.size() == 2) {
+		if (hour == "24") hour = "00";
+		if (min == "60") min = "00";
+		if (hour[0] > '2' || (hour[0] == '2' && hour[1] > '3') || min[0] > '5') return c;
+		str = hour + ':' + min;
+	}
+	return c;
 }
 
 // mess::funtion

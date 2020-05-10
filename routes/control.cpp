@@ -10,8 +10,8 @@ std::tm control::gtime(char* _date, char* _time) {
 
 	//_time: hh:mm\0
 	if (_time == nullptr) return ttm;
-	ttm.tm_hour = _time[0] * 10 + _time[1] - 11 * '0' - 1;
-	ttm.tm_min = _time[3] * 10 + _time[4] - 11 * '0' - 1;
+	ttm.tm_hour = _time[0] * 10 + _time[1] - 11 * '0';
+	ttm.tm_min = _time[3] * 10 + _time[4] - 11 * '0';
 	return ttm;
 }
 
@@ -81,7 +81,9 @@ void academicmark() {
 	if (atoi(SEMESTER.c_str()) == 4) { gotoxy(2, 2, 176); std::cout << " Winter "; }
 }
 
-const char* US_GPA(double score) {
+const char* US_GPA(const char* strsco) {
+	if (strsco[0] == '\0') return "";
+	double score = std::stoi((std::string)strsco);
 	if (score >= 9.0) return "4.0";
 	if (score >= 8.0) return "3.5";
 	if (score >= 7.0) return "3.0";
@@ -91,7 +93,9 @@ const char* US_GPA(double score) {
 	return "0.0";
 }
 
-const char* US_Grade(double score) {
+const char* US_Grade(const char* strsco) {
+	if (strsco[0] == '\0') return "";
+	double score = std::stoi((std::string)strsco);
 	if (score >= 9.5) return "A+";
 	if (score >= 9.0) return "A";
 	if (score >= 8.5) return "A-";
