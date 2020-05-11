@@ -30,5 +30,5 @@ End Project Date:
 - [ ] **Academic staff-Course**
 - [x] **Academic staff-Score board**
 - [x] **Academic staff-Attendance list**
-- [ ] **Lecturer**
+- [x] **Lecturer**
 - [x] **Student**
