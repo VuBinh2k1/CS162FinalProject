@@ -34,6 +34,7 @@
 #define KEY_ENTER 13
 #define KEY_NEW 14
 #define KEY_OPEN 15
+#define KEY_SAVE 19
 #define KEY_ESC 27
 #define KEY_CKIN(c) (c == 'C' || c == 'c')
 #define KEY_EDIT(c) (c == 'E' || c == 'e')
