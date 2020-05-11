@@ -18,7 +18,6 @@ int npscoreboard::staff(const char* course_id, const char* course_cs) {
 
 	int choose = 0, cur = -1;
 	while ((cur = -1)) {
-
 		std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
 		csv_file process(propath.c_str(), def_process);
 		for (int i = 0; i < process.count; ++i) {
@@ -45,10 +44,11 @@ int npscoreboard::staff(const char* course_id, const char* course_cs) {
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
 		if (c == 'E' || c == 'e') {
-		SAVE_AS:
 			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Save as                                                 ";
-			gotoxy(32, 16, 128); std::cout << " Path:                                                   ";
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
+
+		SAVE_AS:
+			gotoxy(32, 16, 128); std::cout << " Path:                                                   ";
 			std::string path;
 			if (read(39, 16, 128, path, 48, SHOW) == KEY_ESC) {
 				// Clear export file box
@@ -57,13 +57,14 @@ int npscoreboard::staff(const char* course_id, const char* course_cs) {
 				gotoxy(32, 17); std::cout << "                                                         ";
 				continue;
 			}
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
 			if (path.empty()) goto SAVE_AS;
 			if (path.back() != '\\') path += '\\'; path += ACADEMICYEAR + '-' + SEMESTER + '-' + course_id + '_' + course_cs + ".csv";
 
 			std::ofstream out(path);
 			if (!out.is_open()) {
 				gotoxy(33, 17, 132); std::cout << "Can't open file!";
-				PAUSE; goto SAVE_AS;
+				goto SAVE_AS;
 			}
 
 			out << "No,Student ID,Midterm,Lab,Bonus,Final,GPA,GRADE\n";
@@ -90,6 +91,7 @@ int npscoreboard::staff(const char* course_id, const char* course_cs) {
 			gotoxy(32, 15); std::cout << "                                                         ";
 			gotoxy(32, 16); std::cout << "                                                         ";
 			gotoxy(32, 17); std::cout << "                                                         ";
+			continue;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
@@ -185,6 +187,7 @@ int npscoreboard::lecturer(const char* course_id, const char* course_cs) {
 			if (bonus.size()) file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 4, bonus.c_str());
 			if (final.size()) file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 5, final.c_str());
 			file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 0, (status) ? "1" : "0");
+			continue;
 		}
 		if (c == 'I' || c == 'i') {
 			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Open                                                    ";
@@ -192,15 +195,16 @@ int npscoreboard::lecturer(const char* course_id, const char* course_cs) {
 
 		OPEN:
 			gotoxy(32, 16, 128); std::cout << " File:                                                   ";
-			std::string path = get(39, 16, 128, 48);
-			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			if (path.empty()) {
+			
+			std::string path;
+			if (type(39, 16, 128, path, 48) == KEY_ESC) {
 				// Clear import file box
 				gotoxy(32, 15); std::cout << "                                                         ";
 				gotoxy(32, 16); std::cout << "                                                         ";
 				gotoxy(32, 17); std::cout << "                                                         ";
 				continue;
 			}
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
 			if (!file::exists(path.c_str())) {
 				gotoxy(33, 17, 132); std::cout << "Can't open file!";
 				goto OPEN;
@@ -258,11 +262,13 @@ int npscoreboard::lecturer(const char* course_id, const char* course_cs) {
 			}
 	
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			gotoxy(33, 17, 129); std::cout << "Import file success."; PAUSE;
+			gotoxy(33, 17, 129); std::cout << "Import file success."; 
+			PAUSE;
 			// Clear import file box
 			gotoxy(32, 15); std::cout << "                                                         ";
 			gotoxy(32, 16); std::cout << "                                                         ";
 			gotoxy(32, 17); std::cout << "                                                         ";
+			continue;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();

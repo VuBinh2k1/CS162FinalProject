@@ -1,7 +1,6 @@
 #ifndef ATTENDANCE_H
 #define ATTENDANCE_H
 #include "control.h"
-#include "course.h"
 #include "scoreboard.h"
 
 namespace npattendance {

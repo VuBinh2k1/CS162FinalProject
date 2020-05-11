@@ -1,32 +1,25 @@
 #include "..\\controls\\class.h"
 
-bool npclass::change(csv_line& user, const char* from, const char* to) {
-	csv_line* student = nullptr;
-	
+bool npclass::change(csv_line& user, const char* class_from, const char* class_to) {
+	std::string fm = class_from;
+	std::string to = class_to;
+	std::string path;
+	std::transform(fm.begin(), fm.end(), fm.begin(), ::toupper);
+	std::transform(to.begin(), to.end(), to.begin(), ::toupper);
+	if (fm == to) return 1;
+	if (to.size()) { if (file::find(__CLASS, to.c_str(), nullptr, OFF) == -1) return 0; }
+	else return 1;
+
 	// Update class1.csv	[NULL: dont have class]
-	std::string name = from;
-	std::transform(name.begin(), name.end(), name.begin(), ::toupper);
-	std::string path = (std::string)(".\\data\\class\\") + name + ".csv";
-	if (name.size()) {
-		csv_file file1(path.c_str(), def_class);
-		student = file::find(file1, user.pdata[1], nullptr, ON);
-		if (student == nullptr) {
-			gotoxy(38, 27, COLOR_RED); std::cout << "This student could not be found in " << name << ".";
-			PAUSE; return 0;
-		}
-		if (student->pdata[0][0] == '0') {
-			gotoxy(38, 27, COLOR_RED); std::cout << "This student had been removed from " << name << ".";
-			PAUSE; return 0;
-		}
-		file::update(path.c_str(), student->id, 0, "0");
+	if (fm.size() && file::find(__CLASS, fm.c_str(), nullptr, OFF) != -1) {
+		path = (std::string)(".\\data\\class\\") + fm + ".csv";
+		file::remove(path.c_str(), file::find(path.c_str(), user.pdata[1], nullptr, OFF));
 	}
 
 	// Update class2.csv
-	name = to;
-	std::transform(name.begin(), name.end(), name.begin(), ::toupper);
-	path = (std::string)(".\\data\\class\\") + name + ".csv";
-	csv_file file2(path.c_str(), def_class);
-	student = file::find(file2, user.pdata[1], nullptr, ON);
+	path = (std::string)(".\\data\\class\\") + to + ".csv";
+	csv_file student_list(path.c_str(), def_class);
+	csv_line* student = file::find(student_list, user.pdata[1], nullptr, OFF);
 	if (student != nullptr) {
 		file::update(path.c_str(), student->id, 0, "1");
 		return 1;

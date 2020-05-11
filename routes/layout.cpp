@@ -15,8 +15,7 @@ void gotoxy(int column, int line, WORD color_code) {
 char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool status, const char* comment) {
 	uint8_t c; 
 	str.resize(0);
-	WORD COLOR_COMM = (COLOR_CODE == COLOR_DEFAULT) ? 8 : COLOR_CODE + 8;
-	if (COLOR_CODE == 128) COLOR_COMM = COLOR_CODE;
+	WORD COLOR_COMM = (COLOR_CODE == 128 ? 128 : (COLOR_CODE == COLOR_DEFAULT ? 8 : (COLOR_CODE % 16 == 0 ? COLOR_CODE + 8 : COLOR_CODE)));
 	gotoxy(x, y, COLOR_COMM); std::cout << comment; gotoxy(x, y, COLOR_CODE);
 	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
 		// Keyboard: Printable characters
@@ -56,9 +55,9 @@ char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool st
 	return c;
 }
 
-std::string get(int x, int y, WORD COLOR_CODE, int max_size, const char* type) {
+char type(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, const char* type) {
 	uint8_t c;
-	std::string str; max_size -= strlen(type);
+	str.resize(0); max_size -= strlen(type);
 	gotoxy(x, y, COLOR_CODE); std::cout << type; for (int i = 0; i < strlen(type); ++i) std::cout << '\b';
 	while ((c = getch()) != KEY_ENTER && c != KEY_ESC) {
 		// Keyboard: Printable characters
@@ -87,8 +86,8 @@ std::string get(int x, int y, WORD COLOR_CODE, int max_size, const char* type) {
 			continue;
 		}
 	}
-	if (c == KEY_ESC) return (std::string)"";
-	return str + type;
+	str += type;
+	return c;
 }
 
 char date(int x, int y, WORD COLOR_CODE, std::string& str) {
