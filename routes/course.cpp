@@ -304,38 +304,6 @@ int npcourse::remove(const char* course_id, const char* course_cs) {
 	csv_line* course = file::find(course_list, course_id, course_cs, OFF);
 	if (course == nullptr) return 0;
 
-<<<<<<< HEAD
-			gotoxy(32, 18, 128); std::cout << "                                                         ";
-			gotoxy(33, 18, 128); std::cout << sche->pdata[0] << "    : " << sche->pdata[1];
-			gotoxy(57, 18, 128); std::cout << "(" << sche->pdata[2];
-
-			gotoxy(64, 18, 128); std::cout << "- " << sche->pdata[3] << ")";
-			uint8_t c = getch();
-			if (c == KEY_ESC) break;
-			if (KEY_EDIT(c)) {
-				std::string sdate, stime, ftime;
-				while (sdate != "1" && sdate.size() != 10) if (date(46, 18, 128, sdate) == KEY_ESC) goto SCHEDULE;
-				if (sdate.size() != 10) { gotoxy(46, 18, 128); std::cout << sche->pdata[1]; }
-
-				gotoxy(57, 18, 128); std::cout << "(";
-				while (stime != "1" && stime.size() != 5) if (time(58, 18, 128, stime) == KEY_ESC) goto SCHEDULE;
-				if (stime.size() != 5) { gotoxy(58, 18, 128); std::cout << sche->pdata[2]; }
-
-				gotoxy(64, 18, 128); std::cout << "- ";
-				while (ftime != "1" && ftime.size() != 5) if (time(66, 18, 128, ftime) == KEY_ESC) goto SCHEDULE;
-				if (ftime.size() != 5) { gotoxy(66, 18, 128); std::cout << sche->pdata[3]; } std::cout << ")";
-
-				if (sdate.size() == 10) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 1, sdate.c_str());
-				if (stime.size() == 5) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 2, stime.c_str());
-				if (ftime.size() == 5) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 3, ftime.c_str());
-				colorizing(128 + COLOR_BLUE); std::cout << " success.";
-				PAUSE; continue;
-			}
-			if (c == 224 || c == 0) {
-				c = getch();
-				if (c == KEY_UP && week > 0) week--;
-				else if (c == KEY_DOWN && week < MAX_WEEK - 1) week++;
-=======
 	gotoxy(33, 20, 128 + COLOR_RED); std::cout << "Are you sure to remove this course, cannot be undone.";
 	for (int choose = 1;;) {
 		gotoxy(51, 21, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
@@ -349,7 +317,6 @@ int npcourse::remove(const char* course_id, const char* course_cs) {
 				file::remove(COURSE_PATH("__course.csv").c_str(), course->id);
 				gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
 				PAUSE; return 1;
->>>>>>> master
 			}
 			return 0;
 		}
@@ -361,18 +328,6 @@ int npcourse::remove(const char* course_id, const char* course_cs) {
 	}
 }
 
-<<<<<<< HEAD
-END:
-	gotoxy(32, 13); std::cout << "                                                         ";
-	gotoxy(32, 14); std::cout << "                                                         ";
-	gotoxy(32, 15); std::cout << "                                                         ";
-	gotoxy(32, 16); std::cout << "                                                         ";
-	gotoxy(32, 17); std::cout << "                                                         ";
-	gotoxy(32, 18); std::cout << "                                                         ";
-	gotoxy(32, 19); std::cout << "                                                         ";
-	gotoxy(32, 20); std::cout << "                                                         ";
-	gotoxy(32, 21); std::cout << "                                                         ";
-=======
 void npcourse::schedule(const char* course_id, const char* course_cs) {
 	if (file::find(COURSE_PATH("__course.csv").c_str(), course_id, course_cs, OFF) == -1) return;
 	gotoxy(32, 17, COLOR_BLUE_BACKGROUND); std::cout << " Schedule                                                ";
@@ -417,5 +372,4 @@ void npcourse::schedule(const char* course_id, const char* course_cs) {
 			else if (c == KEY_DOWN && week < MAX_WEEK - 1) week++;
 		}
 	}
->>>>>>> master
 }
