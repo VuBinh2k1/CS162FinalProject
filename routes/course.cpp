@@ -95,7 +95,7 @@ ENROL_DATA:
 		gotoxy(33, 18, 132); std::cout << "Can't find Student ID: "; colorizing(134); std::cout << studentid;
 		goto ENROL_DATA;
 
-	}{// Check data of course "__course.csv"
+	} {// Check data of course "__course.csv"
 		csv_file course_list((COURSE_PATH("__course.csv")).c_str(), def_course);
 		for (int i = 0; i < course_list.count; ++i) {
 			if (strcmp(course_id, course_list.data[i].pdata[1]) == 0 && strcmp(course_cs, course_list.data[i].pdata[3]) == 0) {
@@ -110,7 +110,7 @@ ENROL_DATA:
 			}
 		}
 
-	}{// Add course to "studentID.csv"
+	} {// Add course to "studentID.csv"
 		csv_file my_course(((std::string)".\\data\\student\\" + studentid + ".csv").c_str(), def_user);
 		for (int i = 0; i < my_course.count; ++i) {
 			// Had enrol in this course (only enrol in 1 class of a course)
@@ -124,7 +124,7 @@ ENROL_DATA:
 		std::ofstream out((std::string)".\\data\\student\\" + studentid + ".csv", std::ios::app);
 		out << ACADEMICYEAR << ',' << SEMESTER << ',' << course_id << ',' << course_cs << '\n'; out.close();
 
-	}{// Add student to "courseID_courseCS.csv"
+	} {// Add student to "courseID_courseCS.csv"
 		csv_file process((COURSE_PATH("process\\") + course_id + '_' + course_cs + ".csv").c_str(), def_process);
 		for (int i = 0; i < process.count; ++i) {
 			// Old data (don't know why it here)
@@ -152,7 +152,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 	gotoxy(32, 17, 128); std::cout << " Date      :                                             ";
 	gotoxy(32, 18, 128); std::cout << "                                                         ";
 	gotoxy(45, 15, 128); std::cout << user.pdata[1];
-	gotoxy(45, 16, 128); std::cout << course_id; 
+	gotoxy(45, 16, 128); std::cout << course_id;
 	gotoxy(66, 16, 128); std::cout << course_cs;
 
 	std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
@@ -171,7 +171,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 		int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
 		if (now == 0) {
 			gotoxy(45, 17, 128); std::cout << date->pdata[1] << " (" << date->pdata[2] << " - " << date->pdata[3] << ")";
-			
+
 			if (mycou->pdata[WEEK_COLUMN + i][0] == '0') {
 				gotoxy(57, 18, COLOR_BLUE_BACKGROUND); std::cout << "[Check in]";
 				if (getch() != KEY_ENTER) {
