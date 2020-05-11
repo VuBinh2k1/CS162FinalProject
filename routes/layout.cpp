@@ -251,3 +251,26 @@ void layout::print() {
 		data[i].print();
 	}
 }
+void loading()
+{
+	gotoxy(1, 18,COLOR_GREEN);
+	for (int i = 0; i < 20; i++)
+	{
+		putchar(219);
+		Sleep(20);
+	}
+	putchar(219);
+	Sleep(800);
+	for (int i = 20; i < 60; i++)
+	{
+		putchar(219);
+		Sleep(20);
+	}
+	putchar(219);
+	Sleep(1000);
+	for (int i = 60; i < 96; i++)
+	{
+		putchar(219);
+		Sleep(20);
+	}
+}
