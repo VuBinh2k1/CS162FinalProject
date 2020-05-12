@@ -11,6 +11,7 @@ int npattendance::staff(const char* course_id, const char* course_cs) {
 
 LAYOUT:
 	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
 	// Title
 	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    " << "  Student list   ";
 	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Attendance     ";
@@ -55,7 +56,15 @@ LAYOUT:
 	UN_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
-		if (c == 'E' || c == 'e') {
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Save as    Ctrl+S  ";
+			gotoxy(78, 9, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 9); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		if (c == KEY_SAVE) {
 			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Save as                                                 ";
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
 
@@ -148,6 +157,7 @@ int npattendance::lecturer(const char* course_id, const char* course_cs) {
 
 LAYOUT:
 	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
 	// Title
 	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    " << "  Student list   ";
 	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Attendance     ";
@@ -194,7 +204,15 @@ LAYOUT:
 	UN_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
-		if (c == 'E' || c == 'e') {
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Edit       E, e    ";
+			gotoxy(78, 9, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 9); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		if (KEY_EDIT(c)) {
 			csv_file process((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str());
 			csv_file schedule((COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv").c_str());
 			csv_line* student = &process.data[editrow];

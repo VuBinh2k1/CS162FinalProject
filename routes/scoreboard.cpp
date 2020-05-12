@@ -9,7 +9,9 @@ int npscoreboard::staff(const char* course_id, const char* course_cs) {
 	layout minibox_layout(inp);
 	inp.close();
 
+LAYOUT:
 	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
 	// Title
 	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    " << "  Student list   " << "  Attendance     ";
 	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Scoreboard    ";
@@ -43,7 +45,15 @@ int npscoreboard::staff(const char* course_id, const char* course_cs) {
 	UN_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
-		if (c == 'E' || c == 'e') {
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Save as    Ctrl+S  ";
+			gotoxy(78, 9, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 9); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		if (c == KEY_SAVE) {
 			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Save as                                                 ";
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
 
@@ -115,7 +125,9 @@ int npscoreboard::lecturer(const char* course_id, const char* course_cs) {
 	layout minibox_layout(inp);
 	inp.close();
 
+LAYOUT:
 	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
 	// Title
 	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    " << "  Student list   " << "  Attendance     ";
 	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Scoreboard    ";
@@ -151,7 +163,17 @@ int npscoreboard::lecturer(const char* course_id, const char* course_cs) {
 	UN_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
-		if (c == 'E' || c == 'e') {
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Open       Ctrl+O  ";
+			gotoxy(78, 9, 128); std::cout << " Edit       E, e    ";
+			gotoxy(78,10, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 9); std::cout << "                    ";
+			gotoxy(78,10); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		if (KEY_EDIT(c)) {
 			csv_file process((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str());
 			csv_line* student = &process.data[editrow];
 			std::string mid, lab, bonus, final; int status = student->pdata[0][0] == '1';
@@ -189,7 +211,7 @@ int npscoreboard::lecturer(const char* course_id, const char* course_cs) {
 			file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 0, (status) ? "1" : "0");
 			continue;
 		}
-		if (c == 'I' || c == 'i') {
+		if (c == KEY_OPEN) {
 			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Open                                                    ";
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
 

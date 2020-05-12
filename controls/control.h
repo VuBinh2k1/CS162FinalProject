@@ -15,6 +15,7 @@
 
 #define MAX_WEEK 11
 #define WEEK_COLUMN 6
+#define INVALID_MEMORY_ADDRESS 0xcccccccccccccccc
 
 #define ENGLISHNAME atoi(control::config("ENGLISHNAME").c_str())
 #define ACADEMICYEAR control::config("ACADEMICYEAR")
