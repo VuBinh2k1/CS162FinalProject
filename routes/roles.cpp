@@ -673,7 +673,7 @@ LAYOUT:
 	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " No.   | Course ID    | Class     | Lecturer ID  | Room   | Status ";
 	while ((cur = -1)) {
-		csv_file course_list((COURSE_PATH("__course.csv")).c_str(), def_course);
+		csv_file course_list(__COURSE, def_course);
 		csv_line* course = nullptr;
 
 		if (permit) delete[] permit;
@@ -826,7 +826,7 @@ int role::calendar(csv_line& user){
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << "    Date    | Course                               | Start |  End  ";
 
 	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
-	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
+	csv_file course_list(__COURSE, def_course);
 
 	int choose = 0, maxChoose = 13; bool has_change = 0;
 	while (1) {

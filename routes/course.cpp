@@ -2,7 +2,7 @@
 
 void npcourse::info(csv_line& user, const char* course_id, const char* course_cs) {
 LAYOUT:
-	csv_file course_list(COURSE_PATH("__course.csv").c_str(), def_course);
+	csv_file course_list(__COURSE, def_course);
 	csv_line* course = file::find(course_list, course_id, course_cs, OFF);
 
 	if (course == nullptr) {
@@ -96,7 +96,7 @@ ENROL_DATA:
 		goto ENROL_DATA;
 
 	} {// Check data of course "__course.csv"
-		csv_file course_list((COURSE_PATH("__course.csv")).c_str(), def_course);
+		csv_file course_list(__COURSE, def_course);
 		for (int i = 0; i < course_list.count; ++i) {
 			if (strcmp(course_id, course_list.data[i].pdata[1]) == 0 && strcmp(course_cs, course_list.data[i].pdata[3]) == 0) {
 				if (user == "student" && course_list.data[i].pdata[0][0] == '0') {
@@ -216,7 +216,7 @@ bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
 }
 
 void npcourse::edit(const char* course_id, const char* course_cs) {
-	csv_file course_list(COURSE_PATH("__course.csv").c_str(), def_course);
+	csv_file course_list(__COURSE, def_course);
 	csv_line* course = file::find(course_list, course_id, course_cs, OFF);
 	if (course == nullptr) return;
 
@@ -277,15 +277,16 @@ void npcourse::edit(const char* course_id, const char* course_cs) {
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				// Update: __course.csv
-				file::update(COURSE_PATH("__course.csv").c_str(), course->id, 0, (status ? "1" : "0"));
-				if (cname.size()) file::update(COURSE_PATH("__course.csv").c_str(), course->id, 2, cname.c_str());
-				if (lectu.size()) file::update(COURSE_PATH("__course.csv").c_str(), course->id, 4, lectu.c_str());
-				if (wdays.size()) file::update(COURSE_PATH("__course.csv").c_str(), course->id, 7, wdays.c_str());
-				if (iroom.size()) file::update(COURSE_PATH("__course.csv").c_str(), course->id, 10, iroom.c_str());
-				if (sdate.size() == 10) file::update(COURSE_PATH("__course.csv").c_str(), course->id, 5, sdate.c_str());
-				if (fdate.size() == 10) file::update(COURSE_PATH("__course.csv").c_str(), course->id, 6, fdate.c_str());
-				if (stime.size() == 5) file::update(COURSE_PATH("__course.csv").c_str(), course->id, 8, stime.c_str());
-				if (ftime.size() == 5) file::update(COURSE_PATH("__course.csv").c_str(), course->id, 9, ftime.c_str());
+				
+				file::update(__COURSE, course->id, 0, (status ? "1" : "0"));
+				if (cname.size()) file::update(__COURSE, course->id, 2, cname.c_str());
+				if (lectu.size()) file::update(__COURSE, course->id, 4, lectu.c_str());
+				if (wdays.size()) file::update(__COURSE, course->id, 7, wdays.c_str());
+				if (iroom.size()) file::update(__COURSE, course->id, 10, iroom.c_str());
+				if (sdate.size() ==10) file::update(__COURSE, course->id, 5, sdate.c_str());
+				if (fdate.size() ==10) file::update(__COURSE, course->id, 6, fdate.c_str());
+				if (stime.size() == 5) file::update(__COURSE, course->id, 8, stime.c_str());
+				if (ftime.size() == 5) file::update(__COURSE, course->id, 9, ftime.c_str());
 
 				gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Save changes successfully.";
 				PAUSE; break;
@@ -301,7 +302,7 @@ void npcourse::edit(const char* course_id, const char* course_cs) {
 }
 
 int npcourse::remove(const char* course_id, const char* course_cs) {
-	csv_file course_list(COURSE_PATH("__course.csv").c_str(), def_course);
+	csv_file course_list(__COURSE, def_course);
 	csv_line* course = file::find(course_list, course_id, course_cs, OFF);
 	if (course == nullptr) return 0;
 
@@ -315,7 +316,7 @@ int npcourse::remove(const char* course_id, const char* course_cs) {
 		if (c == KEY_ESC) return 0;
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
-				file::remove(COURSE_PATH("__course.csv").c_str(), course->id);
+				file::remove(__COURSE, course->id);
 				gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
 				PAUSE; return 1;
 			}
@@ -330,7 +331,7 @@ int npcourse::remove(const char* course_id, const char* course_cs) {
 }
 
 void npcourse::schedule(const char* course_id, const char* course_cs) {
-	if (file::find(COURSE_PATH("__course.csv").c_str(), course_id, course_cs, OFF) == -1) return;
+	if (file::find(__COURSE, course_id, course_cs, OFF) == -1) return;
 	gotoxy(32, 17, COLOR_BLUE_BACKGROUND); std::cout << " Schedule                                                ";
 	gotoxy(32, 18, 128); std::cout << "                                                         ";
 	gotoxy(32, 19, 128); std::cout << "_________________________________________________________";

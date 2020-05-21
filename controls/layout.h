@@ -12,6 +12,7 @@
 #define SHOW 0
 #define HIDE 1
 
+// COLOR_CODE
 #define COLOR_DEFAULT 7
 #define COLOR_BLUE 1
 #define COLOR_RED 4
@@ -24,6 +25,7 @@
 #define COLOR_GREEN_BACKGROUND 160
 #define COLOR_WHITE_BACKGROUND 240
 
+// KEYBOARD_CODE (some keys have 2 characters)
 #define KEY_UP 72			// 0 - 224
 #define KEY_LEFT 75			// 0 - 224
 #define KEY_RIGHT 77		// 0 - 224
@@ -41,6 +43,7 @@
 #define KEY_HELP(c) (c == 'H' || c == 'h')
 #define KEY_EROL(c) (c == 'R' || c == 'r')
 
+// COMMAND
 #define PAUSE Sleep(2000)
 
 typedef struct mess {

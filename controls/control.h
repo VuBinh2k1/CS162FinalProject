@@ -17,6 +17,7 @@
 #define WEEK_COLUMN 6
 #define INVALID_MEMORY_ADDRESS 0xcccccccccccccccc
 
+// .config data
 #define ENGLISHNAME atoi(control::config("ENGLISHNAME").c_str())
 #define ACADEMICYEAR control::config("ACADEMICYEAR")
 #define SEMESTER control::config("SEMESTER")

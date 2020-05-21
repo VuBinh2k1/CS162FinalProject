@@ -290,7 +290,7 @@ int npattendance::student(csv_line& user) {
 	gotoxy(80, 28, COLOR_WHITE_BACKGROUND);  std::cout << "  UPCOMING  ";
 
 	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
-	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
+	csv_file course_list(__COURSE, def_course);
 
 	int choose = 0;
 	while (1) {

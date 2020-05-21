@@ -7,15 +7,19 @@
 #include <string>
 #include "control.h"
 
+// ON-OFF checking status of data file
 #define ON 1
 #define OFF 0
 
+// Path of data files
 #define ACCOUNT ".\\data\\account.csv"
 #define __CLASS ".\\data\\class\\__class.csv"
 #define __STAFF ".\\data\\staff\\__staff.csv"
 #define __STUDENT ".\\data\\student\\__student.csv"
 #define __LECTURER ".\\data\\lecturer\\__lecturer.csv"
+#define __COURSE COURSE_PATH("__course.csv").c_str()
 
+// Path of default files
 #define def_user ".\\data\\__default\\user.csv"
 #define def_class ".\\data\\__default\\class.csv"
 #define def_course ".\\data\\__default\\course.csv"
