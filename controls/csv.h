@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "control.h"
 
 #define ON 1
 #define OFF 0
@@ -41,7 +42,7 @@ public:
 	csv_line mark;
 	csv_line* data;
 
-	csv_file(const char* FILE, const char* __def = nullptr);
+	csv_file(const char* FILE, const char* __def = nullptr, const char* course_id = nullptr, const char* course_cs = nullptr);
 	~csv_file() { delete[] data; }
 };
 
@@ -50,6 +51,7 @@ namespace file {
 	void update(const char* FILE, int row, int column, const char* val);
 	void remove(const char* FILE, int row);
 	bool exists(const char* FILE);
+	void mksche(const char* course_id, const char* course_cs);
 	const char* find(csv_file& file, int row, const char* mark);
 	int find(std::string path, const char* data1, const char* data2, bool status);
 	csv_line* find(csv_file& file, const char* data1, const char* data2, bool status);

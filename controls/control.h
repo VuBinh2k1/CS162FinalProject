@@ -22,7 +22,7 @@
 #define SEMESTER control::config("SEMESTER")
 
 namespace control {
-	std::tm gtime(char* _date, char* _time = nullptr);
+	std::tm gtime(char* _date = nullptr, char* _time = nullptr);
 	int now(char* date, char* start, char* end);
 	int now(std::tm ltm, char* date);
 	void print(std::tm date);

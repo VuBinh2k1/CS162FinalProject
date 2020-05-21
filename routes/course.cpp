@@ -156,8 +156,9 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 	gotoxy(66, 16, 128); std::cout << course_cs;
 
 	std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
+	std::string schpath = COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv";
 	csv_file process(propath.c_str(), def_process);
-	csv_file schedule((COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv").c_str(), def_schedule);
+	csv_file schedule(schpath.c_str(), def_schedule, course_id, course_cs);
 
 	csv_line* mycou = nullptr;
 	if ((mycou = file::find(process, user.pdata[1], nullptr, OFF)) == nullptr) {
@@ -166,7 +167,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 	}
 	for (int i = 0; i < schedule.count; ++i) {
 		csv_line* date = &schedule.data[i];
-		if (strcmp(date->pdata[1], "0") == 0) continue;
+		//if (strcmp(date->pdata[1], "0") == 0) npcourse::mksch(course_id, course_cs);	//////////////////////
 
 		int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
 		if (now == 0) {
@@ -207,7 +208,7 @@ END:
 // [EDIT]::course //============================================================================================================================//
 
 bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
-	csv_file schedule((COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv").c_str(), def_schedule);
+	csv_file schedule((COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv").c_str(), def_schedule, course_id, course_cs);
 	for (int i = 0; i < schedule.count; ++i) {
 		if (control::now(day, schedule.data[i].pdata[1]) == 0) return 1;
 	}
@@ -337,7 +338,7 @@ void npcourse::schedule(const char* course_id, const char* course_cs) {
 	int week = 0;
 	while (1) {
 	SCHEDULE:
-		csv_file schedule((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), def_schedule);
+		csv_file schedule((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), def_schedule, course_id, course_cs);
 		csv_line* sche = &schedule.data[week];
 
 		gotoxy(32, 18, 128); std::cout << "                                                         ";
@@ -360,7 +361,7 @@ void npcourse::schedule(const char* course_id, const char* course_cs) {
 			while (ftime != "1" && ftime.size() != 5) if (time(66, 18, 128, ftime) == KEY_ESC) goto SCHEDULE;
 			if (ftime.size() != 5) { gotoxy(66, 18, 128); std::cout << sche->pdata[3]; } std::cout << ")";
 
-			if (sdate.size() == 10) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 1, sdate.c_str());
+			if (sdate.size() ==10) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 1, sdate.c_str());
 			if (stime.size() == 5) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 2, stime.c_str());
 			if (ftime.size() == 5) file::update((COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str(), sche->id, 3, ftime.c_str());
 			colorizing(128 + COLOR_BLUE); std::cout << " success.";

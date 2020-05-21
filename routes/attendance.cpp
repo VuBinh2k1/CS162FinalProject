@@ -24,7 +24,7 @@ LAYOUT:
 		std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
 		std::string schpath = COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv";
 		csv_file process(propath.c_str(), def_process);
-		csv_file schedule(schpath.c_str(), def_schedule);
+		csv_file schedule(schpath.c_str(), def_schedule, course_id, course_cs);
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -94,7 +94,7 @@ LAYOUT:
 			std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
 			std::string schpath = COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv";
 			csv_file process(propath.c_str(), def_process);
-			csv_file schedule(schpath.c_str(), def_schedule);
+			csv_file schedule(schpath.c_str(), def_schedule, course_id, course_cs);
 			for (int i = 0; i < process.count; ++i) {
 				csv_line* student = &process.data[i];
 				if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -170,7 +170,7 @@ LAYOUT:
 		std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
 		std::string schpath = COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv";
 		csv_file process(propath.c_str(), def_process);
-		csv_file schedule(schpath.c_str(), def_schedule);
+		csv_file schedule(schpath.c_str(), def_schedule, course_id, course_cs);
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;

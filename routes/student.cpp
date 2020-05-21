@@ -20,7 +20,7 @@ LAYOUT:
 
 	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
 	while ((cur = -1)) {
-		csv_file student_list(((std::string)".\\data\\class\\" + class_id + ".csv").c_str(), def_course);
+		csv_file student_list(((std::string)".\\data\\class\\" + class_id + ".csv").c_str(), def_class);
 		csv_file student_info(__STUDENT);
 		csv_line* student = nullptr;
 		if (row) delete[] row;
@@ -133,7 +133,7 @@ LAYOUT:
 
 	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
 	while ((cur = -1)) {
-		csv_file student_list(stustpath.c_str(), def_course);
+		csv_file student_list(stustpath.c_str(), def_process);
 		csv_file student_info(__STUDENT);
 		csv_line* student = nullptr;
 		if (row) delete[] row;
