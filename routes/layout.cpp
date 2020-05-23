@@ -12,6 +12,57 @@ void gotoxy(int column, int line, WORD color_code) {
 	colorizing(color_code);
 }
 
+// [Function]::mess //==========================================================================================================================//
+
+void mess::init(std::istream& inp) {
+	data = new char* [height];
+	inp.ignore(1000, '\n');
+	for (int i = 0; i < height; ++i) {
+		data[i] = new char[width + 1];
+		inp.getline(data[i], width + 1);
+	}
+}
+
+void mess::realease() {
+	for (int i = 0; i < height; ++i) {
+		delete[] data[i];
+	}
+	delete[] data;
+}
+
+void mess::print() {
+	for (int i = 0; i < height; ++i) {
+		gotoxy(xo, yo + i, color_code);
+		std::cout << data[i];
+	}
+}
+
+// [Function]::layout //========================================================================================================================//
+
+layout::layout(std::istream& inp) {
+	inp >> image_count;
+	data = new mess[image_count];
+	for (int i = 0; i < image_count; ++i) {
+		inp >> data[i].xo >> data[i].yo;
+		inp >> data[i].height >> data[i].width;
+		inp >> data[i].color_code;
+		data[i].init(inp);
+	}
+}
+
+layout::~layout() {
+	for (int i = 0; i < image_count; ++i) data[i].realease();
+	delete[] data;
+}
+
+void layout::print() {
+	for (int i = 0; i < image_count; ++i) {
+		data[i].print();
+	}
+}
+
+// [Read]::conio.h //===========================================================================================================================//
+
 char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool status, const char* comment) {
 	uint8_t c; 
 	str.resize(0);
@@ -205,72 +256,14 @@ char time(int x, int y, WORD COLOR_CODE, std::string& str) {
 	return c;
 }
 
-// mess::funtion
-void mess::init(std::istream& inp) {
-	data = new char* [height];
-	inp.ignore(1000, '\n');
-	for (int i = 0; i < height; ++i) {
-		data[i] = new char[width + 1];
-		inp.getline(data[i], width + 1);
-	}
-}
-
-void mess::realease() {
-	for (int i = 0; i < height; ++i) {
-		delete[] data[i];
-	}
-	delete[] data;
-}
-
-void mess::print() {
-	for (int i = 0; i < height; ++i) {
-		gotoxy(xo, yo + i, color_code); 
-		std::cout << data[i];
-	}
-}
-
-// layout::funtion
-layout::layout(std::istream& inp) {
-	inp >> image_count;
-	data = new mess[image_count];
-	for (int i = 0; i < image_count; ++i) {
-		inp >> data[i].xo >> data[i].yo;
-		inp >> data[i].height >> data[i].width;
-		inp >> data[i].color_code;
-		data[i].init(inp);
-	}
-}
-
-layout::~layout() {
-	for (int i = 0; i < image_count; ++i) data[i].realease();
-	delete[] data;
-}
-
-void layout::print() {
-	for (int i = 0; i < image_count; ++i) {
-		data[i].print();
-	}
-}
-void loading()
-{
-	gotoxy(1, 18,COLOR_GREEN);
-	for (int i = 0; i < 20; i++)
-	{
+void loading(int x, int y, int length) {
+	gotoxy(x, y); for (int i = 0; i < length; ++i) putchar(' ');
+	gotoxy(x, y, COLOR_GREEN);
+	for (int i = 1; i <= length; ++i) {
 		putchar(219);
-		Sleep(20);
-	}
-	putchar(219);
-	Sleep(800);
-	for (int i = 20; i < 60; i++)
-	{
-		putchar(219);
-		Sleep(20);
-	}
-	putchar(219);
-	Sleep(1000);
-	for (int i = 60; i < 96; i++)
-	{
-		putchar(219);
-		Sleep(20);
+		if (i == (int)(length * 0.2)) Sleep(800);		// == 20%
+		else if (i == (int)(length * 0.6)) Sleep(1000);	// == 60%
+		else if (i > (int)(length * 0.9)) Sleep(2 * i);	// >  90%
+		else Sleep(20);
 	}
 }

@@ -46,18 +46,14 @@ bool csv_line::operator==(const char* position) {
 	return strcmp(pdata[3], position) == 0;
 }
 
-csv_file::csv_file(const char* FILE, const char* __def, const char* course_id, const char* course_cs) {
-	if (!file::exists(FILE)) {	// load __default.csv of file
-		if (file::exists(__def)) {
-			file::copy(__def, FILE);
-			if (strcmp(__def, def_schedule) == 0 && course_id && course_cs) {
-				file::mksche(course_id, course_cs);
-			}
-		} else {
-			MessageBox(NULL, TEXT("data file is not exist"), TEXT("error database"), MB_OK);
-			exit(0);
-		}
+csv_file::csv_file(const char* FILE, const char* __def) {
+	if (!file::exists(FILE))	// load __default.csv of file
+		if (file::exists(__def)) file::copy(__def, FILE);	
+	if (!file::exists(FILE)) {
+		MessageBox(NULL, TEXT("data file is not exist"), TEXT("error database"), MB_OK);
+		exit(0);
 	}
+
 	std::ifstream inp(FILE);
 	count = std::count(std::istreambuf_iterator<char>(inp), std::istreambuf_iterator<char>(), '\n') - 1;
 	inp.seekg(0, inp.beg);
@@ -70,6 +66,29 @@ csv_file::csv_file(const char* FILE, const char* __def, const char* course_id, c
 	}
 	inp.close();
 }
+
+csv_file::csv_file(const char* FILE, const char* course_id, const char* course_cs) {
+	if (!file::exists(FILE)) file::copy(def_schedule, FILE);	
+	if (!file::exists(FILE)) {
+		MessageBox(NULL, TEXT("data file is not exist"), TEXT("error database"), MB_OK);
+		exit(0);
+	}
+
+	file::mksche(course_id, course_cs);		// Make schedule.csv automatic
+	std::ifstream inp(FILE);
+	count = std::count(std::istreambuf_iterator<char>(inp), std::istreambuf_iterator<char>(), '\n') - 1;
+	inp.seekg(0, inp.beg);
+
+	mark.init(inp);
+	data = new csv_line[count];
+	for (int i = 0; i < count; ++i) {
+		data[i].init(inp);
+		data[i].id = i;
+	}
+	inp.close();
+}
+
+// [EDIT]::file.csv //==========================================================================================================================//
 
 void file::copy(const char* sre, const char* des) {
 	std::ifstream inp(sre, std::ios::binary); std::ofstream out(des, std::ios::binary);
@@ -174,6 +193,8 @@ void file::mksche(const char* course_id, const char* course_cs) {
 	}
 }
 
+// [Data]::find //==============================================================================================================================//
+
 const char* file::find(csv_file& file, int row, const char* mark) {
 	for (int col = 0; col < min(file.mark.count, file.data[row].count); ++col) {
 		if (strcmp(file.mark.pdata[col], mark) == 0) {
@@ -204,4 +225,3 @@ csv_line* file::find(csv_file& file, const char* data1, const char* data2, bool 
 	}
 	return nullptr;
 }
-

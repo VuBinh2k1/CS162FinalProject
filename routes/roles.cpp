@@ -840,7 +840,10 @@ int role::calendar(csv_line& user){
 			if (day.tm_mday == ltm.tm_mday) COLOR_CODE = COLOR_RED_BACKGROUND;
 			if (9 < y && y < 28) {
 				gotoxy(27, y, COLOR_CODE); std::cout << "            |                                      |       |       ";
-				gotoxy(28, y, COLOR_CODE); control::print(day);
+				gotoxy(28, y, COLOR_CODE); 
+				if (day.tm_mday <10) std::cout << '0'; std::cout << day.tm_mday << '/';
+				if (day.tm_mon  < 9) std::cout << '0'; std::cout << day.tm_mon + 1 << '/';
+				std::cout << day.tm_year + 1900;
 			}
 
 			csv_line* course = nullptr;
