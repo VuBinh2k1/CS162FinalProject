@@ -5,7 +5,7 @@ int main(int argc, char* agrv[]) {
     SetConsoleTitle(TEXT("Student management system"));
     csv_line user;
     while (role::login(user)) {
-		loading();
+		//loading();
         if (user == "staff") role::staff(user);
         if (user == "lecturer") role::lecturer(user);
         if (user == "student") role::student(user);

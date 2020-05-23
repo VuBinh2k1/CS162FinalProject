@@ -40,7 +40,6 @@
 #define KEY_EDIT(c) (c == 'E' || c == 'e')
 #define KEY_HELP(c) (c == 'H' || c == 'h')
 #define KEY_EROL(c) (c == 'R' || c == 'r')
-
 #define PAUSE Sleep(2000)
 
 typedef struct mess {
