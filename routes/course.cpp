@@ -156,7 +156,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 	gotoxy(66, 16, 128); std::cout << course_cs;
 
 	csv_file process(PROCESS(course_id, course_cs), def_process);
-	csv_file schedule(SCHEDULE(course_id, course_cs), def_schedule, course_id, course_cs);
+	csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 
 	csv_line* mycou = nullptr;
 	if ((mycou = file::find(process, user.pdata[1], nullptr, OFF)) == nullptr) {
@@ -206,7 +206,7 @@ END:
 // [EDIT]::course //============================================================================================================================//
 
 bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
-	csv_file schedule(SCHEDULE(course_id, course_cs), def_schedule, course_id, course_cs);
+	csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 	for (int i = 0; i < schedule.count; ++i) {
 		if (control::now(day, schedule.data[i].pdata[1]) == 0) return 1;
 	}
@@ -337,7 +337,7 @@ void npcourse::schedule(const char* course_id, const char* course_cs) {
 	int week = 0;
 	while (1) {
 	SCHEDULE:
-		csv_file schedule(SCHEDULE(course_id, course_cs), def_schedule, course_id, course_cs);
+		csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 		csv_line* sche = &schedule.data[week];
 
 		gotoxy(32, 18, 128); std::cout << "                                                         ";

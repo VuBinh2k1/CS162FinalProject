@@ -46,14 +46,6 @@ int control::now(std::tm ltm, char* date) {
 	return 0;
 }
 
-void control::print(std::tm date) {
-	if (date.tm_mday < 10) std::cout << '0';
-	std::cout << date.tm_mday << '/';
-	if (date.tm_mon < 9) std::cout << '0';
-	std::cout << date.tm_mon + 1 << '/';
-	std::cout << date.tm_year + 1900;
-}
-
 std::string control::config(const char* DEFINE) {
 	std::ifstream cfg(".\\.config");
 

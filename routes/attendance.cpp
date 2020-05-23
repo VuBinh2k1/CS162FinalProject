@@ -22,7 +22,7 @@ LAYOUT:
 	int choose = 0, cur = -1;
 	while ((cur = -1)) {
 		csv_file process(PROCESS(course_id, course_cs), def_process);
-		csv_file schedule(SCHEDULE(course_id, course_cs), def_schedule, course_id, course_cs);
+		csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -90,7 +90,7 @@ LAYOUT:
 
 			int cnt = -1;
 			csv_file process(PROCESS(course_id, course_cs), def_process);
-			csv_file schedule(SCHEDULE(course_id, course_cs), def_schedule, course_id, course_cs);
+			csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 			for (int i = 0; i < process.count; ++i) {
 				csv_line* student = &process.data[i];
 				if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -164,7 +164,7 @@ LAYOUT:
 	int choose = 0, cur = -1, overflow = 0, editrow = 0;
 	while ((cur = -1)) {
 		csv_file process(PROCESS(course_id, course_cs), def_process);
-		csv_file schedule(SCHEDULE(course_id, course_cs), def_schedule, course_id, course_cs);
+		csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;

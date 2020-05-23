@@ -85,6 +85,6 @@ char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool st
 char type(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, const char* type = ".csv");
 char date(int x, int y, WORD COLOR_CODE, std::string& str);
 char time(int x, int y, WORD COLOR_CODE, std::string& str);
-void loading();
 
+void loading(int x, int y, int length);
 #endif
