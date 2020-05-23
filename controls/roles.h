@@ -1,9 +1,10 @@
 #ifndef ROLES_H
 #define ROLES_H
 #include "control.h"
-#include "lecturer.h"
-#include "staff.h"
 #include "student.h"
+#include "course.h"
+#include "attendance.h"
+#include "scoreboard.h"
 
 namespace role {
 	// All roles
@@ -15,5 +16,10 @@ namespace role {
 	void staff(csv_line& user);
 	void lecturer(csv_line& user);
 	void student(csv_line& user);
+	// Sub menu
+	int classes_list(csv_line& user);
+	int courses_list(csv_line& user);
+	int calendar(csv_line& user);
+	void settings();
 }
 #endif

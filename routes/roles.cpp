@@ -3,7 +3,7 @@
 bool role::login(csv_line& user) {
 	std::ifstream inp(".\\layout\\login.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("login.layout is not exist"), TEXT("error layout"), MB_OK); 
+		MessageBox(NULL, TEXT("login.layout is not exist"), TEXT("error layout"), MB_OK);
 		return 0;
 	}
 	layout login_layout(inp);
@@ -14,7 +14,7 @@ bool role::login(csv_line& user) {
 
 	colorizing(COLOR_DEFAULT); system("cls");
 	login_layout.print();
-	for(std::string username, password;;) {
+	for (std::string username, password;;) {
 	LOGIN:
 
 		user_pass_layout.print();
@@ -47,7 +47,7 @@ bool role::login(csv_line& user) {
 			if (strcmp(user_list.data[i].pdata[0], "0") == 0) continue;		// Status: 0/1
 			char* _username = user_list.data[i].pdata[1];
 			char* _password = user_list.data[i].pdata[2];
-			if (strcmp(username.c_str(), _username) == 0 && 
+			if (strcmp(username.c_str(), _username) == 0 &&
 				strcmp(password.c_str(), _password) == 0) {
 
 				user = user_list.data[i];
@@ -92,7 +92,7 @@ PROFILE:
 	}
 	else {
 
-		WORD COLOR_CODE;
+		WORD COLOR_CODE = 0;
 		if (position == "staff") COLOR_CODE = COLOR_RED;
 		if (position == "lecturer") COLOR_CODE = COLOR_BLUE;
 		if (position == "student") COLOR_CODE = COLOR_GREEN;
@@ -118,8 +118,8 @@ PROFILE:
 	while (1) {
 		int E = 2;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit profile    ";
-		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Change password ";
-		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "    Main menu     ";
+		gotoxy(2, 10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Change password ";
+		gotoxy(2, 28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "    Main menu     ";
 
 	NO_CHANGE:
 		uint8_t c = getch();
@@ -148,7 +148,7 @@ PROFILE:
 bool role::new_password(csv_line& user) {
 	std::ifstream inp(".\\layout\\password.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("password.layout is not exist"), TEXT("error layout"), MB_OK); 
+		MessageBox(NULL, TEXT("password.layout is not exist"), TEXT("error layout"), MB_OK);
 		return 0;
 	}
 	layout password_layout(inp);
@@ -166,7 +166,7 @@ bool role::new_password(csv_line& user) {
 	while (1) {
 		change_password_layout.print();
 
-		if (read(32,  9, COLOR_DEFAULT, pw_old, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 9, COLOR_DEFAULT, pw_old, 52, HIDE) == KEY_ESC) return 0;
 		if (read(32, 11, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
 		if (read(32, 13, COLOR_DEFAULT, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
 
@@ -188,7 +188,7 @@ bool role::new_password(csv_line& user) {
 				}
 			}
 		}
-		
+
 		if (strcmp(password, pw_old.c_str())) {
 			gotoxy(32, 10, COLOR_RED); std::cout << "Current Password is incorrect.";
 			PAUSE; continue;
@@ -281,7 +281,7 @@ bool role::password(csv_line& user) {
 	// Update "account.csv"
 	file::update(".\\data\\account.csv", user.id, 2, pw_new.c_str());
 	gotoxy(46, 27, COLOR_GREEN); std::cout << " Save changes successfully. ";
-	
+
 	// Update current user
 	csv_file user_list(".\\data\\account.csv");
 	user = user_list.data[user.id];
@@ -301,7 +301,7 @@ void role::staff(csv_line& user) {
 	layout menu_info_layout(inp);
 	inp.close();
 
-	csv_file infofile(".\\data\\staff\\__staff.csv");
+	csv_file infofile(__STAFF);
 	csv_line* infouser = nullptr;
 	for (int i = 0; i < infofile.count; ++i) {
 		if (strcmp(user.pdata[1], infofile.data[i].pdata[1]) == 0) {
@@ -338,42 +338,34 @@ MENU:
 
 	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "      Staff       ";
 	while (1) {
-		int E = 6;	// END MENU
+		int E = 4;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Profile         ";
-		gotoxy(2, 10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit classes    ";
-		gotoxy(2, 11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Edit courses    ";
-		gotoxy(2, 12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Attendance      ";
-		gotoxy(2, 13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Scoreboard      ";
-		gotoxy(2, 14, (choose == 5) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Settings        ";
-		gotoxy(2, 28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
+		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Classes         ";
+		gotoxy(2,11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Courses         ";
+		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Settings        ";
+		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
 	NO_CHANGE:
 		uint8_t c = getch();
-		if (c == KEY_ESC) if (choose != E) choose = E; else goto NO_CHANGE;
+		if (c == KEY_ESC && choose != E) { choose = E; continue; }
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				role::profile(user);
 				goto MENU;
 			}
 			if (choose == 1) {
-				npstaff::menu_class();
+				gotoxy(2, 10, 8); std::cout << "  Classes         ";
+				role::classes_list(user);
 				goto MENU;
 			}
 			if (choose == 2) {
-				npcourse::list(user);
+				gotoxy(2, 11, 8); std::cout << "  Courses         ";
+				role::courses_list(user);
 				goto MENU;
 			}
 			if (choose == 3) {
-				npattendance::staff();
-				goto MENU;
-			}
-			if (choose == 4) {
-				npscoreboard::staff();
-				goto MENU;
-			}
-			if (choose == 5) {
-				gotoxy(2, 14, 8); std::cout << "  Settings        ";
-				npstaff::settings();
+				gotoxy(2, 12, 8); std::cout << "  Settings        ";
+				role::settings();
 				goto MENU;
 			}
 			if (choose == E) return;
@@ -383,11 +375,13 @@ MENU:
 			if (c == KEY_UP && choose > 0) choose--;
 			else if (c == KEY_DOWN && choose < E) choose++;
 			else goto NO_CHANGE;
+			continue;
 		}
+		goto NO_CHANGE;
 	}
 }
 
-void role::lecturer(csv_line& user){
+void role::lecturer(csv_line& user) {
 	std::ifstream inp(".\\layout\\menu.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);
@@ -397,7 +391,7 @@ void role::lecturer(csv_line& user){
 	layout menu_info_layout(inp);
 	inp.close();
 
-	csv_file infofile(".\\data\\lecturer\\__lecturer.csv");
+	csv_file infofile(__LECTURER);
 	csv_line* infouser = nullptr;
 	for (int i = 0; i < infofile.count; ++i) {
 		if (strcmp(user.pdata[1], infofile.data[i].pdata[1]) == 0) {
@@ -431,36 +425,22 @@ MENU:
 
 	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "     Lecturer     ";
 	while (1) {
-		int E = 5;	// END MENU
+		int E = 2;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Profile         ";
-		gotoxy(2, 10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My courses      ";
-		gotoxy(2, 11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My students     ";
-		gotoxy(2, 12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Attendance      ";
-		gotoxy(2, 13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Scoreboard      ";
-		gotoxy(2, 28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
+		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My courses      ";
+		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
 	NO_CHANGE:
 		uint8_t c = getch();
-		if (c == KEY_ESC) if (choose != E) choose = E; else goto NO_CHANGE;
+		if (c == KEY_ESC && choose != E) { choose = E; continue; }
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				role::profile(user);
 				goto MENU;
 			}
 			if (choose == 1) {
-				npcourse::list(user);
-				goto MENU;
-			}
-			if (choose == 2) {
-
-				goto MENU;
-			}
-			if (choose == 3) {
-				npattendance::lecturer(user);
-				goto MENU;
-			}
-			if (choose == 4) {
-				npscoreboard::lecturer(user);
+				gotoxy(2, 10, 8); std::cout << "  My courses      ";
+				role::courses_list(user);
 				goto MENU;
 			}
 			if (choose == E) return;
@@ -470,11 +450,13 @@ MENU:
 			if (c == KEY_UP && choose > 0) choose--;
 			else if (c == KEY_DOWN && choose < E) choose++;
 			else goto NO_CHANGE;
+			continue;
 		}
+		goto NO_CHANGE;
 	}
 }
 
-void role::student(csv_line& user){
+void role::student(csv_line& user) {
 	std::ifstream inp(".\\layout\\menu.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);
@@ -484,7 +466,7 @@ void role::student(csv_line& user){
 	layout menu_info_layout(inp);
 	inp.close();
 
-	csv_file infofile(".\\data\\student\\__student.csv");
+	csv_file infofile(__STUDENT);
 	csv_line* infouser = nullptr;
 	for (int i = 0; i < infofile.count; ++i) {
 		if (strcmp(user.pdata[1], infofile.data[i].pdata[1]) == 0) {
@@ -493,7 +475,7 @@ void role::student(csv_line& user){
 		}
 	}
 
-	int choose = 0;
+	int choose = 0; bool submenu_change = 0;
 
 MENU:
 	colorizing(COLOR_DEFAULT); system("cls");
@@ -527,38 +509,39 @@ MENU:
 	while (1) {
 		int E = 5;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Profile         ";
-		gotoxy(2, 10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My courses      ";
-		gotoxy(2, 11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My calendar     ";
-		gotoxy(2, 12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My attendance   ";
-		gotoxy(2, 13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My scoreboard   ";
-		gotoxy(2, 28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
+		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My courses      ";
+		gotoxy(2,11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My calendar     ";
+		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My attendance   ";
+		gotoxy(2,13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  My scoreboard   ";
+		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
 	NO_CHANGE:
-		uint8_t c = getch();
-		if (c == KEY_ESC) if (choose != E) choose = E; else goto NO_CHANGE;
+		uint8_t c = KEY_ENTER;
+		if (submenu_change) submenu_change = 0; else c = getch();
+		if (c == KEY_ESC && choose != E) { choose = E; continue; }
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				role::profile(user);
 				goto MENU;
 			}
 			if (choose == 1) {
-				npcourse::list(user);
-				//npstudent::checkin(user);
+				gotoxy(2, 10, 8); std::cout << "  My courses      ";
+				if ((choose += role::courses_list(user)) != 1) { submenu_change = 1; continue; }
 				goto MENU;
 			}
 			if (choose == 2) {
 				gotoxy(2, 11, 8); std::cout << "  My calendar     ";
-				npstudent::calendar(user);
+				if ((choose += role::calendar(user)) != 2) { submenu_change = 1; continue; }
 				goto MENU;
 			}
 			if (choose == 3) {
 				gotoxy(2, 12, 8); std::cout << "  My attendance   ";
-				npattendance::student(user);
+				if ((choose += npattendance::student(user)) != 3) { submenu_change = 1; continue; }
 				goto MENU;
 			}
 			if (choose == 4) {
 				gotoxy(2, 13, 8); std::cout << "  My scoreboard   ";
-				npscoreboard::student(user);
+				if ((choose += npscoreboard::student(user)) != 4) { submenu_change = 1; continue; }
 				goto MENU;
 			}
 			if (choose == E) return;
@@ -568,6 +551,422 @@ MENU:
 			if (c == KEY_UP && choose > 0) choose--;
 			else if (c == KEY_DOWN && choose < E) choose++;
 			else goto NO_CHANGE;
+			continue;
+		}
+		goto NO_CHANGE;
+	}
+}
+
+// [Sub menu]::allclass //======================================================================================================================//
+
+int role::classes_list(csv_line& user) {
+	std::ifstream inp(".\\layout\\minibox.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return 0;
+	}
+	layout minibox_layout(inp);
+	inp.close();
+
+	int choose = 0, cur = -1, overflow = 0;
+LAYOUT:
+	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
+	// Title
+	gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "  Class list     "; colorizing(COLOR_YELLOW); std::cout << "  Student list   ";
+	// Detail
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " No.   | Class name   | Infomation                                 ";
+	while ((cur = -1)) {
+		csv_file class_list(__CLASS, def_class);
+		csv_line* cls = nullptr;
+
+		for (int i = 0; i < class_list.count; ++i) {
+			int y = 10 + (++cur) + overflow;
+			if (y < 10 || y > 27) continue;
+			cls = &class_list.data[i];
+			WORD COLOR_CODE = (cur % 2) ? 112 : 240;
+			if (choose == cur) COLOR_CODE = 176;
+
+			gotoxy(27, y, COLOR_CODE); std::cout << "       |              |                                            ";
+			gotoxy(28, y, COLOR_CODE); std::cout << cur;
+			gotoxy(36, y, COLOR_CODE); std::cout << cls->pdata[1];
+			if (cls->count > 2) { gotoxy(51, y, COLOR_CODE); std::cout << cls->pdata[2]; }
+		}
+	NO_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) break;
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
+			gotoxy(78, 9, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 8); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		if (c == KEY_SEARCH) {
+			int old = choose; std::string search;
+			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
+			gotoxy(32, 16, 128); std::cout << "                                                         ";
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
+			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
+				std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+				do {
+					if (choose < cur) { if (++choose < cur - 16) overflow--; }
+					else choose = overflow = 0;
+					if (strstr(class_list.data[choose].pdata[1], search.c_str()) || (class_list.data[choose].count > 2 &&
+						strstr(class_list.data[choose].pdata[2], search.c_str()))) goto SUCCESS_SEARCH;
+				} while (choose != old);
+
+				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
+				do {
+					if (choose < cur) { if (++choose < cur - 16) overflow--; }
+					else choose = overflow = 0;
+					if (strstr(class_list.data[choose].pdata[1], search.c_str()) || (class_list.data[choose].count > 2 &&
+						strstr(class_list.data[choose].pdata[2], search.c_str()))) goto SUCCESS_SEARCH;
+				} while (choose != old);
+			}
+
+		SUCCESS_SEARCH:
+			gotoxy(32, 15); std::cout << "                                                         ";
+			gotoxy(32, 16); std::cout << "                                                         ";
+			gotoxy(32, 17); std::cout << "                                                         ";
+			continue;
+		}
+		cls = &class_list.data[choose];
+		if (c == KEY_ENTER) {
+
+			goto NO_CHANGE;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
+			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
+			else if (c == KEY_RIGHT) {
+				npstudent::list(user, cls->pdata[1]);
+				goto LAYOUT;
+			}
+			else goto NO_CHANGE;
+			continue;
+		}
+		goto NO_CHANGE;
+	}
+	return 0;
+}
+
+int role::courses_list(csv_line& user) {
+	std::ifstream inp(".\\layout\\minibox.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return 0;
+	}
+	layout minibox_layout(inp);
+	inp.close();
+
+	int choose = 0, cur = -1, overflow = 0; bool* permit = nullptr;
+LAYOUT:
+	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
+	// Title
+	gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "  Course list    ";
+	if (user == "student") { colorizing(COLOR_YELLOW); std::cout << "  Calendar       " << "  Attendance     " << "  Scoreboard    "; }
+	else { colorizing(COLOR_YELLOW); std::cout << "  Student list   " << "  Attendance     " << "  Scoreboard    "; }
+	// Detail
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " No.   | Course ID    | Class     | Lecturer ID  | Room   | Status ";
+	while ((cur = -1)) {
+		csv_file course_list(__COURSE, def_course);
+		csv_line* course = nullptr;
+
+		if (permit) delete[] permit;
+		permit = new bool[course_list.count];
+
+		for (int i = 0; i < course_list.count; ++i) {
+			int y = 10 + (++cur) + overflow;
+			if (y < 10 || y > 27) continue;
+			course = &course_list.data[i]; permit[i] = 0;
+			WORD COLOR_CODE = (cur % 2) ? 112 : 240;
+			if (choose == cur) COLOR_CODE = 176;
+
+			gotoxy(27, y, COLOR_CODE); std::cout << "       |              |           |              |        |        ";
+			gotoxy(28, y, COLOR_CODE); std::cout << cur;
+			gotoxy(36, y, COLOR_CODE); std::cout << course->pdata[1];
+			gotoxy(51, y, COLOR_CODE); std::cout << course->pdata[3];
+			gotoxy(63, y, COLOR_CODE); std::cout << course->pdata[4];
+			gotoxy(78, y, COLOR_CODE); std::cout << course->pdata[10];
+
+			// Status
+			if (user == "staff" || (user == "lecturer" && strcmp(user.pdata[1], course->pdata[4]) == 0)) {
+				if (course->pdata[0][0] == '0') {
+					gotoxy(87, y, COLOR_CODE + COLOR_RED); std::cout << "private";
+				}
+				else {
+					gotoxy(87, y, COLOR_CODE + 2); std::cout << "public";
+				}
+				permit[i] = 1;
+			}
+			if (user == "student") {
+				csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
+
+				for (int j = 0; j < my_course.count; ++j) {
+					
+					if (strcmp(my_course.data[j].pdata[0], ACADEMICYEAR.c_str())) continue;
+					if (strcmp(my_course.data[j].pdata[1], SEMESTER.c_str())) continue;
+					if (strcmp(my_course.data[j].pdata[2], course->pdata[1]) == 0)
+						if (strcmp(my_course.data[j].pdata[3], course->pdata[3]) == 0) {
+							gotoxy(87, y, COLOR_CODE + 2); std::cout << "enrol";
+							permit[i] = 1; break;
+						}
+				}
+			}
+		}
+	NO_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) break;
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
+			gotoxy(78, 9, 128); std::cout << " Enrol      R, r    ";
+			gotoxy(78,10, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 9); std::cout << "                    ";
+			gotoxy(78,10); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		if (c == KEY_SEARCH) {
+			int old = choose; std::string search;
+			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
+			gotoxy(32, 16, 128); std::cout << "                                                         ";
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
+			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
+				std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+				do {
+					if (choose < cur) { if (++choose < cur - 16) overflow--; }
+					else choose = overflow = 0;
+					if (strstr(course_list.data[choose].pdata[1], search.c_str()) ||
+						strstr(course_list.data[choose].pdata[3], search.c_str()) ||
+						strstr(course_list.data[choose].pdata[4], search.c_str()) ||
+						strstr(course_list.data[choose].pdata[10], search.c_str())) goto SUCCESS_SEARCH;
+					if (search.empty() && permit[choose]) goto SUCCESS_SEARCH;
+				} while (choose != old);
+
+				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
+				do {
+					if (choose < cur) { if (++choose < cur - 16) overflow--; }
+					else choose = overflow = 0;
+					if (strstr(course_list.data[choose].pdata[1], search.c_str()) ||
+						strstr(course_list.data[choose].pdata[3], search.c_str()) ||
+						strstr(course_list.data[choose].pdata[4], search.c_str()) ||
+						strstr(course_list.data[choose].pdata[10], search.c_str())) goto SUCCESS_SEARCH;
+				} while (choose != old);
+			}
+
+		SUCCESS_SEARCH:
+			gotoxy(32, 15); std::cout << "                                                         ";
+			gotoxy(32, 16); std::cout << "                                                         ";
+			gotoxy(32, 17); std::cout << "                                                         ";
+			continue;
+		}
+		course = &course_list.data[choose];
+		if (c == KEY_ENTER) {
+			if (user == "staff" || (user == "lecturer" && strcmp(user.pdata[1], course->pdata[4]) == 0)) {
+				npcourse::info(user, course->pdata[1], course->pdata[3]);
+				goto LAYOUT;
+			}
+			if (user == "student") {
+				npcourse::chkin(user, course->pdata[1], course->pdata[3]);
+				continue;
+			}
+			goto NO_CHANGE;
+		}
+		if (KEY_EROL(c)) {
+			npcourse::enrol(user, course->pdata[1], course->pdata[3]);
+			continue;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
+			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
+			else if (c == KEY_RIGHT) {
+				if (user == "staff" || (user == "lecturer" && strcmp(user.pdata[1], course->pdata[4]) == 0)) {
+					npstudent::list(user, course->pdata[1], course->pdata[3]);
+					goto LAYOUT;
+				}
+				if (user == "student") {
+					delete[] permit;
+					return 1;
+				}
+				goto NO_CHANGE;
+			}
+			else goto NO_CHANGE;
+			continue;
+		}
+		goto NO_CHANGE;
+	}
+	delete[] permit;
+	return 0;
+}
+
+int role::calendar(csv_line& user){
+	std::ifstream inp(".\\layout\\minibox.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return 0;
+	}
+	layout minibox_layout(inp);
+	inp.close();
+
+	std::time_t now = time(0);
+	std::tm ltm = *localtime(&now); ltm.tm_hour = 0; std::mktime(&ltm);
+
+	minibox_layout.print();
+	// Title
+	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    ";
+	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Calendar       ";
+	colorizing(COLOR_YELLOW); std::cout << "  Attendance     " << "  Scoreboard    ";
+	// Detail
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << "    Date    | Course                               | Start |  End  ";
+
+	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
+	csv_file course_list(__COURSE, def_course);
+
+	int choose = 0, maxChoose = 13; bool has_change = 0;
+	while (1) {
+		int cur = 0;
+		std::tm day = ltm; day.tm_mday -= 7;
+		for (int i = 0; cur < choose + 18 && i < 31; ++i) {
+			int y = 10 + cur - choose;
+			day.tm_mday++; std::mktime(&day);
+
+			WORD COLOR_CODE = (day.tm_mday % 2) ? 112 : 240;
+			if (day.tm_mday == ltm.tm_mday) COLOR_CODE = COLOR_RED_BACKGROUND;
+			if (9 < y && y < 28) {
+				gotoxy(27, y, COLOR_CODE); std::cout << "            |                                      |       |       ";
+				gotoxy(28, y, COLOR_CODE); control::print(day);
+			}
+
+			csv_line* course = nullptr;
+			bool empty = 1;
+			for (int j = 0; j < my_course.count; ++j) {
+				course = &my_course.data[j];
+				if (strcmp(course->pdata[0], ACADEMICYEAR.c_str())) continue;
+				if (strcmp(course->pdata[1], SEMESTER.c_str())) continue;
+				if (npcourse::now(course->pdata[2], course->pdata[3], day) == 0) continue;
+
+				y = 10 + cur - choose;
+				if (y < 10) { cur++; empty = 0; continue; }
+				if (y > 27) {
+					if (!has_change && choose == 13) maxChoose++;
+					continue;
+				}
+
+				if (!empty) { gotoxy(27, y, COLOR_CODE); std::cout << "            |                                      |       |       "; }
+				gotoxy(41, y, COLOR_CODE); std::cout << course->pdata[2] << ": ";
+
+				for (int k = 0; k < course_list.count; ++k) {
+					if (strcmp(course->pdata[2], course_list.data[k].pdata[1])) continue;
+					std::cout << course_list.data[k].pdata[2];
+					gotoxy(80, y, COLOR_CODE); std::cout << course_list.data[k].pdata[8];
+					gotoxy(88, y, COLOR_CODE); std::cout << course_list.data[k].pdata[9];
+					break;
+				}
+				cur++;  empty = 0;
+			}
+			if (empty) cur++;
+			if (maxChoose != 13) has_change = 1;
+		}
+	NO_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) break;
+		if (c == KEY_ENTER) goto NO_CHANGE;
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) choose--;
+			else if (c == KEY_DOWN && choose < maxChoose) choose++;
+			else if (c == KEY_LEFT) return -1;
+			else if (c == KEY_RIGHT) return 1;
+			else goto NO_CHANGE;
+		}
+	}
+	return 0;
+}
+
+void role::settings() {
+	std::ifstream inp(".\\layout\\minibox.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return;
+	}
+	layout minibox_layout(inp);
+	inp.close();
+
+	int chsEN = ENGLISHNAME;
+	std::string chsAY = ACADEMICYEAR;
+	int chsAS = atoi(SEMESTER.c_str());
+
+	minibox_layout.print();
+	gotoxy(53, 9, COLOR_YELLOW);  std::cout << "Program setting";
+	gotoxy(33, 12); std::cout << "English name format        : ";
+	gotoxy(33, 15); std::cout << "Current Academic year      : "; gotoxy(72, 15); std::cout << chsAY;
+	gotoxy(33, 18); std::cout << "Current Academic semester  : "; gotoxy(72, 18); std::cout << chsAS;
+	gotoxy(46, 27); std::cout << "[Save change] [  Cancel   ]";
+	if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << "[Spring]"; }
+	if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << "[Summer]"; }
+	if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << "[Autumn]"; }
+	if (chsAS == 4) { gotoxy(72, 18, 176); std::cout << "[Winter]"; }
+
+	while (1) {
+		if (chsEN) { gotoxy(72, 12, COLOR_GREEN_BACKGROUND); std::cout << "[ON]"; colorizing(COLOR_DEFAULT); std::cout << ' '; }
+		else { gotoxy(72, 12, COLOR_RED_BACKGROUND); std::cout << "[OFF]"; }
+
+		uint8_t c = getch();
+		if (c == KEY_ESC) return;
+		if (c == KEY_ENTER) break;
+		if (c == 224 || c == 0) {
+			if ((c = getch()) == KEY_LEFT || c == KEY_RIGHT) {
+				chsEN = 1 - chsEN;
+			}
+		}
+	}
+	read(72, 15, COLOR_DEFAULT, chsAY, 4, SHOW, ACADEMICYEAR.c_str());
+	while (1) {
+		if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << "[Spring]"; }
+		if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << "[Summer]"; }
+		if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << "[Autumn]"; }
+		if (chsAS == 4) { gotoxy(72, 18, 176); std::cout << "[Winter]"; }
+
+		uint8_t c = getch();
+		if (c == KEY_ESC) return;
+		if (c == KEY_ENTER) break;
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && chsAS > 1) chsAS--;
+			if (c == KEY_DOWN && chsAS < 4) chsAS++;
+		}
+	}
+
+	for (int choose = 0;;) {
+		gotoxy(46, 27, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[Save change]";
+		gotoxy(60, 27, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "[  Cancel   ]";
+
+		uint8_t c = getch();
+		if (c == KEY_ESC) return;
+		if (c == KEY_ENTER) {
+			if (choose == 0) {
+				if (chsAY.empty()) chsAY = ACADEMICYEAR;
+
+				std::ofstream cfg(".config");
+				cfg << "ENGLISHNAME " << chsEN << "\n";
+				cfg << "ACADEMICYEAR " << chsAY << "\n";
+				cfg << "SEMESTER " << chsAS << "\n";
+				gotoxy(46, 27, COLOR_GREEN); std::cout << " Save changes successfully.";
+				cfg.close();
+				PAUSE; return;
+			}
+			if (choose == 1) return;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_LEFT && choose == 1) choose--;
+			else if (c == KEY_RIGHT && choose == 0) choose++;
 		}
 	}
 }

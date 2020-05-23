@@ -1,202 +1,195 @@
 #include "..\\controls\\scoreboard.h"
 
-void npscoreboard::staff() {
-	std::ifstream inp(".\\layout\\course.layout");
+int npscoreboard::staff(const char* course_id, const char* course_cs) {
+	std::ifstream inp(".\\layout\\minibox.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("course.layout is not exist"), TEXT("error layout"), MB_OK);
-		return;
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return 0;
 	}
-	layout course_layout(inp);
 	layout minibox_layout(inp);
 	inp.close();
 
-	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
-	csv_line* course = nullptr;
-	int chscrs = 0;
+LAYOUT:
+	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
+	// Title
+	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    " << "  Student list   " << "  Attendance     ";
+	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Scoreboard    ";
+	// Detail
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " Course   | Class    | Student ID | Mid | Lab |Bonus|Final| Status ";
 
-	course_layout.print();
-	academicmark();
+	int choose = 0, cur = -1;
+	while ((cur = -1)) {
+		csv_file process(PROCESS(course_id, course_cs), def_process);
+		for (int i = 0; i < process.count; ++i) {
+			csv_line* student = &process.data[i];
+			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
 
-	while ((course = npcourse::choose(course_list, chscrs, 1)) != nullptr) {
-		minibox_layout.print();
-		gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " No.   | Student ID   | Class     | Mid | Lab |Bonus|Final| Status ";
-		gotoxy(33, 28); std::cout << "[E]: Export to file";
-
-		csv_line* mycou = nullptr;
-		int choose = 0, cur = -1;
-
-	MENU_CHOOSEN:
-		mycou = course; cur = -1;
-		while (mycou != nullptr) {
-			char* courseid = mycou->pdata[1];
-			char* coursecs = mycou->pdata[3];
-			if (npcourse::info(courseid, coursecs, 33, 8, 1)) {
-				std::string propath = COURSE_PATH("process\\") + courseid + "_" + coursecs + ".csv";
-				csv_file process(propath.c_str(), def_process);
-				for (int i = 0; i < process.count; ++i) {
-					int y = 10 + (++cur) - choose;
-					if (y < 10 || y > 27) continue;
-					csv_line* student = &process.data[i];
-					WORD COLOR_CODE = (cur % 2 ? 112 : 240);
-					gotoxy(27, y, COLOR_CODE); std::cout << "       |              |           |     |     |     |     |        ";
-					gotoxy(28, y, COLOR_CODE); std::cout << cur;
-					gotoxy(36, y, COLOR_CODE); std::cout << student->pdata[1];
-					gotoxy(51, y, COLOR_CODE); std::cout << coursecs;
-					gotoxy(63, y, COLOR_CODE); std::cout << student->pdata[2];
-					gotoxy(69, y, COLOR_CODE); std::cout << student->pdata[3];
-					gotoxy(75, y, COLOR_CODE); std::cout << student->pdata[4];
-					gotoxy(81, y, COLOR_CODE); std::cout << student->pdata[5];
-					if (student->pdata[0][0] == '0') { gotoxy(86, y, COLOR_CODE + COLOR_RED); std::cout << "Private"; }
-					else { gotoxy(86, y, COLOR_CODE + COLOR_GREEN); std::cout << " Public"; }
-				}
-			}
-			mycou = npcourse::find(mycou + 1, course_list.data + course_list.count, courseid, 1);
+			int y = 10 + (++cur) - choose;
+			if (y < 10 || y > 27) continue;
+			
+			WORD COLOR_CODE = (cur % 2 ? 112 : 240);
+			gotoxy(27, y, COLOR_CODE); std::cout << "          |          |            |     |     |     |     |        ";
+			gotoxy(28, y, COLOR_CODE); std::cout << course_id;
+			gotoxy(39, y, COLOR_CODE); std::cout << course_cs;
+			gotoxy(50, y, COLOR_CODE); std::cout << student->pdata[1];
+			gotoxy(63, y, COLOR_CODE); std::cout << student->pdata[2];
+			gotoxy(69, y, COLOR_CODE); std::cout << student->pdata[3];
+			gotoxy(75, y, COLOR_CODE); std::cout << student->pdata[4];
+			gotoxy(81, y, COLOR_CODE); std::cout << student->pdata[5];
+			if (student->pdata[0][0] == '0') { gotoxy(86, y, COLOR_CODE + COLOR_RED); std::cout << "Private"; }
+			else { gotoxy(86, y, COLOR_CODE + COLOR_GREEN); std::cout << " Public"; }
 		}
+	
 	UN_CHANGE:
 		uint8_t c = getch();
-		if (c == KEY_ESC) continue;
-		if (c == 'E' || c == 'e') {
-		SAVE_AS:
+		if (c == KEY_ESC) return 0;
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Save as    Ctrl+S  ";
+			gotoxy(78, 9, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 9); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		if (c == KEY_SAVE) {
 			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Save as                                                 ";
-			gotoxy(32, 16, 128); std::cout << " Path:                                                   ";
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
+
+		SAVE_AS:
+			gotoxy(32, 16, 128); std::cout << " Path:                                                   ";
 			std::string path;
 			if (read(39, 16, 128, path, 48, SHOW) == KEY_ESC) {
 				// Clear export file box
 				gotoxy(32, 15); std::cout << "                                                         ";
 				gotoxy(32, 16); std::cout << "                                                         ";
 				gotoxy(32, 17); std::cout << "                                                         ";
-				goto MENU_CHOOSEN;
+				continue;
 			}
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
 			if (path.empty()) goto SAVE_AS;
-			if (path.back() != '\\') path += '\\'; path += ACADEMICYEAR + '-' + SEMESTER + '-' + course->pdata[1] + ".csv";
+			if (path.back() != '\\') path += '\\'; path += ACADEMICYEAR + '-' + SEMESTER + '-' + course_id + '_' + course_cs + ".csv";
 
 			std::ofstream out(path);
 			if (!out.is_open()) {
 				gotoxy(33, 17, 132); std::cout << "Can't open file!";
-				PAUSE; goto SAVE_AS;
+				goto SAVE_AS;
 			}
 
-			out << "No,Student ID,Class,Midterm,Lab,Bonus,Final,GPA,GRADE\n";
-			mycou = course; int cnt = -1;
-			while (mycou != nullptr) {
-				char* courseid = mycou->pdata[1];
-				char* coursecs = mycou->pdata[3];
-				if (npcourse::info(courseid, coursecs, 33, 8, 0)) {
-					std::string propath = COURSE_PATH("process\\") + courseid + "_" + coursecs + ".csv";
-					csv_file process(propath.c_str(), def_process);
-					for (int i = 0; i < process.count; ++i) {
-						csv_line* student = &process.data[i];
-						out << ++cnt << ',' << student->pdata[1] << ',' << coursecs << ',';
-						out << student->pdata[2] << ',' << student->pdata[3] << ',' << student->pdata[4] << ',' << student->pdata[5] << ',';
-						std::string fscore = student->pdata[5];
-						out << US_GPA(std::stoi(fscore)) << ',' << US_Grade(std::stoi(fscore)) << '\n';
-					}
-				}
-				mycou = npcourse::find(mycou + 1, course_list.data + course_list.count, courseid, 1);
+			out << "No,Student ID,Midterm,Lab,Bonus,Final,GPA,GRADE\n";
+
+			int cnt = -1;
+			csv_file process(PROCESS(course_id, course_cs), def_process);
+			for (int i = 0; i < process.count; ++i) {
+				csv_line* student = &process.data[i];
+				if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
+
+				out << ++cnt << ',' << student->pdata[1] << ',';
+				out << student->pdata[2] << ',' << student->pdata[3] << ',' << student->pdata[4] << ',' << student->pdata[5] << ',';
+				out << US_GPA(student->pdata[5]) << ',' << US_Grade(student->pdata[5]) << '\n';
 			}
+
 			out.close();
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
 			gotoxy(33, 17, 129); std::cout << "Export to ";
-			colorizing(134); std::cout << ACADEMICYEAR << '-' << SEMESTER << '-' << course->pdata[1] << ".csv";
+			colorizing(134); std::cout << ACADEMICYEAR << '-' << SEMESTER << '-' << course_id << '_' << course_cs << ".csv";
 			colorizing(129); std::cout << " success.";
 			PAUSE;
 			// Clear export file box
 			gotoxy(32, 15); std::cout << "                                                         ";
 			gotoxy(32, 16); std::cout << "                                                         ";
 			gotoxy(32, 17); std::cout << "                                                         ";
+			continue;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) choose--;
 			else if (c == KEY_DOWN && choose < cur - 17) choose++;
-			else if (c == KEY_LEFT) continue;
+			else if (c == KEY_LEFT) return 1;
 			else goto UN_CHANGE;
+			continue;
 		}
-		goto MENU_CHOOSEN;
+		goto UN_CHANGE;
 	}
+	return 0;
 }
 
-void npscoreboard::lecturer(csv_line& user) {
-	std::ifstream inp(".\\layout\\course.layout");
+int npscoreboard::lecturer(const char* course_id, const char* course_cs) {
+	std::ifstream inp(".\\layout\\minibox.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("course.layout is not exist"), TEXT("error layout"), MB_OK);
-		return;
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return 0;
 	}
-	layout course_layout(inp);
 	layout minibox_layout(inp);
 	inp.close();
 
-	csv_file my_course(((std::string)".\\data\\lecturer\\" + user.pdata[1] + ".csv").c_str(), def_user);
-	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
-	csv_line* course = nullptr;
-	int chscrs = 0;
+LAYOUT:
+	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
+	// Title
+	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    " << "  Student list   " << "  Attendance     ";
+	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Scoreboard    ";
+	// Detail
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " Course   | Class    | Student ID | Mid | Lab |Bonus|Final| Status ";
 
-	course_layout.print();
-	academicmark();
 
-	while ((course = npcourse::choose(my_course, chscrs)) != nullptr) {
-		minibox_layout.print();
-		gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << " No.   | Student ID   | Class     | Mid | Lab |Bonus|Final| Status ";
-		gotoxy(33, 28); std::cout << "[I]: Import file       [E]: Edit score";
+	int choose = 0, cur = -1, overflow = 0, editrow = 0;
+	while ((cur = -1)) {
+		csv_file process(PROCESS(course_id, course_cs), def_process);
+		for (int i = 0; i < process.count; ++i) {
+			csv_line* student = &process.data[i];
+			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
 
-		csv_line* mycou = nullptr;
-		int choose = 0, cur = -1, overflow = 0;
-		std::string editpath; int editrow = -1;
+			int y = 10 + (++cur) + overflow;
+			if (y < 10 || y > 27) continue;
+			
+			WORD COLOR_CODE = (cur % 2 ? 112 : 240);
+			if (choose == cur) COLOR_CODE = 176, editrow = i;
 
-	MENU_CHOOSEN:
-		mycou = course; cur = -1;
-		while (mycou != nullptr) {
-			char* courseid = mycou->pdata[2];
-			char* coursecs = mycou->pdata[3];
-			if (npcourse::info(courseid, coursecs, 33, 8, 1)) {
-				std::string propath = COURSE_PATH("process\\") + courseid + "_" + coursecs + ".csv";
-				csv_file process(propath.c_str(), def_process);
-				for (int i = 0; i < process.count; ++i) {
-					int y = 10 + (++cur) + overflow;
-					if (y < 10 || y > 27) continue;
-					csv_line* student = &process.data[i];
-					WORD COLOR_CODE = (cur % 2 ? 112 : 240);
-					if (choose == cur) COLOR_CODE = 176, editpath = propath, editrow = i;
-
-					gotoxy(27, y, COLOR_CODE); std::cout << "       |              |           |     |     |     |     |        ";
-					gotoxy(28, y, COLOR_CODE); std::cout << cur;
-					gotoxy(36, y, COLOR_CODE); std::cout << student->pdata[1];
-					gotoxy(51, y, COLOR_CODE); std::cout << coursecs;
-					gotoxy(63, y, COLOR_CODE); std::cout << student->pdata[2];
-					gotoxy(69, y, COLOR_CODE); std::cout << student->pdata[3];
-					gotoxy(75, y, COLOR_CODE); std::cout << student->pdata[4];
-					gotoxy(81, y, COLOR_CODE); std::cout << student->pdata[5];
-					if (student->pdata[0][0] == '0') { gotoxy(86, y, COLOR_CODE + COLOR_RED); std::cout << "Private"; }
-					else { gotoxy(86, y, COLOR_CODE + COLOR_GREEN); std::cout << " Public"; }
-				}
-			}
-			mycou = npcourse::find(mycou + 1, my_course.data + my_course.count, courseid);
+			gotoxy(27, y, COLOR_CODE); std::cout << "          |          |            |     |     |     |     |        ";
+			gotoxy(28, y, COLOR_CODE); std::cout << course_id;
+			gotoxy(39, y, COLOR_CODE); std::cout << course_cs;
+			gotoxy(50, y, COLOR_CODE); std::cout << student->pdata[1];
+			gotoxy(63, y, COLOR_CODE); std::cout << student->pdata[2];
+			gotoxy(69, y, COLOR_CODE); std::cout << student->pdata[3];
+			gotoxy(75, y, COLOR_CODE); std::cout << student->pdata[4];
+			gotoxy(81, y, COLOR_CODE); std::cout << student->pdata[5];
+			if (student->pdata[0][0] == '0') { gotoxy(86, y, COLOR_CODE + COLOR_RED); std::cout << "Private"; }
+			else { gotoxy(86, y, COLOR_CODE + COLOR_GREEN); std::cout << " Public"; }
 		}
-
 	UN_CHANGE:
 		uint8_t c = getch();
-		if (c == KEY_ESC) continue;
-		if (c == 'E' || c == 'e') {
-			csv_file process(editpath.c_str());
+		if (c == KEY_ESC) return 0;
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Open       Ctrl+O  ";
+			gotoxy(78, 9, 128); std::cout << " Edit       E, e    ";
+			gotoxy(78,10, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 9); std::cout << "                    ";
+			gotoxy(78,10); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		if (KEY_EDIT(c)) {
+			csv_file process(PROCESS(course_id, course_cs));
 			csv_line* student = &process.data[editrow];
-			std::string mid, lab, bonus, final; bool status = student->pdata[0][0] == '1';
+			std::string mid, lab, bonus, final; int status = student->pdata[0][0] == '1';
 			int y = 10 + choose + overflow;
 			WORD COLOR_CODE = 176;
 			gotoxy(63, y, COLOR_CODE + 8); std::cout << student->pdata[2];
 			gotoxy(69, y, COLOR_CODE + 8); std::cout << student->pdata[3];
 			gotoxy(75, y, COLOR_CODE + 8); std::cout << student->pdata[4];
 			gotoxy(81, y, COLOR_CODE + 8); std::cout << student->pdata[5];
-			if (read(63, y, COLOR_CODE, mid, 4, SHOW, student->pdata[2]) == KEY_ESC) goto MENU_CHOOSEN;
-			if (read(69, y, COLOR_CODE, lab, 4, SHOW, student->pdata[3]) == KEY_ESC) goto MENU_CHOOSEN;
-			if (read(75, y, COLOR_CODE, bonus, 4, SHOW, student->pdata[4]) == KEY_ESC) goto MENU_CHOOSEN;
-			if (read(81, y, COLOR_CODE, final, 4, SHOW, student->pdata[5]) == KEY_ESC) goto MENU_CHOOSEN;
+			if (read(63, y, COLOR_CODE, mid, 4, SHOW, student->pdata[2]) == KEY_ESC) continue;
+			if (read(69, y, COLOR_CODE, lab, 4, SHOW, student->pdata[3]) == KEY_ESC) continue;
+			if (read(75, y, COLOR_CODE, bonus, 4, SHOW, student->pdata[4]) == KEY_ESC) continue;
+			if (read(81, y, COLOR_CODE, final, 4, SHOW, student->pdata[5]) == KEY_ESC) continue;
 			while (1) {
 				if (status) { gotoxy(86, y, COLOR_GREEN_BACKGROUND); std::cout << " Public "; }
 				else { gotoxy(86, y, COLOR_RED_BACKGROUND); std::cout << "Private "; }
 
 				uint8_t c = getch();
-				if (c == KEY_ESC) goto MENU_CHOOSEN;
+				if (c == KEY_ESC) { status = -1; break; }
 				if (c == KEY_ENTER) break;
 				if (c == 224 || c == 0) {
 					c = getch();
@@ -206,57 +199,50 @@ void npscoreboard::lecturer(csv_line& user) {
 				}
 			}
 
+			if (status == -1) continue;
 			// Update scoreboard
-			if (mid.size()) file::update(editpath.c_str(), student->id, 2, mid.c_str());
-			if (lab.size()) file::update(editpath.c_str(), student->id, 3, lab.c_str());
-			if (bonus.size()) file::update(editpath.c_str(), student->id, 4, bonus.c_str());
-			if (final.size()) file::update(editpath.c_str(), student->id, 5, final.c_str());
-			file::update(editpath.c_str(), student->id, 0, (status) ? "1" : "0");
+			
+			if (mid.size()) file::update(PROCESS(course_id, course_cs), student->id, 2, mid.c_str());
+			if (lab.size()) file::update(PROCESS(course_id, course_cs), student->id, 3, lab.c_str());
+			if (bonus.size()) file::update(PROCESS(course_id, course_cs), student->id, 4, bonus.c_str());
+			if (final.size()) file::update(PROCESS(course_id, course_cs), student->id, 5, final.c_str());
+			file::update(PROCESS(course_id, course_cs), student->id, 0, (status) ? "1" : "0");
+			continue;
 		}
-		if (c == 'I' || c == 'i') {
-		OPEN:
+		if (c == KEY_OPEN) {
 			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Open                                                    ";
-			gotoxy(32, 16, 128); std::cout << " File:                                                   ";
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			std::string path = get(39, 16, 128, 48);
-			if (path.empty()) {
+
+		OPEN:
+			gotoxy(32, 16, 128); std::cout << " File:                                                   ";
+			
+			std::string path;
+			if (type(39, 16, 128, path, 48) == KEY_ESC) {
 				// Clear import file box
 				gotoxy(32, 15); std::cout << "                                                         ";
 				gotoxy(32, 16); std::cout << "                                                         ";
 				gotoxy(32, 17); std::cout << "                                                         ";
-				goto MENU_CHOOSEN;
+				continue;
 			}
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
 			if (!file::exists(path.c_str())) {
 				gotoxy(33, 17, 132); std::cout << "Can't open file!";
-				PAUSE; goto OPEN;
+				goto OPEN;
 			}
 
 			// Check title:
-			std::string defClass = "";
 			csv_file imfile(path.c_str());
-			if (file::find(imfile, 0, "Student ID") == nullptr) { gotoxy(33, 17, 132); std::cout << "Can't find \"Student ID\""; PAUSE; goto OPEN; }
-			if (file::find(imfile, 0, "Class") == nullptr) {
-				gotoxy(32, 17, 128); std::cout << " Course ID :               Class:                        ";
-				gotoxy(45, 16, 128); std::cout << course->pdata[2];
-				if (read(66, 16, 128, defClass, 10, SHOW) == KEY_ESC) goto MENU_CHOOSEN;
-				std::transform(defClass.begin(), defClass.end(), defClass.begin(), ::toupper);
-			}
+			if (file::find(imfile, 0, "Student ID") == nullptr) { gotoxy(33, 17, 132); std::cout << "Can't find \"Student ID\""; goto OPEN; }
+			csv_file process(PROCESS(course_id, course_cs), def_process);
 
 			for (int i = 0; i < imfile.count; ++i) {
-				const char* coursecs = file::find(imfile, i, "Class"); if (coursecs == nullptr) coursecs = defClass.c_str();
-				if (strlen(coursecs) == 0) {
-					gotoxy(32, 17, 128); std::cout << "                                                         ";
-					gotoxy(33, 17, 132); std::cout << "Row " << i + 1 << ": \"Class\" can't be null";
-					Sleep(500); continue;
-				}
-				std::string propath = COURSE_PATH("process\\") + course->pdata[2] + "_" + coursecs + ".csv";
-
-				csv_file process(propath.c_str(), def_process);
-				csv_line* student = file::exists(process, imfile.data[i].pdata[1], 0);
+				const char* studentID = file::find(imfile, i, "Student ID");
+				if (file::find(__STUDENT, studentID, nullptr, ON) == -1) continue;
+				csv_line* student = file::find(process, studentID, nullptr, OFF);
 
 				// Add new student
 				std::ofstream app;
-				if (student == nullptr) { app.open(propath, std::ios::app); app << "0," << imfile.data[i].pdata[1] << ','; }
+				if (student == nullptr) { app.open(PROCESS(course_id, course_cs), std::ios::app); app << "0," << studentID << ','; }
 
 				const char* score = nullptr;
 				// Midterm score
@@ -265,25 +251,25 @@ void npscoreboard::lecturer(csv_line& user) {
 				if (score == nullptr) score = file::find(imfile, i, "Mid-term");
 				if (score != nullptr) {
 					if (student == nullptr) app << score << ',';
-					else file::update(propath.c_str(), student->id, 2, score);
+					else file::update(PROCESS(course_id, course_cs), student->id, 2, score);
 				}
 				else if (student == nullptr) app << ',';
 				// Lab score
 				if ((score = file::find(imfile, i, "Lab")) != nullptr) {
 					if (student == nullptr) app << score << ',';
-					else file::update(propath.c_str(), student->id, 3, score);
+					else file::update(PROCESS(course_id, course_cs), student->id, 3, score);
 				}
 				else if (student == nullptr) app << ',';
 				// Bonus score
 				if ((score = file::find(imfile, i, "Bonus")) != nullptr) {
 					if (student == nullptr) app << score << ',';
-					else file::update(propath.c_str(), student->id, 4, score);
+					else file::update(PROCESS(course_id, course_cs), student->id, 4, score);
 				}
 				else if (student == nullptr) app << ',';
 				// Final score
 				if ((score = file::find(imfile, i, "Final")) != nullptr) {
 					if (student == nullptr) app << score << ',';
-					else file::update(propath.c_str(), student->id, 5, score);
+					else file::update(PROCESS(course_id, course_cs), student->id, 5, score);
 				}
 				else if (student == nullptr) app << ',';
 
@@ -291,38 +277,46 @@ void npscoreboard::lecturer(csv_line& user) {
 				if (student == nullptr) { for (int i = 6; i < process.mark.count - 1; ++i) app << "0,"; app << "0\n"; }
 
 				gotoxy(32, 17, 128); std::cout << "                                                         ";
-				gotoxy(33, 17, 129); std::cout << "Success add "; colorizing(134); std::cout << imfile.data[i].pdata[1];
+				gotoxy(33, 17, 129); std::cout << "Success add "; colorizing(134); std::cout << studentID;
 				Sleep(500);
 			}
+	
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			gotoxy(33, 17, 129); std::cout << "Import file success."; PAUSE;
+			gotoxy(33, 17, 129); std::cout << "Import file success."; 
+			PAUSE;
 			// Clear import file box
 			gotoxy(32, 15); std::cout << "                                                         ";
 			gotoxy(32, 16); std::cout << "                                                         ";
 			gotoxy(32, 17); std::cout << "                                                         ";
+			continue;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
-			else if (c == KEY_LEFT) continue;
+			else if (c == KEY_LEFT) return 1;
 			else goto UN_CHANGE;
+			continue;
 		}
-		goto MENU_CHOOSEN;
+		goto UN_CHANGE;
 	}
+	return 0;
 }
 
-void npscoreboard::student(csv_line& user) {
+int npscoreboard::student(csv_line& user) {
 	std::ifstream inp(".\\layout\\minibox.layout");
 	if (!inp.is_open()) {
 		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
-		return;
+		return 0;
 	}
 	layout minibox_layout(inp);
 	inp.close();
 
 	minibox_layout.print();
-	gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "                           My Scoreboard                           ";
+	// Title
+	gotoxy(27, 8, COLOR_YELLOW); std::cout << "  Course list    " << "  Calendar       " << "  Attendance     ";
+	colorizing(COLOR_YELLOW_BACKGROUND); std::cout << "  Scoreboard    ";
+	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " Semester    | Course ID       | Mid | Lab |Bonus|Final| GPA |GRADE";
 
 	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
@@ -345,14 +339,14 @@ void npscoreboard::student(csv_line& user) {
 			if (!file::exists(propath.c_str())) { gotoxy(51, y, COLOR_CODE + 8); std::cout << "(hide)"; continue; }
 			csv_file process(propath.c_str(), def_process);
 			csv_line* mycou = nullptr;
-			if ((mycou = file::exists(process, user.pdata[1])) == nullptr) { gotoxy(51, y, COLOR_CODE + 8); std::cout << "(hide)"; continue; }
+			if ((mycou = file::find(process, user.pdata[1], nullptr, OFF)) == nullptr) { gotoxy(51, y, COLOR_CODE + 8); std::cout << "(hide)"; continue; }
+			if ((mycou->pdata[2][0] == '\0')) continue;
 			gotoxy(60, y, COLOR_CODE); std::cout << mycou->pdata[2];	// Mid-term
 			gotoxy(66, y, COLOR_CODE); std::cout << mycou->pdata[3];	// Lab
 			gotoxy(72, y, COLOR_CODE); std::cout << mycou->pdata[4];	// Bonus
 			gotoxy(78, y, COLOR_CODE); std::cout << mycou->pdata[5];	// Final
-			std::string fscore = mycou->pdata[5];
-			gotoxy(84, y, COLOR_CODE); std::cout << US_GPA(std::stoi(fscore));
-			gotoxy(90, y, COLOR_CODE); std::cout << US_Grade(std::stoi(fscore));
+			gotoxy(84, y, COLOR_CODE); std::cout << US_GPA(mycou->pdata[5]);
+			gotoxy(90, y, COLOR_CODE); std::cout << US_Grade(mycou->pdata[5]);
 		}
 	NO_CHANGE:
 		uint8_t c = getch();
@@ -362,8 +356,9 @@ void npscoreboard::student(csv_line& user) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) choose--;
 			else if (c == KEY_DOWN && choose < my_course.count - 18) choose++;
-			else if (c == KEY_LEFT) break;
+			else if (c == KEY_LEFT) return -1;
 			else goto NO_CHANGE;
 		}
 	}
+	return 0;
 }
