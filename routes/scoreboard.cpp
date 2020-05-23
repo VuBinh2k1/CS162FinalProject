@@ -20,8 +20,7 @@ LAYOUT:
 
 	int choose = 0, cur = -1;
 	while ((cur = -1)) {
-		std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
-		csv_file process(propath.c_str(), def_process);
+		csv_file process(PROCESS(course_id, course_cs), def_process);
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -80,8 +79,7 @@ LAYOUT:
 			out << "No,Student ID,Midterm,Lab,Bonus,Final,GPA,GRADE\n";
 
 			int cnt = -1;
-			std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
-			csv_file process(propath.c_str(), def_process);
+			csv_file process(PROCESS(course_id, course_cs), def_process);
 			for (int i = 0; i < process.count; ++i) {
 				csv_line* student = &process.data[i];
 				if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -137,8 +135,7 @@ LAYOUT:
 
 	int choose = 0, cur = -1, overflow = 0, editrow = 0;
 	while ((cur = -1)) {
-		std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
-		csv_file process(propath.c_str(), def_process);
+		csv_file process(PROCESS(course_id, course_cs), def_process);
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -174,7 +171,7 @@ LAYOUT:
 			goto LAYOUT;
 		}
 		if (KEY_EDIT(c)) {
-			csv_file process((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str());
+			csv_file process(PROCESS(course_id, course_cs));
 			csv_line* student = &process.data[editrow];
 			std::string mid, lab, bonus, final; int status = student->pdata[0][0] == '1';
 			int y = 10 + choose + overflow;
@@ -204,11 +201,12 @@ LAYOUT:
 
 			if (status == -1) continue;
 			// Update scoreboard
-			if (mid.size()) file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 2, mid.c_str());
-			if (lab.size()) file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 3, lab.c_str());
-			if (bonus.size()) file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 4, bonus.c_str());
-			if (final.size()) file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 5, final.c_str());
-			file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, 0, (status) ? "1" : "0");
+			
+			if (mid.size()) file::update(PROCESS(course_id, course_cs), student->id, 2, mid.c_str());
+			if (lab.size()) file::update(PROCESS(course_id, course_cs), student->id, 3, lab.c_str());
+			if (bonus.size()) file::update(PROCESS(course_id, course_cs), student->id, 4, bonus.c_str());
+			if (final.size()) file::update(PROCESS(course_id, course_cs), student->id, 5, final.c_str());
+			file::update(PROCESS(course_id, course_cs), student->id, 0, (status) ? "1" : "0");
 			continue;
 		}
 		if (c == KEY_OPEN) {
@@ -235,7 +233,7 @@ LAYOUT:
 			// Check title:
 			csv_file imfile(path.c_str());
 			if (file::find(imfile, 0, "Student ID") == nullptr) { gotoxy(33, 17, 132); std::cout << "Can't find \"Student ID\""; goto OPEN; }
-			csv_file process((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), def_process);
+			csv_file process(PROCESS(course_id, course_cs), def_process);
 
 			for (int i = 0; i < imfile.count; ++i) {
 				const char* studentID = file::find(imfile, i, "Student ID");
@@ -244,7 +242,7 @@ LAYOUT:
 
 				// Add new student
 				std::ofstream app;
-				if (student == nullptr) { app.open(propath, std::ios::app); app << "0," << studentID << ','; }
+				if (student == nullptr) { app.open(PROCESS(course_id, course_cs), std::ios::app); app << "0," << studentID << ','; }
 
 				const char* score = nullptr;
 				// Midterm score
@@ -253,25 +251,25 @@ LAYOUT:
 				if (score == nullptr) score = file::find(imfile, i, "Mid-term");
 				if (score != nullptr) {
 					if (student == nullptr) app << score << ',';
-					else file::update(propath.c_str(), student->id, 2, score);
+					else file::update(PROCESS(course_id, course_cs), student->id, 2, score);
 				}
 				else if (student == nullptr) app << ',';
 				// Lab score
 				if ((score = file::find(imfile, i, "Lab")) != nullptr) {
 					if (student == nullptr) app << score << ',';
-					else file::update(propath.c_str(), student->id, 3, score);
+					else file::update(PROCESS(course_id, course_cs), student->id, 3, score);
 				}
 				else if (student == nullptr) app << ',';
 				// Bonus score
 				if ((score = file::find(imfile, i, "Bonus")) != nullptr) {
 					if (student == nullptr) app << score << ',';
-					else file::update(propath.c_str(), student->id, 4, score);
+					else file::update(PROCESS(course_id, course_cs), student->id, 4, score);
 				}
 				else if (student == nullptr) app << ',';
 				// Final score
 				if ((score = file::find(imfile, i, "Final")) != nullptr) {
 					if (student == nullptr) app << score << ',';
-					else file::update(propath.c_str(), student->id, 5, score);
+					else file::update(PROCESS(course_id, course_cs), student->id, 5, score);
 				}
 				else if (student == nullptr) app << ',';
 

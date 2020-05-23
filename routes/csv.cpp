@@ -47,13 +47,13 @@ bool csv_line::operator==(const char* position) {
 }
 
 csv_file::csv_file(const char* FILE, const char* __def) {
-	if (!file::exists(FILE)) {	// load __default.csv of file
-		if (file::exists(__def)) file::copy(__def, FILE);
-		else {
-			MessageBox(NULL, TEXT("data file is not exist"), TEXT("error database"), MB_OK);
-			exit(0);
-		}
+	if (!file::exists(FILE))	// load __default.csv of file
+		if (file::exists(__def)) file::copy(__def, FILE);	
+	if (!file::exists(FILE)) {
+		MessageBox(NULL, TEXT("data file is not exist"), TEXT("error database"), MB_OK);
+		exit(0);
 	}
+
 	std::ifstream inp(FILE);
 	count = std::count(std::istreambuf_iterator<char>(inp), std::istreambuf_iterator<char>(), '\n') - 1;
 	inp.seekg(0, inp.beg);
@@ -66,6 +66,29 @@ csv_file::csv_file(const char* FILE, const char* __def) {
 	}
 	inp.close();
 }
+
+csv_file::csv_file(const char* FILE, const char* course_id, const char* course_cs) {
+	if (!file::exists(FILE)) file::copy(def_schedule, FILE);	
+	if (!file::exists(FILE)) {
+		MessageBox(NULL, TEXT("data file is not exist"), TEXT("error database"), MB_OK);
+		exit(0);
+	}
+
+	file::mksche(course_id, course_cs);		// Make schedule.csv automatic
+	std::ifstream inp(FILE);
+	count = std::count(std::istreambuf_iterator<char>(inp), std::istreambuf_iterator<char>(), '\n') - 1;
+	inp.seekg(0, inp.beg);
+
+	mark.init(inp);
+	data = new csv_line[count];
+	for (int i = 0; i < count; ++i) {
+		data[i].init(inp);
+		data[i].id = i;
+	}
+	inp.close();
+}
+
+// [EDIT]::file.csv //==========================================================================================================================//
 
 void file::copy(const char* sre, const char* des) {
 	std::ifstream inp(sre, std::ios::binary); std::ofstream out(des, std::ios::binary);
@@ -125,6 +148,53 @@ bool file::exists(const char* FILE) {
 	inp.close(); return 1;
 }
 
+void file::mksche(const char* course_id, const char* course_cs) {
+	csv_file course_list(COURSE_PATH("__course.csv").c_str(), def_course);
+	csv_line* course = file::find(course_list, course_id, course_cs, OFF);
+	if (course == nullptr) return;
+
+	std::string schpath = COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv";
+	csv_file schedule(schpath.c_str(), def_schedule);
+	if (strcmp(course->pdata[5], "0") == 0) return;
+	if (strcmp(course->pdata[6], "0") == 0) return;
+
+	std::tm cur = control::gtime(course->pdata[5]);
+	std::mktime(&cur);
+
+	int wday = 0;
+	if (strcmp(course->pdata[7], "Sun") == 0) wday = 0;
+	if (strcmp(course->pdata[7], "Mon") == 0) wday = 1;
+	if (strcmp(course->pdata[7], "Tue") == 0) wday = 2;
+	if (strcmp(course->pdata[7], "Wed") == 0) wday = 3;
+	if (strcmp(course->pdata[7], "Thu") == 0) wday = 4;
+	if (strcmp(course->pdata[7], "Fri") == 0) wday = 5;
+	if (strcmp(course->pdata[7], "Sat") == 0) wday = 6;
+	while (cur.tm_wday != wday) {
+		cur.tm_mday++;
+		std::mktime(&cur);
+	}
+
+	for (int week = 0; week < MAX_WEEK; ++week) {
+		if (control::now(cur, course->pdata[6]) == 1) break;
+
+		if (strcmp(schedule.data[week].pdata[1], "0") == 0) {
+			std::string data = "";
+			if (cur.tm_mday < 10) data += '0'; data += std::to_string(cur.tm_mday) + '/';
+			if (cur.tm_mon < 9) data += '0'; data += std::to_string(cur.tm_mon + 1) + '/';
+			data += std::to_string(cur.tm_year + 1900);
+
+			file::update(schpath.c_str(), week, 1, data.c_str());
+			file::update(schpath.c_str(), week, 2, course->pdata[8]);
+			file::update(schpath.c_str(), week, 3, course->pdata[9]);
+		}
+
+		cur.tm_mday += 7;
+		std::mktime(&cur);
+	}
+}
+
+// [Data]::find //==============================================================================================================================//
+
 const char* file::find(csv_file& file, int row, const char* mark) {
 	for (int col = 0; col < min(file.mark.count, file.data[row].count); ++col) {
 		if (strcmp(file.mark.pdata[col], mark) == 0) {
@@ -155,4 +225,3 @@ csv_line* file::find(csv_file& file, const char* data1, const char* data2, bool 
 	}
 	return nullptr;
 }
-

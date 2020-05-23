@@ -20,7 +20,7 @@ LAYOUT:
 
 	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
 	while ((cur = -1)) {
-		csv_file student_list(((std::string)".\\data\\class\\" + class_id + ".csv").c_str(), def_course);
+		csv_file student_list(((std::string)".\\data\\class\\" + class_id + ".csv").c_str(), def_class);
 		csv_file student_info(__STUDENT);
 		csv_line* student = nullptr;
 		if (row) delete[] row;
@@ -129,11 +129,9 @@ LAYOUT:
 	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << " Course   | Class    | Student ID | Full name                      ";
 
-	std::string stustpath = COURSE_PATH("process\\") + course_id + '_' + course_cs + ".csv";
-
 	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
 	while ((cur = -1)) {
-		csv_file student_list(stustpath.c_str(), def_course);
+		csv_file student_list(PROCESS(course_id, course_cs), def_process);
 		csv_file student_info(__STUDENT);
 		csv_line* student = nullptr;
 		if (row) delete[] row;
@@ -336,7 +334,7 @@ void npstudent::edit(const char* student_id){
 	for (int choose = 0;;) {
 		gotoxy(46, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Save change ";
 		gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "   Cancel    ";
-
+	
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
 		if (c == KEY_ENTER) {

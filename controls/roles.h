@@ -5,6 +5,7 @@
 #include "course.h"
 #include "attendance.h"
 #include "scoreboard.h"
+#include "lecturer.h"
 
 namespace role {
 	// All roles
