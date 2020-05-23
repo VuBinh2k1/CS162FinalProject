@@ -338,11 +338,12 @@ MENU:
 
 	gotoxy(2, 8, COLOR_YELLOW_BACKGROUND); std::cout << "      Staff       ";
 	while (1) {
-		int E = 4;	// END MENU
+		int E = 5;	// END MENU
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Profile         ";
 		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Classes         ";
 		gotoxy(2,11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Courses         ";
 		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Settings        ";
+		gotoxy(2, 13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Lecturer       ";
 		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
 	NO_CHANGE:
@@ -366,6 +367,11 @@ MENU:
 			if (choose == 3) {
 				gotoxy(2, 12, 8); std::cout << "  Settings        ";
 				role::settings();
+				goto MENU;
+			}
+			if (choose == 4) {
+				gotoxy(2, 13, 8); std::cout << "  Lecture        ";
+				nplecturer::list();
 				goto MENU;
 			}
 			if (choose == E) return;
@@ -781,7 +787,7 @@ LAYOUT:
 			npcourse::enrol(user, course->pdata[1], course->pdata[3]);
 			continue;
 		}
-		if (c == 224 || c == 0) {
+		else if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
