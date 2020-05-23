@@ -373,3 +373,37 @@ void npcourse::schedule(const char* course_id, const char* course_cs) {
 		}
 	}
 }
+
+int npcourse::removeStudent(const char* course_id, const char* course_cs, const char* student_id) {
+	char* studentPath = new char[strlen(student_id) + 4];
+	strcpy(studentPath, student_id);
+	studentPath = studentPath + '.csv';
+	studentPath[strlen(studentPath)] = '\0';
+
+	csv_file student_course(COURSE_PATH(studentPath).c_str(), def_course);
+	csv_line* course = file::find(student_course, student_id, course_cs, OFF);
+	if (course == nullptr) return 0;
+
+	gotoxy(33, 20, 128 + COLOR_RED); std::cout << "Are you sure to remove this student, cannot be undone.";
+	for (int choose = 1;;) {
+		gotoxy(51, 21, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
+		gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Cancel ";
+
+		uint8_t c = getch();
+		csv_line* student = nullptr;
+		if (c == KEY_ESC) return 0;
+		if (c == KEY_ENTER) {
+			if (choose == 0) {
+				file::remove(studentPath, course->id);
+				gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
+				PAUSE; return 1;
+			}
+			return 0;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_LEFT && choose == 1) choose--;
+			else if (c == KEY_RIGHT && choose == 0) choose++;
+		}
+	}
+}

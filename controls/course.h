@@ -11,5 +11,7 @@ namespace npcourse {
 	void edit(const char* course_id, const char* course_cs);
 	int remove(const char* course_id, const char* course_cs);
 	void schedule(const char* course_id, const char* course_cs);
+	int removeStudent(const char* course_id, const char* course_cs, const char* student_id);
+
 }
 #endif
