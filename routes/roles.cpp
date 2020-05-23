@@ -342,8 +342,8 @@ MENU:
 		gotoxy(2, 9, (choose == 0) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Profile         ";
 		gotoxy(2,10, (choose == 1) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Classes         ";
 		gotoxy(2,11, (choose == 2) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Courses         ";
-		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Settings        ";
-		gotoxy(2, 13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Lecturer       ";
+		gotoxy(2,12, (choose == 3) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Lecturer       ";
+		gotoxy(2,13, (choose == 4) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "  Settings        ";
 		gotoxy(2,28, (choose == E) ? COLOR_WHITE_BACKGROUND : COLOR_WHITE); std::cout << "     Log out      ";
 
 	NO_CHANGE:
@@ -365,13 +365,13 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 3) {
-				gotoxy(2, 12, 8); std::cout << "  Settings        ";
-				role::settings();
+				gotoxy(2, 12, 8); std::cout << "  Lecture        ";
+				role::lecturer_list();
 				goto MENU;
 			}
 			if (choose == 4) {
-				gotoxy(2, 13, 8); std::cout << "  Lecture        ";
-				nplecturer::list();
+				gotoxy(2, 13, 8); std::cout << "  Settings        ";
+				role::settings();
 				goto MENU;
 			}
 			if (choose == E) return;
@@ -808,6 +808,119 @@ LAYOUT:
 		goto NO_CHANGE;
 	}
 	delete[] permit;
+	return 0;
+}
+
+int role::lecturer_list() {
+	std::ifstream inp(".\\layout\\minibox.layout");
+	if (!inp.is_open()) {
+		MessageBox(NULL, TEXT("minibox.layout is not exist"), TEXT("error layout"), MB_OK);
+		return 0;
+	}
+	layout minibox_layout(inp);
+	inp.close();
+
+	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
+LAYOUT:
+	minibox_layout.print();
+	gotoxy(78, 7); std::cout << "[Help]";
+	// Title
+	gotoxy(27, 8, COLOR_YELLOW_BACKGROUND); std::cout << "  Lecturer list  ";
+	colorizing(COLOR_YELLOW); std::cout << "  Course list    ";
+	// Detail
+	gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << " No.   | Lecturer ID | Ranking    | Full name                      ";
+	while ((cur = -1)) {
+		csv_file lecturer_info(__LECTURER);
+		csv_line* lecturer = nullptr;
+		if (row) delete[]row;
+		row = new int[lecturer_info.count];
+
+		for (int i = 0; i < lecturer_info.count; i++) {
+			if ((lecturer = file::find(lecturer_info, lecturer_info.data[i].pdata[1], nullptr, ON)) == nullptr) continue;
+
+			int y = 10 + (++cur) + overflow; row[cur] = i;
+			if (y < 10 || y>27) continue;
+			WORD COLOR_CODE = (cur % 2) ? 112 : 240;
+			if (choose == cur)COLOR_CODE = 176;
+
+			gotoxy(27, y, COLOR_CODE); std::cout << "       |             |            |                                ";
+			gotoxy(28, y, COLOR_CODE); std::cout << cur;
+			gotoxy(36, y, COLOR_CODE); std::cout << lecturer->pdata[1];
+			gotoxy(50, y, COLOR_CODE); std::cout << lecturer->pdata[4];
+			gotoxy(63, y, COLOR_CODE);
+			if (ENGLISHNAME) std::cout << lecturer->pdata[3] << ' ' << lecturer->pdata[2];
+			else std::cout << lecturer->pdata[2] << ' ' << lecturer->pdata[3];
+		}
+	NO_CHANGE:
+		uint8_t c = getch();
+		if (c == KEY_ESC) break;
+		if (KEY_HELP(c)) {
+			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
+			gotoxy(78, 9, 128); std::cout << " New        Ctrl+N  ";
+			gotoxy(78, 10, 128); std::cout << "                    ";
+			getch();
+			gotoxy(78, 8); std::cout << "                    ";
+			gotoxy(78, 9); std::cout << "                    ";
+			gotoxy(78, 10); std::cout << "                    ";
+			goto LAYOUT;
+		}
+		lecturer = &lecturer_info.data[row[choose]];
+		if (c == KEY_SEARCH) {
+			int old = choose; std::string search;
+			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
+			gotoxy(32, 16, 128); std::cout << "                                                         ";
+			gotoxy(32, 17, 128); std::cout << "                                                         ";
+			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
+				std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+				do {
+					if (choose < cur) { if (++choose < cur - 16) overflow--; }
+					else choose = overflow = 0;
+
+					lecturer = file::find(lecturer_info, lecturer_info.data[row[choose]].pdata[1], nullptr, ON);
+
+					if (strstr(lecturer->pdata[1], search.c_str()) ||
+						strstr(lecturer->pdata[2], search.c_str()) ||
+						strstr(lecturer->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
+				} while (choose != old);
+
+				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
+				//search.front() = toupper(search.front());
+				do {
+					if (choose < cur) { if (++choose < cur - 16) overflow--; }
+					else choose = overflow = 0;
+
+					lecturer = file::find(lecturer_info, lecturer_info.data[row[choose]].pdata[1], nullptr, ON);
+
+					if (strstr(lecturer->pdata[1], search.c_str()) ||
+						strstr(lecturer->pdata[2], search.c_str()) ||
+						strstr(lecturer->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
+				} while (choose != old);
+			}
+
+		SUCCESS_SEARCH:
+			gotoxy(32, 15); std::cout << "                                                         ";
+			gotoxy(32, 16); std::cout << "                                                         ";
+			gotoxy(32, 17); std::cout << "                                                         ";
+			continue;
+		}
+		if (c == KEY_ENTER) {
+			nplecturer::info(lecturer->pdata[1], ON);
+			continue;
+		}
+		else if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
+			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
+			else if (c == KEY_RIGHT) {
+				nplecturer::courses_list(lecturer->pdata[1]);
+				goto LAYOUT;
+			}
+			else goto NO_CHANGE;
+			continue;
+		}
+		goto NO_CHANGE;
+	}
+	delete[] row;
 	return 0;
 }
 

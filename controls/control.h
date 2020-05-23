@@ -26,6 +26,7 @@ namespace control {
 
 std::string COURSE_PATH(const char* FILE);
 void academicmark();
+void capitalize(std::string& str);
 const char* US_GPA(const char* strsco);
 const char* US_Grade(const char* strsco);
 

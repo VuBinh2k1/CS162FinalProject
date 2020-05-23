@@ -20,6 +20,7 @@ namespace role {
 	// Sub menu
 	int classes_list(csv_line& user);
 	int courses_list(csv_line& user);
+	int lecturer_list();
 	int calendar(csv_line& user);
 	void settings();
 }
