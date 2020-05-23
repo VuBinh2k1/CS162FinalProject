@@ -1,23 +1,24 @@
 #include "..\\controls\\control.h"
 
 std::tm control::gtime(char* _date, char* _time) {
-	std::tm ttm;
+	std::time_t now = time(0);
+	std::tm ttm = *localtime(&now);
 
 	//_date: dd/mm/yyyy\0
+	if (_date == nullptr || strlen(_date) < 10) return ttm;
 	ttm.tm_mday = _date[0] * 10 + _date[1] - 11 * '0';
 	ttm.tm_mon = _date[3] * 10 + _date[4] - 11 * '0' - 1;	// month since 0
 	ttm.tm_year = atoi(_date + 6) - 1900;					// year since 1900
 
 	//_time: hh:mm\0
-	if (_time == nullptr) return ttm;
+	if (_time == nullptr || strlen(_time) < 5) return ttm;
 	ttm.tm_hour = _time[0] * 10 + _time[1] - 11 * '0';
 	ttm.tm_min = _time[3] * 10 + _time[4] - 11 * '0';
 	return ttm;
 }
 
 int control::now(char* date, char* start, char* end) {
-	std::time_t now = time(0);
-	std::tm ltm = *localtime(&now);
+	std::tm ltm = control::gtime();
 	std::tm stm = control::gtime(date, start);
 	std::tm etm = control::gtime(date, end);
 
@@ -45,14 +46,6 @@ int control::now(std::tm ltm, char* date) {
 	return 0;
 }
 
-void control::print(std::tm date) {
-	if (date.tm_mday < 10) std::cout << '0';
-	std::cout << date.tm_mday << '/';
-	if (date.tm_mon < 9) std::cout << '0';
-	std::cout << date.tm_mon + 1 << '/';
-	std::cout << date.tm_year + 1900;
-}
-
 std::string control::config(const char* DEFINE) {
 	std::ifstream cfg(".\\.config");
 
@@ -63,7 +56,7 @@ std::string control::config(const char* DEFINE) {
 			return std::string(strchr(temp, ' ') + 1);
 		}
 	}
-	return std::string(0);
+	return std::string();
 }
 
 //void back(uint8_t KEY_ARROW_BREAK) { uint8_t c; while ((c = getch()) != KEY_ESC && (c != 224 || getch() != KEY_ARROW_BREAK)); }

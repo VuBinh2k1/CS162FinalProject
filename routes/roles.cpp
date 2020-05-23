@@ -679,7 +679,7 @@ LAYOUT:
 	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << " No.   | Course ID    | Class     | Lecturer ID  | Room   | Status ";
 	while ((cur = -1)) {
-		csv_file course_list((COURSE_PATH("__course.csv")).c_str(), def_course);
+		csv_file course_list(__COURSE, def_course);
 		csv_line* course = nullptr;
 
 		if (permit) delete[] permit;
@@ -832,7 +832,7 @@ int role::calendar(csv_line& user){
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND);   std::cout << "    Date    | Course                               | Start |  End  ";
 
 	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
-	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
+	csv_file course_list(__COURSE, def_course);
 
 	int choose = 0, maxChoose = 13; bool has_change = 0;
 	while (1) {
@@ -846,7 +846,10 @@ int role::calendar(csv_line& user){
 			if (day.tm_mday == ltm.tm_mday) COLOR_CODE = COLOR_RED_BACKGROUND;
 			if (9 < y && y < 28) {
 				gotoxy(27, y, COLOR_CODE); std::cout << "            |                                      |       |       ";
-				gotoxy(28, y, COLOR_CODE); control::print(day);
+				gotoxy(28, y, COLOR_CODE); 
+				if (day.tm_mday <10) std::cout << '0'; std::cout << day.tm_mday << '/';
+				if (day.tm_mon  < 9) std::cout << '0'; std::cout << day.tm_mon + 1 << '/';
+				std::cout << day.tm_year + 1900;
 			}
 
 			csv_line* course = nullptr;
