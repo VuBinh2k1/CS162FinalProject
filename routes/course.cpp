@@ -374,14 +374,14 @@ void npcourse::schedule(const char* course_id, const char* course_cs) {
 	}
 }
 
-int npcourse::removeStudent(const char* course_id, const char* course_cs, const char* student_id) {
+int npcourse::removeStudent(const char* student_id) {
 	char* studentPath = new char[strlen(student_id) + 4];
 	strcpy(studentPath, student_id);
 	studentPath = studentPath + '.csv';
 	studentPath[strlen(studentPath)] = '\0';
 
-	csv_file student_course(COURSE_PATH(studentPath).c_str(), def_course);
-	csv_line* course = file::find(student_course, student_id, course_cs, OFF);
+	csv_file student_course(studentPath);
+	csv_line* course = file::find(student_course, student_id, nullptr, OFF);
 	if (course == nullptr) return 0;
 
 	gotoxy(33, 20, 128 + COLOR_RED); std::cout << "Are you sure to remove this student, cannot be undone.";
