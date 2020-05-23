@@ -95,7 +95,7 @@ LAYOUT:
 		}
 		if (c == KEY_ENTER) {
 			npstudent::info(student->pdata[1], ON);
-			goto LAYOUT;
+			continue;
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
@@ -341,8 +341,8 @@ void npstudent::edit(const char* student_id){
 			if (choose == 0) {
 				// Update: __student.csv
 				std::transform(newcs.begin(), newcs.end(), newcs.begin(), ::toupper);
-				std::transform(fname.begin(), fname.end(), fname.begin(), ::toupper);
-				std::transform(lname.begin(), lname.end(), lname.begin(), ::toupper);
+				capitalize(fname); //std::transform(fname.begin(), fname.end(), fname.begin(), ::toupper);
+				capitalize(lname); //std::transform(lname.begin(), lname.end(), lname.begin(), ::toupper);
 				if (npclass::change(*student, student->pdata[6], newcs.c_str()) == 0) {
 					gotoxy(46, 21, 128 + COLOR_RED); std::cout << " Save changes failed.      ";
 					PAUSE; return;
@@ -368,10 +368,6 @@ void npstudent::edit(const char* student_id){
 }
 
 int npstudent::remove(const char* student_id){
-	csv_file student_list(__STUDENT);
-	csv_line* student = file::find(student_list, student_id, nullptr, ON);
-	if (student == nullptr) return 0;
-
 	gotoxy(33, 20, 128 + COLOR_RED); std::cout << "Are you sure to remove this student, cannot be undone.";
 	for (int choose = 1;;) {
 		gotoxy(51, 21, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
@@ -381,8 +377,8 @@ int npstudent::remove(const char* student_id){
 		if (c == KEY_ESC) return 0;
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
-				file::remove(__STUDENT, student->id);
-				file::remove(ACCOUNT, file::find(ACCOUNT, student->pdata[1], nullptr, ON));
+				file::remove(__STUDENT, file::find(__STUDENT, student_id, nullptr, ON));
+				file::remove(ACCOUNT, file::find(ACCOUNT, student_id, nullptr, ON));
 				gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
 				PAUSE; return 1;
 			}

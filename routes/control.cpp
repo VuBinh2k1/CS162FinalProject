@@ -74,6 +74,13 @@ void academicmark() {
 	if (atoi(SEMESTER.c_str()) == 4) { gotoxy(2, 2, 176); std::cout << " Winter "; }
 }
 
+void capitalize(std::string& str) {
+	for (int i = 0; i < str.size(); ++i) {
+		if (i == 0 || str[i - 1] == ' ') str[i] = toupper(str[i]);
+		else str[i] = tolower(str[i]);
+	}
+}
+
 const char* US_GPA(const char* strsco) {
 	if (strsco[0] == '\0') return "";
 	double score = std::stoi((std::string)strsco);
