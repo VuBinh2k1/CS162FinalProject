@@ -21,10 +21,8 @@ LAYOUT:
 
 	int choose = 0, cur = -1;
 	while ((cur = -1)) {
-		std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
-		std::string schpath = COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv";
-		csv_file process(propath.c_str(), def_process);
-		csv_file schedule(schpath.c_str(), def_schedule);
+		csv_file process(PROCESS(course_id, course_cs), def_process);
+		csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -91,10 +89,8 @@ LAYOUT:
 			out << "No,Student ID,Week 01,Week 02,Week 03,Week 04,Week 05,Week 06,Week 07,Week 08,Week 09,Week 10,Week 11\n";
 
 			int cnt = -1;
-			std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
-			std::string schpath = COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv";
-			csv_file process(propath.c_str(), def_process);
-			csv_file schedule(schpath.c_str(), def_schedule);
+			csv_file process(PROCESS(course_id, course_cs), def_process);
+			csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 			for (int i = 0; i < process.count; ++i) {
 				csv_line* student = &process.data[i];
 				if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -167,10 +163,8 @@ LAYOUT:
 
 	int choose = 0, cur = -1, overflow = 0, editrow = 0;
 	while ((cur = -1)) {
-		std::string propath = COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv";
-		std::string schpath = COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv";
-		csv_file process(propath.c_str(), def_process);
-		csv_file schedule(schpath.c_str(), def_schedule);
+		csv_file process(PROCESS(course_id, course_cs), def_process);
+		csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
@@ -213,8 +207,8 @@ LAYOUT:
 			goto LAYOUT;
 		}
 		if (KEY_EDIT(c)) {
-			csv_file process((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str());
-			csv_file schedule((COURSE_PATH("schedule\\") + course_id + "_" + course_cs + ".csv").c_str());
+			csv_file process(PROCESS(course_id, course_cs));
+			csv_file schedule(SCHEDULE(course_id, course_cs));
 			csv_line* student = &process.data[editrow];
 			int y = 10 + choose + overflow;
 
@@ -237,7 +231,7 @@ LAYOUT:
 					if (c == KEY_ENTER) {
 						if (status) { gotoxy(x, y, 176 + COLOR_GREEN); std::cout << "CK"; }
 						else { gotoxy(x, y, 176 + COLOR_RED); std::cout << "MS"; }
-						file::update((COURSE_PATH("process\\") + course_id + "_" + course_cs + ".csv").c_str(), student->id, WEEK_COLUMN + i, (status ? "1" : "0"));
+						file::update(PROCESS(course_id, course_cs), student->id, WEEK_COLUMN + i, (status ? "1" : "0"));
 						break;
 					}
 					if (c == 224 || c == 0) {
@@ -290,7 +284,7 @@ int npattendance::student(csv_line& user) {
 	gotoxy(80, 28, COLOR_WHITE_BACKGROUND);  std::cout << "  UPCOMING  ";
 
 	csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
-	csv_file course_list((COURSE_PATH("__course.csv").c_str()), def_course);
+	csv_file course_list(__COURSE, def_course);
 
 	int choose = 0;
 	while (1) {
