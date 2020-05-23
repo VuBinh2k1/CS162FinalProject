@@ -160,11 +160,11 @@ LAYOUT:
 		if (KEY_HELP(c)) {
 			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
 			gotoxy(78, 9, 128); std::cout << " Enrol      R, r    ";
-			gotoxy(78,10, 128); std::cout << "                    ";
+			gotoxy(78, 10, 128); std::cout << "                    ";
 			getch();
 			gotoxy(78, 8); std::cout << "                    ";
 			gotoxy(78, 9); std::cout << "                    ";
-			gotoxy(78,10); std::cout << "                    ";
+			gotoxy(78, 10); std::cout << "                    ";
 			goto LAYOUT;
 		}
 		student = &student_list.data[row[choose]];
@@ -206,7 +206,7 @@ LAYOUT:
 			gotoxy(32, 17); std::cout << "                                                         ";
 			continue;
 		}
-		
+
 		if (c == KEY_ENTER) {
 			npstudent::info(student->pdata[1], OFF);
 			continue;
@@ -215,7 +215,7 @@ LAYOUT:
 			npcourse::enrol(user, course_id, course_cs);
 			continue;
 		}
-	
+
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
@@ -308,7 +308,7 @@ END:
 
 // [EDIT]::student //===========================================================================================================================//
 
-void npstudent::edit(const char* student_id){
+void npstudent::edit(const char* student_id) {
 	csv_file student_list(__STUDENT);
 	csv_line* student = file::find(student_list, student_id, nullptr, ON);
 	if (student == nullptr) return;
@@ -334,7 +334,7 @@ void npstudent::edit(const char* student_id){
 	for (int choose = 0;;) {
 		gotoxy(46, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Save change ";
 		gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "   Cancel    ";
-	
+
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
 		if (c == KEY_ENTER) {
@@ -367,7 +367,7 @@ void npstudent::edit(const char* student_id){
 	}
 }
 
-int npstudent::remove(const char* student_id){
+int npstudent::remove(const char* student_id) {
 	gotoxy(33, 20, 128 + COLOR_RED); std::cout << "Are you sure to remove this student, cannot be undone.";
 	for (int choose = 1;;) {
 		gotoxy(51, 21, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
