@@ -68,13 +68,15 @@ csv_file::csv_file(const char* FILE, const char* __def) {
 }
 
 csv_file::csv_file(const char* FILE, const char* course_id, const char* course_cs) {
-	if (!file::exists(FILE)) file::copy(def_schedule, FILE);	
+	if (!file::exists(FILE)) {
+		file::copy(def_schedule, FILE);
+		file::mksche(course_id, course_cs);		// Make schedule.csv automatic
+	}
 	if (!file::exists(FILE)) {
 		MessageBox(NULL, TEXT("data file is not exist"), TEXT("error database"), MB_OK);
 		exit(0);
 	}
 
-	file::mksche(course_id, course_cs);		// Make schedule.csv automatic
 	std::ifstream inp(FILE);
 	count = std::count(std::istreambuf_iterator<char>(inp), std::istreambuf_iterator<char>(), '\n') - 1;
 	inp.seekg(0, inp.beg);

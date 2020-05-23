@@ -7,58 +7,62 @@ bool role::login(csv_line& user) {
 		return 0;
 	}
 	layout login_layout(inp);
-	layout user_pass_layout(inp);
 	inp.close();
 
+	std::string username, password;
+
+LOGIN:
 	csv_file user_list(".\\data\\account.csv");
 
 	colorizing(COLOR_DEFAULT); system("cls");
 	login_layout.print();
-	for (std::string username, password;;) {
-	LOGIN:
 
-		user_pass_layout.print();
-		if (read(24, 12, COLOR_DEFAULT, username, 52, SHOW) == KEY_ESC) return 0;
-		if (read(24, 13, COLOR_DEFAULT, password, 52, HIDE) == KEY_ESC) return 0;
+	if (read(24, 12, COLOR_DEFAULT, username, 52, SHOW) == KEY_ESC) return 0;
+	if (read(24, 13, COLOR_DEFAULT, password, 52, HIDE) == KEY_ESC) return 0;
+	password = sha256(password);	// sha256
 
-		// Choose Left-right: [Login][Cancel]
-		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
-			gotoxy(40, 17, C1); std::cout << "[Login]";
-			gotoxy(48, 17, C2);  std::cout << "[Cancel]";
+	// Choose Left-right: [Login][Cancel]
+	for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
+		gotoxy(40, 17, C1); std::cout << "[Login]";
+		gotoxy(48, 17, C2);  std::cout << "[Cancel]";
 
-			uint8_t c = getch();
-			if (c == KEY_ESC) return 0;
-			if (c == KEY_ENTER) {
-				if (C1 == 240) break;
-				else {
-					gotoxy(34, 17, COLOR_YELLOW); std::cout << "Pls login to use the program";
-					PAUSE; goto LOGIN;
-				}
-			}
-			if (c == 224 || c == 0) {
-				if (C1 == 240 && getch() == KEY_RIGHT ||
-					C2 == 240 && getch() == KEY_LEFT) {
-					WORD temp = C1; C1 = C2; C2 = temp;
-				}
+		uint8_t c = getch();
+		if (c == KEY_ESC) return 0;
+		if (c == KEY_ENTER) {
+			if (C1 == 240) break;
+			else {
+				gotoxy(34, 17, COLOR_YELLOW); std::cout << "Pls login to use the program";
+				PAUSE; goto LOGIN;
 			}
 		}
-
-		for (int i = 0; i < user_list.count; ++i) {
-			if (strcmp(user_list.data[i].pdata[0], "0") == 0) continue;		// Status: 0/1
-			char* _username = user_list.data[i].pdata[1];
-			char* _password = user_list.data[i].pdata[2];
-			if (strcmp(username.c_str(), _username) == 0 &&
-				strcmp(password.c_str(), _password) == 0) {
-
-				user = user_list.data[i];
-				colorizing(COLOR_DEFAULT);
-				if (password.size() < 5 && role::new_password(user) == 0) return 0;
-				return 1;
+		if (c == 224 || c == 0) {
+			if (C1 == 240 && getch() == KEY_RIGHT ||
+				C2 == 240 && getch() == KEY_LEFT) {
+				WORD temp = C1; C1 = C2; C2 = temp;
 			}
 		}
-		gotoxy(33, 17, COLOR_RED); std::cout << "Incorrect username or password";
-		PAUSE;
 	}
+
+	for (int i = 0; i < user_list.count; ++i) {
+		if (strcmp(user_list.data[i].pdata[0], "0") == 0) continue;		// Status: 0/1
+		char* _username = user_list.data[i].pdata[1];
+		char* _password = user_list.data[i].pdata[2];
+		if (strcmp(username.c_str(), _username) == 0 &&
+			(strcmp(password.c_str(), _password) == 0 || strcmp("0", _password) == 0)) {
+
+			user = user_list.data[i];
+			colorizing(COLOR_DEFAULT);
+
+			// New account (password: '0')
+			if (strcmp("0", _password) == 0)
+				if (role::new_password(user) == 0) return 0; 
+				else goto LOGIN;
+			return 1;
+		}
+	}
+	gotoxy(33, 17, COLOR_RED); std::cout << "Incorrect username or password";
+	PAUSE;
+	goto LOGIN;
 }
 
 bool role::profile(csv_line& user) {
@@ -152,23 +156,19 @@ bool role::new_password(csv_line& user) {
 		return 0;
 	}
 	layout password_layout(inp);
-	layout change_password_layout(inp);
 	inp.close();
 
 	char* username = user.pdata[1];
-	char* password = user.pdata[2];
-	std::string pw_old;
 	std::string pw_new;
 	std::string pw_new_confirm;
 
 	colorizing(COLOR_DEFAULT); system("cls");
-	password_layout.print();
+	
 	while (1) {
-		change_password_layout.print();
+		password_layout.print();
 
-		if (read(32, 9, COLOR_DEFAULT, pw_old, 52, HIDE) == KEY_ESC) return 0;
-		if (read(32, 11, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
-		if (read(32, 13, COLOR_DEFAULT, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 10, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 12, COLOR_DEFAULT, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Save change][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
@@ -189,29 +189,24 @@ bool role::new_password(csv_line& user) {
 			}
 		}
 
-		if (strcmp(password, pw_old.c_str())) {
-			gotoxy(32, 10, COLOR_RED); std::cout << "Current Password is incorrect.";
-			PAUSE; continue;
-		}
 		if (pw_new.size() < 5) {
-			gotoxy(32, 12, COLOR_RED); std::cout << "The Password field must be least 5 characters.";
+			gotoxy(32, 11, COLOR_RED); std::cout << "The Password field must be least 5 characters.";
 			PAUSE; continue;
 		}
 		if (pw_new != pw_new_confirm) {
-			gotoxy(32, 14, COLOR_RED); std::cout << "The Confirm Password confirmation does not match.";
+			gotoxy(32, 13, COLOR_RED); std::cout << "The Confirm Password confirmation does not match.";
 			PAUSE; continue;
 		}
 		break;
 	}
 
+	// sha256
+	pw_new = sha256(pw_new);
+	pw_new_confirm = sha256(pw_new_confirm);
+
 	// Update "account.csv"
 	file::update(".\\data\\account.csv", user.id, 2, pw_new.c_str());
 	gotoxy(36, 17, COLOR_GREEN); std::cout << "Save changes successfully.";
-
-	// Update current user
-	csv_file user_list(".\\data\\account.csv");
-	user = user_list.data[user.id];
-
 	gotoxy(0, 20); PAUSE;
 	return 1;
 }
@@ -226,7 +221,7 @@ bool role::password(csv_line& user) {
 	inp.close();
 
 	char* username = user.pdata[1];
-	char* password = user.pdata[2];
+	char* password = user.pdata[2];		// sha256
 	std::string pw_old;
 	std::string pw_new;
 	std::string pw_new_confirm;
@@ -238,7 +233,6 @@ bool role::password(csv_line& user) {
 		gotoxy(24, 15); std::cout << "New password    :[                                                     ]";
 		gotoxy(24, 18); std::cout << "Confirm password:[                                                     ]";
 		gotoxy(47, 27); std::cout << "[Save change] [  Cancel   ]";
-
 
 		if (read(42, 12, COLOR_DEFAULT, pw_old, 52, HIDE) == KEY_ESC) return 0;
 		if (read(42, 15, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
@@ -263,7 +257,7 @@ bool role::password(csv_line& user) {
 			}
 		}
 
-		if (strcmp(password, pw_old.c_str())) {
+		if (strcmp(password, sha256(pw_old).c_str()) && strcmp(password, "0")) {	// sha256
 			gotoxy(42, 13, COLOR_RED); std::cout << "Current Password is incorrect.";
 			PAUSE; continue;
 		}
@@ -277,6 +271,11 @@ bool role::password(csv_line& user) {
 		}
 		break;
 	}
+
+	// sha256
+	pw_old = sha256(pw_old);
+	pw_new = sha256(pw_new);
+	pw_new_confirm = sha256(pw_new_confirm);
 
 	// Update "account.csv"
 	file::update(".\\data\\account.csv", user.id, 2, pw_new.c_str());
@@ -292,13 +291,12 @@ bool role::password(csv_line& user) {
 // [Main menu]::allclass //=====================================================================================================================//
 
 void role::staff(csv_line& user) {
-	std::ifstream inp(".\\layout\\menu.layout");
+	std::ifstream inp(".\\layout\\staff.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("staff.layout is not exist"), TEXT("error layout"), MB_OK);
 		exit(0);
 	}
 	layout menu_layout(inp);
-	layout menu_info_layout(inp);
 	inp.close();
 
 	csv_file infofile(__STAFF);
@@ -388,13 +386,12 @@ MENU:
 }
 
 void role::lecturer(csv_line& user) {
-	std::ifstream inp(".\\layout\\menu.layout");
+	std::ifstream inp(".\\layout\\lecturer.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("lecturer.layout is not exist"), TEXT("error layout"), MB_OK);
 		exit(0);
 	}
 	layout menu_layout(inp);
-	layout menu_info_layout(inp);
 	inp.close();
 
 	csv_file infofile(__LECTURER);
@@ -463,13 +460,12 @@ MENU:
 }
 
 void role::student(csv_line& user) {
-	std::ifstream inp(".\\layout\\menu.layout");
+	std::ifstream inp(".\\layout\\student.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("student.layout is not exist"), TEXT("error layout"), MB_OK);
 		exit(0);
 	}
 	layout menu_layout(inp);
-	layout menu_info_layout(inp);
 	inp.close();
 
 	csv_file infofile(__STUDENT);
@@ -883,8 +879,7 @@ LAYOUT:
 						strstr(lecturer->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
 				} while (choose != old);
 
-				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-				//search.front() = toupper(search.front());
+				capitalize(search);
 				do {
 					if (choose < cur) { if (++choose < cur - 16) overflow--; }
 					else choose = overflow = 0;
@@ -955,7 +950,7 @@ int role::calendar(csv_line& user){
 			int y = 10 + cur - choose;
 			day.tm_mday++; std::mktime(&day);
 
-			WORD COLOR_CODE = (day.tm_mday % 2) ? 112 : 240;
+			WORD COLOR_CODE = (i % 2) ? 112 : 240;
 			if (day.tm_mday == ltm.tm_mday) COLOR_CODE = COLOR_RED_BACKGROUND;
 			if (9 < y && y < 28) {
 				gotoxy(27, y, COLOR_CODE); std::cout << "            |                                      |       |       ";
@@ -1006,7 +1001,9 @@ int role::calendar(csv_line& user){
 			else if (c == KEY_LEFT) return -1;
 			else if (c == KEY_RIGHT) return 1;
 			else goto NO_CHANGE;
+			continue;
 		}
+		goto NO_CHANGE;
 	}
 	return 0;
 }

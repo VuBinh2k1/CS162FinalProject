@@ -51,7 +51,7 @@ LAYOUT:
 				if (color == COLOR_CODE + COLOR_RED) std::cout << "MS";
 			}
 		}
-	UN_CHANGE:
+	NO_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
 		if (KEY_HELP(c)) {
@@ -134,10 +134,10 @@ LAYOUT:
 				if (npscoreboard::staff(course_id, course_cs) == 0) return 0;
 				goto LAYOUT;
 			}
-			else goto UN_CHANGE;
+			else goto NO_CHANGE;
 			continue;
 		}
-		goto UN_CHANGE;
+		goto NO_CHANGE;
 	}
 	return 0;
 }
@@ -195,7 +195,7 @@ LAYOUT:
 			}
 		}
 
-	UN_CHANGE:
+	NO_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
 		if (KEY_HELP(c)) {
@@ -254,10 +254,10 @@ LAYOUT:
 				if (npscoreboard::lecturer(course_id, course_cs) == 0) return 0;
 				goto LAYOUT;
 			}
-			else goto UN_CHANGE;
+			else goto NO_CHANGE;
 			continue;
 		}
-		goto UN_CHANGE;
+		goto NO_CHANGE;
 	}
 	return 0;
 }
@@ -325,7 +325,7 @@ int npattendance::student(csv_line& user) {
 				if (color == COLOR_CODE + COLOR_RED) std::cout << "MS";
 			}
 		}
-	UN_CHANGE:
+	NO_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
 		if (c == 224 || c == 0) {
@@ -334,8 +334,10 @@ int npattendance::student(csv_line& user) {
 			else if (c == KEY_DOWN && choose < my_course.count - 17) choose++;
 			else if (c == KEY_LEFT) return -1;
 			else if (c == KEY_RIGHT) return 1;
-			else goto UN_CHANGE;
+			else goto NO_CHANGE;
+			continue;
 		}
+		goto NO_CHANGE;
 	}
 	return 0;
 }

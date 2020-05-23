@@ -73,8 +73,7 @@ LAYOUT:
 						strstr(student->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
 				} while (choose != old);
 
-				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-				//search.front() = toupper(search.front());
+				capitalize(search);
 				do {
 					if (choose < cur) { if (++choose < cur - 16) overflow--; }
 					else choose = overflow = 0;
@@ -186,8 +185,7 @@ LAYOUT:
 						strstr(student->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
 				} while (choose != old);
 
-				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-				//search.front() = toupper(search.front());
+				capitalize(search);
 				do {
 					if (choose < cur) { if (++choose < cur - 16) overflow--; }
 					else choose = overflow = 0;
