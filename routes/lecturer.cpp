@@ -205,7 +205,7 @@ int nplecturer::remove(const char* lecturer_id) {
 
 				csv_file course_list(__COURSE);
 				for (int i = 0; i < course_list.count; ++i) {
-					if (strcmp(course_list.data[i].pdata[4], lecturer_id) == 0) file::update(__COURSE, i, 4, nullptr);
+					if (strcmp(course_list.data[i].pdata[4], lecturer_id) == 0) file::update(__COURSE, i, 4, "");
 				}
 
 				gotoxy(46, 19, 128 + COLOR_BLUE); std::cout << " Remove successfully.";

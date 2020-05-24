@@ -90,12 +90,91 @@ csv_file::csv_file(const char* FILE, const char* course_id, const char* course_c
 	inp.close();
 }
 
+// [Function]::comparator //====================================================================================================================//
+
+bool file::sort_cmp_default(const char* x, const char* y) {
+	return strcmp(x, y) < 1;
+}
+
+bool file::sort_cmp_class(const char* x, const char* y) {
+	// CLASS ID: year_type_num (Ex: 19 - CLC - 1 = 19CLC1;
+	std::string str[2]; str[0] = x; str[1] = y;
+	std::string year[2], type[2], num[2];
+	for (int t = 0; t < 2; ++t) {	// Convert const char* to std::string year - type - num
+		std::string *cur = &year[t];
+		for (int i = 0; i < str[t].size(); ++i) {
+			if (cur == &year[t]) {
+				if (str[t][i] >= '0' && str[t][i] <= '9') *cur += str[t][i];
+				else cur = &type[t];
+			}
+			if (cur == &type[t]) {
+				if ((str[t][i] >= 'A' && str[t][i] <= 'Z')) *cur += str[t][i];
+				else cur = &num[t];
+			}
+			if (cur == &num[t]) {
+				if (str[t][i] >= '0' && str[t][i] <= '9') *cur += str[t][i];
+				else break;
+			}
+		}
+	}
+
+	if (std::stoi(year[0]) != std::stoi(year[1])) return std::stoi(year[0]) <= std::stoi(year[1]);
+	if (type[0] != type[1]) return type[0] <= type[1];
+	if (std::stoi(num[0]) != std::stoi(num[1])) return std::stoi(num[0]) <= std::stoi(num[1]);
+	return 1;
+}
+
 // [EDIT]::file.csv //==========================================================================================================================//
 
 void file::copy(const char* sre, const char* des) {
 	std::ifstream inp(sre, std::ios::binary); std::ofstream out(des, std::ios::binary);
 	out << inp.rdbuf();
 	inp.close(); out.close();
+}
+
+// file::sort: overloads
+void file::sort(const char* FILE, int col1, int col2, int col3) { file::sort(FILE, col1, col2, col3, file::sort_cmp_default); }
+void file::sort(const char* FILE, int col1, comparator _cmp) { file::sort(FILE, col1, -1, -1, _cmp); }
+void file::sort(const char* FILE, int col1, int col2, comparator _cmp) { file::sort(FILE, col1, col2, -1, _cmp); }
+// file::sort: main function
+void file::sort(const char* FILE, int col1, int col2, int col3, comparator _cmp) {
+	csv_file file(FILE);
+	std::ofstream out(FILE);
+
+	// Init
+	int n = file.count;
+	int* row = new int[n];
+	for (int i = 0; i < n; ++i)
+		if (file.data[i].count < max(col1, max(col1, col2)) + 1) { delete[] row; return; }
+		else row[i] = i;
+
+	// Sort O(n^2)
+	for (int i = 0; i < n; ++i) {
+		for (int j = i + 1; j < n; ++j) {
+			if (col1 > -1 && !_cmp(file.data[row[i]].pdata[col1], file.data[row[j]].pdata[col1])) std::swap(row[i], row[j]);
+			if (strcmp(file.data[row[i]].pdata[col1], file.data[row[j]].pdata[col1])) continue;
+
+			if (col2 > -1 && !_cmp(file.data[row[i]].pdata[col2], file.data[row[j]].pdata[col2])) std::swap(row[i], row[j]);
+			if (strcmp(file.data[row[i]].pdata[col2], file.data[row[j]].pdata[col2])) continue;
+
+			if (col3 > -1 && !_cmp(file.data[row[i]].pdata[col3], file.data[row[j]].pdata[col3])) std::swap(row[i], row[j]);
+		}
+	}
+
+	// Save file
+	for (int j = 0; j < file.mark.count; ++j) {
+		out << file.mark.pdata[j];
+		if (j + 1 != file.mark.count) out << ',';
+	}
+	out << "\n";
+	for (int i = 0; i < n; out << "\n", ++i) {
+		for (int j = 0; j < file.data[row[i]].count; ++j) {
+			out << file.data[row[i]].pdata[j];
+			if (j + 1 != file.data[row[i]].count) out << ',';
+		}
+	}
+	out.close();
+	delete[] row;
 }
 
 void file::update(const char* FILE, int row, int column, const char* val) {
@@ -179,17 +258,14 @@ void file::mksche(const char* course_id, const char* course_cs) {
 	for (int week = 0; week < MAX_WEEK; ++week) {
 		if (control::now(cur, course->pdata[6]) == 1) break;
 
-		if (strcmp(schedule.data[week].pdata[1], "0") == 0) {
-			std::string data = "";
-			if (cur.tm_mday < 10) data += '0'; data += std::to_string(cur.tm_mday) + '/';
-			if (cur.tm_mon < 9) data += '0'; data += std::to_string(cur.tm_mon + 1) + '/';
-			data += std::to_string(cur.tm_year + 1900);
+		std::string data = "";
+		if (cur.tm_mday < 10) data += '0'; data += std::to_string(cur.tm_mday) + '/';
+		if (cur.tm_mon < 9) data += '0'; data += std::to_string(cur.tm_mon + 1) + '/';
+		data += std::to_string(cur.tm_year + 1900);
 
-			file::update(schpath.c_str(), week, 1, data.c_str());
-			file::update(schpath.c_str(), week, 2, course->pdata[8]);
-			file::update(schpath.c_str(), week, 3, course->pdata[9]);
-		}
-
+		file::update(schpath.c_str(), week, 1, data.c_str());
+		file::update(schpath.c_str(), week, 2, course->pdata[8]);
+		file::update(schpath.c_str(), week, 3, course->pdata[9]);
 		cur.tm_mday += 7;
 		std::mktime(&cur);
 	}

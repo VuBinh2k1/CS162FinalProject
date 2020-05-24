@@ -1,9 +1,9 @@
-﻿No,Lecturer ID,Last name,First name,Ranking
+﻿Status,Lecturer ID,Last name,First name,Ranking
 1,htphuong,Huynh Truc,Phuong,PhD
-2,ngohuy83,Ngo Quang,Huy,PhD
-3,nkquang,Nguyen Kim,Quang,PhD
-4,nmhuy,Nguyen Minh,Huy,Master
-5,nttrung,Nguyen Tan,Trung,PhD
-6,nttvan,Nguyen Thi Thu,Van,PhD
-7,ttthinh,Truong Toan,Thinh,PhD
-8,vcnam,Van Chi,Nam,Master
+1,ngohuy83,Ngo Quang,Huy,PhD
+1,nkquang,Nguyen Kim,Quang,PhD
+1,nmhuy,Nguyen Minh,Huy,Master
+1,nttrung,Nguyen Tan,Trung,PhD
+1,nttvan,Nguyen Thi Thu,Van,PhD
+1,ttthinh,Truong Toan,Thinh,PhD
+1,vcnam,Van Chi,Nam,Master
