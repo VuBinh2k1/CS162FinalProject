@@ -9,6 +9,7 @@ void npstudent::list(csv_line& user, const char* class_id) {
 	layout minibox_layout(inp);
 	inp.close();
 
+	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
 LAYOUT:
 	minibox_layout.print();
 	gotoxy(78, 7); std::cout << "[Help]";
@@ -18,7 +19,6 @@ LAYOUT:
 	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << " No.      | Class    | Student ID | Full name                      ";
 
-	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
 	while ((cur = -1)) {
 		csv_file student_list(((std::string)".\\data\\class\\" + class_id + ".csv").c_str(), def_class);
 		csv_file student_info(__STUDENT);
@@ -46,59 +46,28 @@ LAYOUT:
 	NO_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
+		// KEY_HELP:
 		if (KEY_HELP(c)) {
-			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
-			gotoxy(78, 9, 128); std::cout << "                    ";
+			gotoxy(78, 8, 128); std::cout << " New       Ctrl+N   ";
+			gotoxy(78, 9, 128); std::cout << " Open      Ctrl+O   ";
+			gotoxy(78,10, 128); std::cout << " Search    Ctrl+F   ";
+			gotoxy(78,11, 128); std::cout << " Delete    Delete   ";
+			gotoxy(78,12, 128); std::cout << "____________________";
+			gotoxy(78,13, 128); std::cout << " Sort      Ctrl+\\,  ";
+			gotoxy(78,14, 128); std::cout << "  - Student ID    1 ";
+			gotoxy(78,15, 128); std::cout << "  - First name    2 ";
+			gotoxy(78,16, 128); std::cout << "                    ";
 			getch();
-			gotoxy(78, 8); std::cout << "                    ";
-			gotoxy(78, 9); std::cout << "                    ";
 			goto LAYOUT;
 		}
-		student = &student_list.data[row[choose]];
-		if (c == KEY_SEARCH) {
-			int old = choose; std::string search;
-			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
-			gotoxy(32, 16, 128); std::cout << "                                                         ";
-			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
-				std::transform(search.begin(), search.end(), search.begin(), ::tolower);
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-
-					student = file::find(student_info, student_list.data[row[choose]].pdata[1], nullptr, ON);
-
-					if (strstr(student->pdata[1], search.c_str()) ||
-						strstr(student->pdata[2], search.c_str()) ||
-						strstr(student->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
-				} while (choose != old);
-
-				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-				//search.front() = toupper(search.front());
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-
-					student = file::find(student_info, student_list.data[row[choose]].pdata[1], nullptr, ON);
-
-					if (strstr(student->pdata[1], search.c_str()) ||
-						strstr(student->pdata[2], search.c_str()) ||
-						strstr(student->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
-				} while (choose != old);
-			}
-
-		SUCCESS_SEARCH:
-			gotoxy(32, 15); std::cout << "                                                         ";
-			gotoxy(32, 16); std::cout << "                                                         ";
-			gotoxy(32, 17); std::cout << "                                                         ";
-			continue;
-		}
-		if (c == KEY_ENTER) {
-			npstudent::info(student->pdata[1], ON);
-			continue;
-		}
+		// KEY_NEW:
+		// KEY_OPEN:
+		if (c == KEY_SEARCH) { npstudent::search(student_list, cur, choose, overflow, row); goto LAYOUT; }
+		if (c == KEY_FUNCTION) { if (npstudent::sort(((std::string)".\\data\\class\\" + class_id + ".csv").c_str())) goto LAYOUT; else goto NO_CHANGE; }
+		if (c == KEY_ENTER) { npstudent::info(student_list.data[row[choose]].pdata[1], ON); goto LAYOUT; }
 		if (c == 224 || c == 0) {
 			c = getch();
+			if (c == KEY_DELETE) { npstudent::info(student_list.data[row[choose]].pdata[1], ON, ON); goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_LEFT) break;
@@ -119,6 +88,7 @@ void npstudent::list(csv_line& user, const char* course_id, const char* course_c
 	layout minibox_layout(inp);
 	inp.close();
 
+	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
 LAYOUT:
 	minibox_layout.print();
 	gotoxy(78, 7); std::cout << "[Help]";
@@ -128,8 +98,7 @@ LAYOUT:
 	colorizing(COLOR_YELLOW); std::cout << "  Attendance     " << "  Scoreboard    ";
 	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << " Course   | Class    | Student ID | Full name                      ";
-
-	int choose = 0, cur = -1, overflow = 0; int* row = nullptr;
+	
 	while ((cur = -1)) {
 		csv_file student_list(PROCESS(course_id, course_cs), def_process);
 		csv_file student_info(__STUDENT);
@@ -145,7 +114,6 @@ LAYOUT:
 			WORD COLOR_CODE = (cur % 2) ? 112 : 240;
 			if (choose == cur) COLOR_CODE = 176;
 
-
 			gotoxy(27, y, COLOR_CODE); std::cout << "          |          |            |                                ";
 			gotoxy(28, y, COLOR_CODE); std::cout << course_id;
 			gotoxy(39, y, COLOR_CODE); std::cout << course_cs;
@@ -157,67 +125,43 @@ LAYOUT:
 	NO_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
+		// KEY_HELP:
 		if (KEY_HELP(c)) {
-			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
-			gotoxy(78, 9, 128); std::cout << " Enrol      R, r    ";
-			gotoxy(78, 10, 128); std::cout << "                    ";
+			if (user == "staff") {
+				gotoxy(78, 8, 128); std::cout << " Search    Ctrl+F   ";
+				gotoxy(78, 9, 128); std::cout << " Delete    Delete   ";
+				gotoxy(78,10, 128); std::cout << "____________________";
+				gotoxy(78,11, 128); std::cout << " Sort      Ctrl+\\,  ";
+				gotoxy(78,12, 128); std::cout << "  - Student ID    1 ";
+				gotoxy(78,13, 128); std::cout << "  - First name    2 ";
+				gotoxy(78,14, 128); std::cout << "____________________";
+				gotoxy(78,15, 128); std::cout << " Enrol     R, r     ";
+				gotoxy(78,16, 128); std::cout << "                    ";
+			}
+			else {
+				gotoxy(78, 8, 128); std::cout << " Search    Ctrl+F   ";
+				gotoxy(78, 9, 128); std::cout << "____________________";
+				gotoxy(78,10, 128); std::cout << " Sort      Ctrl+\\,  ";
+				gotoxy(78,11, 128); std::cout << "  - Student ID    1 ";
+				gotoxy(78,12, 128); std::cout << "  - First name    2 ";
+				gotoxy(78,13, 128); std::cout << "____________________";
+				gotoxy(78,14, 128); std::cout << " Enrol     R, r     ";
+				gotoxy(78,15, 128); std::cout << "                    ";
+			}
 			getch();
-			gotoxy(78, 8); std::cout << "                    ";
-			gotoxy(78, 9); std::cout << "                    ";
-			gotoxy(78, 10); std::cout << "                    ";
 			goto LAYOUT;
 		}
-		student = &student_list.data[row[choose]];
-		if (c == KEY_SEARCH) {
-			int old = choose; std::string search;
-			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
-			gotoxy(32, 16, 128); std::cout << "                                                         ";
-			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
-				std::transform(search.begin(), search.end(), search.begin(), ::tolower);
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-
-					student = file::find(student_info, student_list.data[row[choose]].pdata[1], nullptr, ON);
-
-					if (strstr(student->pdata[1], search.c_str()) ||
-						strstr(student->pdata[2], search.c_str()) ||
-						strstr(student->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
-				} while (choose != old);
-
-				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-				//search.front() = toupper(search.front());
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-
-					student = file::find(student_info, student_list.data[row[choose]].pdata[1], nullptr, ON);
-
-					if (strstr(student->pdata[1], search.c_str()) ||
-						strstr(student->pdata[2], search.c_str()) ||
-						strstr(student->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
-				} while (choose != old);
-			}
-
-		SUCCESS_SEARCH:
-			gotoxy(32, 15); std::cout << "                                                         ";
-			gotoxy(32, 16); std::cout << "                                                         ";
-			gotoxy(32, 17); std::cout << "                                                         ";
-			continue;
+		if (c == KEY_SEARCH) { npstudent::search(student_list, cur, choose, overflow, row); goto LAYOUT; }
+		// POSITION: STAFF
+		if (user == "staff") {
+			// KEY_OPEN:
 		}
-
-		if (c == KEY_ENTER) {
-			npstudent::info(student->pdata[1], OFF);
-			continue;
-		}
-		if (KEY_EROL(c)) {
-			npcourse::enrol(user, course_id, course_cs);
-			continue;
-		}
-
+		if (c == KEY_FUNCTION) { if (npstudent::sort(PROCESS(course_id, course_cs))) goto LAYOUT; else goto NO_CHANGE; }
+		if (c == KEY_ENTER) { npstudent::info(student_list.data[row[choose]].pdata[1], OFF); goto LAYOUT; }
+		if (KEY_EROL(c)) { npcourse::enrol(user, course_id, course_cs); continue; }
 		if (c == 224 || c == 0) {
 			c = getch();
+			//if (c == KEY_DELETE && user == "staff") { goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_RIGHT) {
@@ -235,7 +179,7 @@ LAYOUT:
 	delete[] row;
 }
 
-void npstudent::info(const char* student_id, bool EDIT) {
+void npstudent::info(const char* student_id, bool EDIT, bool _DELETE) {
 LAYOUT:
 	csv_file student_list(__STUDENT);
 	csv_line* student = file::find(student_list, student_id, nullptr, ON);
@@ -243,7 +187,7 @@ LAYOUT:
 		gotoxy(32, 15, COLOR_BLUE_BACKGROUND); std::cout << " Student info                                            ";
 		gotoxy(32, 16, 128); std::cout << "                                                         ";
 		gotoxy(33, 16, 132); std::cout << "This student does not exist";
-		goto END;
+		PAUSE; return;
 	}
 
 	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " Student info                                            ";
@@ -265,6 +209,7 @@ LAYOUT:
 	gotoxy(33, 19, 128); std::cout << "Gender      : " << student->pdata[4];
 
 	if (EDIT) {
+		if (_DELETE == ON) { npstudent::remove(student_id); return; }
 		for (int choose = 0;;) {
 			gotoxy(51, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "  Edit  ";
 			gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Remove ";
@@ -277,7 +222,7 @@ LAYOUT:
 					goto LAYOUT;
 				}
 				if (choose == 1) {
-					if (npstudent::remove(student_id)) goto END;
+					if (npstudent::remove(student_id)) return;
 					goto LAYOUT;
 				}
 			}
@@ -293,22 +238,98 @@ LAYOUT:
 		uint8_t c = getch();
 		while (c != KEY_ESC && c != KEY_ENTER) c = getch();
 	}
+}
 
-END:
-	gotoxy(32, 13); std::cout << "                                                         ";
-	gotoxy(32, 14); std::cout << "                                                         ";
-	gotoxy(32, 15); std::cout << "                                                         ";
-	gotoxy(32, 16); std::cout << "                                                         ";
-	gotoxy(32, 17); std::cout << "                                                         ";
-	gotoxy(32, 18); std::cout << "                                                         ";
-	gotoxy(32, 19); std::cout << "                                                         ";
-	gotoxy(32, 20); std::cout << "                                                         ";
-	gotoxy(32, 21); std::cout << "                                                         ";
+void npstudent::search(csv_file& student_list, int cur, int& choose, int& overflow, int* row) {
+	int old = choose; std::string search;
+	csv_line* student = nullptr;
+	csv_file student_info(__STUDENT);
+
+	gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
+	gotoxy(32, 16, 128); std::cout << "                                                         ";
+	gotoxy(32, 17, 128); std::cout << "                                                         ";
+	if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
+		std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+		do {
+			if (choose < cur) { if (++choose < cur - 16) overflow--; }
+			else choose = overflow = 0;
+
+			student = file::find(student_info, student_list.data[row[choose]].pdata[1], nullptr, OFF);
+			if (strstr(student->pdata[1], search.c_str()) ||
+				strstr(student->pdata[2], search.c_str()) ||
+				strstr(student->pdata[3], search.c_str())) return;
+		} while (choose != old);
+
+		capitalize(search);
+		do {
+			if (choose < cur) { if (++choose < cur - 16) overflow--; }
+			else choose = overflow = 0;
+
+			student = file::find(student_info, student_list.data[row[choose]].pdata[1], nullptr, OFF);
+			if (strstr(student->pdata[1], search.c_str()) ||
+				strstr(student->pdata[2], search.c_str()) ||
+				strstr(student->pdata[3], search.c_str())) return;
+		} while (choose != old);
+	}
 }
 
 // [EDIT]::student //===========================================================================================================================//
 
-void npstudent::edit(const char* student_id) {
+void npstudent::sort(const char* FILE, int col1, int col2, int col3) {
+	csv_file file(FILE);
+	// Init
+	int n = file.count;
+	int* row = new int[n];
+	for (int i = 0; i < n; ++i) row[i] = i;
+
+	csv_file info(__STUDENT);
+	std::ofstream out(FILE);
+	// Sort O(n^2)
+	for (int i = 0; i < n; ++i) {
+		for (int j = i + 1; j < n; ++j) {
+			csv_line* istu = file::find(info, file.data[row[i]].pdata[1], nullptr, ON);
+			csv_line* jstu = file::find(info, file.data[row[j]].pdata[1], nullptr, ON);
+			if (istu == nullptr || jstu == nullptr) continue;
+
+			if (col1 > -1 && !file::sort_cmp_default(istu->pdata[col1], jstu->pdata[col1])) std::swap(row[i], row[j]);
+			if (strcmp(istu->pdata[col1], jstu->pdata[col1])) continue;
+
+			if (col2 > -1 && !file::sort_cmp_default(istu->pdata[col2], jstu->pdata[col2])) std::swap(row[i], row[j]);
+			if (strcmp(istu->pdata[col2], jstu->pdata[col2])) continue;
+
+			if (col3 > -1 && !file::sort_cmp_default(istu->pdata[col3], jstu->pdata[col3])) std::swap(row[i], row[j]);
+		}
+	}
+
+	// Save file
+	for (int j = 0; j < file.mark.count; ++j) {
+		out << file.mark.pdata[j];
+		if (j + 1 != file.mark.count) out << ',';
+	}
+	out << "\n";
+	for (int i = 0; i < n; out << "\n", ++i) {
+		for (int j = 0; j < file.data[row[i]].count; ++j) {
+			out << file.data[row[i]].pdata[j];
+			if (j + 1 != file.data[row[i]].count) out << ',';
+		}
+	}
+	out.close();
+	delete[] row;
+}
+
+bool npstudent::sort(const char* FILE) {
+	gotoxy(23, 28, 8); std::cout << "(Ctrl + \\) was pressed. Waiting for second key of chord...";
+	uint8_t c = getch();
+	if (c == '1') npstudent::sort(FILE, 1);				// sort: student id
+	else if (c == '2') npstudent::sort(FILE, 3, 2, 1);	// sort: first name
+	else {
+		gotoxy(23, 28); std::cout << "                                                          ";
+		return 0;
+	}
+	return 1;
+}
+
+void npstudent::edit(const char* student_id){
 	csv_file student_list(__STUDENT);
 	csv_line* student = file::find(student_list, student_id, nullptr, ON);
 	if (student == nullptr) return;

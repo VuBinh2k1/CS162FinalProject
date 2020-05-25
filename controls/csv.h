@@ -30,7 +30,8 @@
 
 class csv_line {
 public:
-	int id, count;		// Number of columns
+	int id;			// Location row
+	int count;		// Number of columns
 	char** pdata;
 
 	void init(std::istream& inp);
@@ -44,7 +45,7 @@ private:
 
 class csv_file {
 public:
-	int count;		// Number of cows
+	int count;		// Number of rows
 	csv_line mark;
 	csv_line* data;
 
@@ -54,8 +55,14 @@ public:
 };
 
 namespace file {
+	// FUNCTION: comparator
+	bool sort_cmp_default(const char* x, const char* y);
 	// EDIT: file.csv
 	void copy(const char* sre, const char* des);
+	void sort(const char* FILE, int col1, int col2 = -1, int col3 = -1);
+	void sort(const char* FILE, int col1, comparator _cmp);
+	void sort(const char* FILE, int col1, int col2, comparator _cmp);
+	void sort(const char* FILE, int col1, int col2, int col3, comparator _cmp);
 	void update(const char* FILE, int row, int column, const char* val);
 	void remove(const char* FILE, int row);
 	bool exists(const char* FILE);

@@ -24,18 +24,20 @@
 #define COLOR_GREEN_BACKGROUND 160
 #define COLOR_WHITE_BACKGROUND 240
 
-#define KEY_UP 72			// 0 - 224
-#define KEY_LEFT 75			// 0 - 224
-#define KEY_RIGHT 77		// 0 - 224
-#define KEY_DOWN 80			// 0 - 224
-#define KEY_DELETE 83		// 0
-#define KEY_SEARCH 6
-#define KEY_BACKSPACE 8
-#define KEY_ENTER 13
-#define KEY_NEW 14
-#define KEY_OPEN 15
-#define KEY_SAVE 19
-#define KEY_ESC 27
+// KEYBOARD_CODE (some keys have 2 characters)
+#define KEY_BACKSPACE 8		// Backspace.
+#define KEY_ENTER 13		// Enter.
+#define KEY_ESC 27			// Esc.
+#define KEY_UP 72			// 0 - 224	+ Up.
+#define KEY_LEFT 75			// 0 - 224	+ Left.
+#define KEY_RIGHT 77		// 0 - 224	+ Right.
+#define KEY_DOWN 80			// 0 - 224	+ Down.
+#define KEY_DELETE 83		// 0		+ Delete.
+#define KEY_SEARCH 6		// Ctrl		+ F.
+#define KEY_NEW 14			// Ctrl		+ N.
+#define KEY_OPEN 15			// Ctrl		+ O.
+#define KEY_SAVE 19			// Ctrl		+ S.
+#define KEY_FUNCTION 28		// Ctrl		+ \,
 #define KEY_CKIN(c) (c == 'C' || c == 'c')
 #define KEY_EDIT(c) (c == 'E' || c == 'e')
 #define KEY_HELP(c) (c == 'H' || c == 'h')

@@ -358,7 +358,9 @@ int npscoreboard::student(csv_line& user) {
 			else if (c == KEY_DOWN && choose < my_course.count - 18) choose++;
 			else if (c == KEY_LEFT) return -1;
 			else goto NO_CHANGE;
+			continue;
 		}
+		goto NO_CHANGE;
 	}
 	return 0;
 }

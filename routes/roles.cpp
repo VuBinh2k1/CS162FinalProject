@@ -8,58 +8,62 @@ bool role::login(csv_line& user) {
 		return 0;
 	}
 	layout login_layout(inp);
-	layout user_pass_layout(inp);
 	inp.close();
 
+	std::string username, password;
+
+LOGIN:
 	csv_file user_list(".\\data\\account.csv");
 
 	colorizing(COLOR_DEFAULT); system("cls");
 	login_layout.print();
-	for (std::string username, password;;) {
-	LOGIN:
 
-		user_pass_layout.print();
-		if (read(24, 12, COLOR_DEFAULT, username, 52, SHOW) == KEY_ESC) return 0;
-		if (read(24, 13, COLOR_DEFAULT, password, 52, HIDE) == KEY_ESC) return 0;
+	if (read(24, 12, COLOR_DEFAULT, username, 52, SHOW) == KEY_ESC) return 0;
+	if (read(24, 13, COLOR_DEFAULT, password, 52, HIDE) == KEY_ESC) return 0;
+	password = sha256(password);	// sha256
 
-		// Choose Left-right: [Login][Cancel]
-		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
-			gotoxy(40, 17, C1); std::cout << "[Login]";
-			gotoxy(48, 17, C2);  std::cout << "[Cancel]";
+	// Choose Left-right: [Login][Cancel]
+	for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
+		gotoxy(40, 17, C1); std::cout << "[Login]";
+		gotoxy(48, 17, C2);  std::cout << "[Cancel]";
 
-			uint8_t c = getch();
-			if (c == KEY_ESC) return 0;
-			if (c == KEY_ENTER) {
-				if (C1 == 240) break;
-				else {
-					gotoxy(34, 17, COLOR_YELLOW); std::cout << "Pls login to use the program";
-					PAUSE; goto LOGIN;
-				}
-			}
-			if (c == 224 || c == 0) {
-				if (C1 == 240 && getch() == KEY_RIGHT ||
-					C2 == 240 && getch() == KEY_LEFT) {
-					WORD temp = C1; C1 = C2; C2 = temp;
-				}
+		uint8_t c = getch();
+		if (c == KEY_ESC) return 0;
+		if (c == KEY_ENTER) {
+			if (C1 == 240) break;
+			else {
+				gotoxy(34, 17, COLOR_YELLOW); std::cout << "Pls login to use the program";
+				PAUSE; goto LOGIN;
 			}
 		}
-
-		for (int i = 0; i < user_list.count; ++i) {
-			if (strcmp(user_list.data[i].pdata[0], "0") == 0) continue;		// Status: 0/1
-			char* _username = user_list.data[i].pdata[1];
-			char* _password = user_list.data[i].pdata[2];
-			if (strcmp(username.c_str(), _username) == 0 &&
-				strcmp(password.c_str(), _password) == 0) {
-
-				user = user_list.data[i];
-				colorizing(COLOR_DEFAULT);
-				if (password.size() < 5 && role::new_password(user) == 0) return 0;
-				return 1;
+		if (c == 224 || c == 0) {
+			if (C1 == 240 && getch() == KEY_RIGHT ||
+				C2 == 240 && getch() == KEY_LEFT) {
+				WORD temp = C1; C1 = C2; C2 = temp;
 			}
 		}
-		gotoxy(33, 17, COLOR_RED); std::cout << "Incorrect username or password";
-		PAUSE;
 	}
+
+	for (int i = 0; i < user_list.count; ++i) {
+		if (strcmp(user_list.data[i].pdata[0], "0") == 0) continue;		// Status: 0/1
+		char* _username = user_list.data[i].pdata[1];
+		char* _password = user_list.data[i].pdata[2];
+		if (strcmp(username.c_str(), _username) == 0 &&
+			(strcmp(password.c_str(), _password) == 0 || strcmp("0", _password) == 0)) {
+
+			user = user_list.data[i];
+			colorizing(COLOR_DEFAULT);
+
+			// New account (password: '0')
+			if (strcmp("0", _password) == 0)
+				if (role::new_password(user) == 0) return 0; 
+				else goto LOGIN;
+			return 1;
+		}
+	}
+	gotoxy(33, 17, COLOR_RED); std::cout << "Incorrect username or password";
+	PAUSE;
+	goto LOGIN;
 }
 
 bool role::profile(csv_line& user) {
@@ -153,23 +157,19 @@ bool role::new_password(csv_line& user) {
 		return 0;
 	}
 	layout password_layout(inp);
-	layout change_password_layout(inp);
 	inp.close();
 
 	char* username = user.pdata[1];
-	char* password = user.pdata[2];
-	std::string pw_old;
 	std::string pw_new;
 	std::string pw_new_confirm;
 
 	colorizing(COLOR_DEFAULT); system("cls");
-	password_layout.print();
+	
 	while (1) {
-		change_password_layout.print();
+		password_layout.print();
 
-		if (read(32, 9, COLOR_DEFAULT, pw_old, 52, HIDE) == KEY_ESC) return 0;
-		if (read(32, 11, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
-		if (read(32, 13, COLOR_DEFAULT, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 10, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
+		if (read(32, 12, COLOR_DEFAULT, pw_new_confirm, 52, HIDE) == KEY_ESC) return 0;
 
 		// Choose Left-right: [Save change][Cancel]
 		for (WORD C1 = COLOR_WHITE_BACKGROUND, C2 = COLOR_WHITE;;) {
@@ -190,29 +190,20 @@ bool role::new_password(csv_line& user) {
 			}
 		}
 
-		if (strcmp(password, pw_old.c_str())) {
-			gotoxy(32, 10, COLOR_RED); std::cout << "Current Password is incorrect.";
-			PAUSE; continue;
-		}
 		if (pw_new.size() < 5) {
-			gotoxy(32, 12, COLOR_RED); std::cout << "The Password field must be least 5 characters.";
+			gotoxy(32, 11, COLOR_RED); std::cout << "The Password field must be least 5 characters.";
 			PAUSE; continue;
 		}
 		if (pw_new != pw_new_confirm) {
-			gotoxy(32, 14, COLOR_RED); std::cout << "The Confirm Password confirmation does not match.";
+			gotoxy(32, 13, COLOR_RED); std::cout << "The Confirm Password confirmation does not match.";
 			PAUSE; continue;
 		}
 		break;
 	}
 
 	// Update "account.csv"
-	file::update(".\\data\\account.csv", user.id, 2, pw_new.c_str());
+	file::update(".\\data\\account.csv", user.id, 2, sha256(pw_new).c_str());	// sha256
 	gotoxy(36, 17, COLOR_GREEN); std::cout << "Save changes successfully.";
-
-	// Update current user
-	csv_file user_list(".\\data\\account.csv");
-	user = user_list.data[user.id];
-
 	gotoxy(0, 20); PAUSE;
 	return 1;
 }
@@ -227,7 +218,7 @@ bool role::password(csv_line& user) {
 	inp.close();
 
 	char* username = user.pdata[1];
-	char* password = user.pdata[2];
+	char* password = user.pdata[2];		// sha256
 	std::string pw_old;
 	std::string pw_new;
 	std::string pw_new_confirm;
@@ -239,7 +230,6 @@ bool role::password(csv_line& user) {
 		gotoxy(24, 15); std::cout << "New password    :[                                                     ]";
 		gotoxy(24, 18); std::cout << "Confirm password:[                                                     ]";
 		gotoxy(47, 27); std::cout << "[Save change] [  Cancel   ]";
-
 
 		if (read(42, 12, COLOR_DEFAULT, pw_old, 52, HIDE) == KEY_ESC) return 0;
 		if (read(42, 15, COLOR_DEFAULT, pw_new, 52, HIDE) == KEY_ESC) return 0;
@@ -264,7 +254,7 @@ bool role::password(csv_line& user) {
 			}
 		}
 
-		if (strcmp(password, pw_old.c_str())) {
+		if (strcmp(password, sha256(pw_old).c_str())) {	// sha256
 			gotoxy(42, 13, COLOR_RED); std::cout << "Current Password is incorrect.";
 			PAUSE; continue;
 		}
@@ -280,7 +270,7 @@ bool role::password(csv_line& user) {
 	}
 
 	// Update "account.csv"
-	file::update(".\\data\\account.csv", user.id, 2, pw_new.c_str());
+	file::update(".\\data\\account.csv", user.id, 2, sha256(pw_new).c_str());	// sha256
 	gotoxy(46, 27, COLOR_GREEN); std::cout << " Save changes successfully. ";
 
 	// Update current user
@@ -293,13 +283,12 @@ bool role::password(csv_line& user) {
 // [Main menu]::allclass //=====================================================================================================================//
 
 void role::staff(csv_line& user) {
-	std::ifstream inp(".\\layout\\menu.layout");
+	std::ifstream inp(".\\layout\\staff.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("staff.layout is not exist"), TEXT("error layout"), MB_OK);
 		exit(0);
 	}
 	layout menu_layout(inp);
-	layout menu_info_layout(inp);
 	inp.close();
 
 	csv_file infofile(__STAFF);
@@ -389,13 +378,12 @@ MENU:
 }
 
 void role::lecturer(csv_line& user) {
-	std::ifstream inp(".\\layout\\menu.layout");
+	std::ifstream inp(".\\layout\\lecturer.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("lecturer.layout is not exist"), TEXT("error layout"), MB_OK);
 		exit(0);
 	}
 	layout menu_layout(inp);
-	layout menu_info_layout(inp);
 	inp.close();
 
 	csv_file infofile(__LECTURER);
@@ -464,13 +452,12 @@ MENU:
 }
 
 void role::student(csv_line& user) {
-	std::ifstream inp(".\\layout\\menu.layout");
+	std::ifstream inp(".\\layout\\student.layout");
 	if (!inp.is_open()) {
-		MessageBox(NULL, TEXT("menu.layout is not exist"), TEXT("error layout"), MB_OK);
+		MessageBox(NULL, TEXT("student.layout is not exist"), TEXT("error layout"), MB_OK);
 		exit(0);
 	}
 	layout menu_layout(inp);
-	layout menu_info_layout(inp);
 	inp.close();
 
 	csv_file infofile(__STUDENT);
@@ -602,56 +589,27 @@ LAYOUT:
 	NO_CHANGE:
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
+		// KEY_HELP:
 		if (KEY_HELP(c)) {
-			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
-			gotoxy(78, 9, 128); std::cout << "                    ";
+			gotoxy(78, 8, 128); std::cout << " New       Ctrl+N   ";
+			gotoxy(78, 9, 128); std::cout << " Search    Ctrl+F   "; 
+			gotoxy(78,10, 128); std::cout << " Delete    Dalete   "; 
+			gotoxy(78,11, 128); std::cout << "____________________";
+			gotoxy(78,12, 128); std::cout << " Sort      Ctrl+\\,  ";
+			gotoxy(78,13, 128); std::cout << "  - Class name    1 ";
+			gotoxy(78,14, 128); std::cout << "                    ";
 			getch();
-			gotoxy(78, 8); std::cout << "                    ";
-			gotoxy(78, 8); std::cout << "                    ";
 			goto LAYOUT;
 		}
-		if (c == KEY_SEARCH) {
-			int old = choose; std::string search;
-			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
-			gotoxy(32, 16, 128); std::cout << "                                                         ";
-			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
-				std::transform(search.begin(), search.end(), search.begin(), ::tolower);
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-					if (strstr(class_list.data[choose].pdata[1], search.c_str()) || (class_list.data[choose].count > 2 &&
-						strstr(class_list.data[choose].pdata[2], search.c_str()))) goto SUCCESS_SEARCH;
-				} while (choose != old);
-
-				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-					if (strstr(class_list.data[choose].pdata[1], search.c_str()) || (class_list.data[choose].count > 2 &&
-						strstr(class_list.data[choose].pdata[2], search.c_str()))) goto SUCCESS_SEARCH;
-				} while (choose != old);
-			}
-
-		SUCCESS_SEARCH:
-			gotoxy(32, 15); std::cout << "                                                         ";
-			gotoxy(32, 16); std::cout << "                                                         ";
-			gotoxy(32, 17); std::cout << "                                                         ";
-			continue;
-		}
-		cls = &class_list.data[choose];
-		if (c == KEY_ENTER) {
-
-			goto NO_CHANGE;
-		}
+		if (c == KEY_NEW) { npclass::add(); choose = overflow = 0; goto LAYOUT; }
+		if (c == KEY_SEARCH) { npclass::search(class_list, cur, choose, overflow); goto LAYOUT; }
+		if (c == KEY_FUNCTION) { if (npclass::sort()) goto LAYOUT; else goto NO_CHANGE; }
 		if (c == 224 || c == 0) {
 			c = getch();
+			if (c == KEY_DELETE) { npclass::remove(class_list.data[choose].pdata[1]); choose = overflow = 0; goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
-			else if (c == KEY_RIGHT) {
-				npstudent::list(user, cls->pdata[1]);
-				goto LAYOUT;
-			}
+			else if (c == KEY_RIGHT) { npstudent::list(user, class_list.data[choose].pdata[1]); goto LAYOUT; }
 			else goto NO_CHANGE;
 			continue;
 		}
@@ -729,50 +687,43 @@ LAYOUT:
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
 		if (KEY_HELP(c)) {
-			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
-			gotoxy(78, 9, 128); std::cout << " Enrol      R, r    ";
-			gotoxy(78, 10, 128); std::cout << "                    ";
+			if (user == "staff") {
+				gotoxy(78, 8, 128); std::cout << " New       Ctrl+N   ";
+				gotoxy(78, 9, 128); std::cout << " Open      Ctrl+O   ";
+				gotoxy(78,10, 128); std::cout << " Search    Ctrl+F   ";
+				gotoxy(78,11, 128); std::cout << " Delete    Delete   ";
+				gotoxy(78,12, 128); std::cout << "____________________";
+				gotoxy(78,13, 128); std::cout << " Sort      Ctrl+\\,  ";
+				gotoxy(78,14, 128); std::cout << "  - Course ID     1 ";
+				gotoxy(78,15, 128); std::cout << "  - Class         2 ";
+				gotoxy(78,16, 128); std::cout << "  - Lecturer ID   3 ";
+				gotoxy(78,17, 128); std::cout << "  - Room          4 ";
+				gotoxy(78,18, 128); std::cout << "____________________";
+				gotoxy(78,19, 128); std::cout << " Enrol     R, r     ";
+				gotoxy(78,20, 128); std::cout << "                    ";
+			} else {
+				gotoxy(78, 8, 128); std::cout << " Search    Ctrl+F   ";
+				gotoxy(78, 9, 128); std::cout << "____________________";
+				gotoxy(78,10, 128); std::cout << " Sort      Ctrl+\\,  ";
+				gotoxy(78,11, 128); std::cout << "  - Course ID     1 ";
+				gotoxy(78,12, 128); std::cout << "  - Class         2 ";
+				gotoxy(78,13, 128); std::cout << "  - Lecturer ID   3 ";
+				gotoxy(78,14, 128); std::cout << "  - Room          4 ";
+				gotoxy(78,15, 128); std::cout << "____________________";
+				gotoxy(78,16, 128); std::cout << " Enrol     R, r     ";
+				gotoxy(78,17, 128); std::cout << "                    ";
+			}
 			getch();
-			gotoxy(78, 8); std::cout << "                    ";
-			gotoxy(78, 9); std::cout << "                    ";
-			gotoxy(78, 10); std::cout << "                    ";
 			goto LAYOUT;
 		}
-		if (c == KEY_SEARCH) {
-			int old = choose; std::string search;
-			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
-			gotoxy(32, 16, 128); std::cout << "                                                         ";
-			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
-				std::transform(search.begin(), search.end(), search.begin(), ::tolower);
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-					if (strstr(course_list.data[choose].pdata[1], search.c_str()) ||
-						strstr(course_list.data[choose].pdata[3], search.c_str()) ||
-						strstr(course_list.data[choose].pdata[4], search.c_str()) ||
-						strstr(course_list.data[choose].pdata[10], search.c_str())) goto SUCCESS_SEARCH;
-					if (search.empty() && permit[choose]) goto SUCCESS_SEARCH;
-				} while (choose != old);
-
-				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-					if (strstr(course_list.data[choose].pdata[1], search.c_str()) ||
-						strstr(course_list.data[choose].pdata[3], search.c_str()) ||
-						strstr(course_list.data[choose].pdata[4], search.c_str()) ||
-						strstr(course_list.data[choose].pdata[10], search.c_str())) goto SUCCESS_SEARCH;
-				} while (choose != old);
-			}
-
-		SUCCESS_SEARCH:
-			gotoxy(32, 15); std::cout << "                                                         ";
-			gotoxy(32, 16); std::cout << "                                                         ";
-			gotoxy(32, 17); std::cout << "                                                         ";
-			continue;
-		}
+		if (c == KEY_SEARCH) { npcourse::search(course_list, cur, choose, overflow, permit); goto LAYOUT; }
 		course = &course_list.data[choose];
+		// POSITION: STAFF
+		if (user == "staff") {
+			// KEY_NEW:
+			// KEY_OPEN:
+		}
+		if (c == KEY_FUNCTION) { if (npcourse::sort()) goto LAYOUT; else goto NO_CHANGE; }
 		if (c == KEY_ENTER) {
 			if (user == "staff" || (user == "lecturer" && strcmp(user.pdata[1], course->pdata[4]) == 0)) {
 				npcourse::info(user, course->pdata[1], course->pdata[3]);
@@ -784,12 +735,10 @@ LAYOUT:
 			}
 			goto NO_CHANGE;
 		}
-		if (KEY_EROL(c)) {
-			npcourse::enrol(user, course->pdata[1], course->pdata[3]);
-			continue;
-		}
-		else if (c == 224 || c == 0) {
+		if (KEY_EROL(c)) { npcourse::enrol(user, course->pdata[1], course->pdata[3]); continue; }
+		if (c == 224 || c == 0) {
 			c = getch();
+			if (c == KEY_DELETE && user == "staff") { npcourse::info(user, course->pdata[1], course->pdata[3], ON); goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_RIGHT) {
@@ -831,13 +780,13 @@ LAYOUT:
 	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << " No.   | Lecturer ID | Ranking    | Full name                      ";
 	while ((cur = -1)) {
-		csv_file lecturer_info(__LECTURER);
+		csv_file lecturer_list(__LECTURER);
 		csv_line* lecturer = nullptr;
 		if (row) delete[]row;
-		row = new int[lecturer_info.count];
+		row = new int[lecturer_list.count];
 
-		for (int i = 0; i < lecturer_info.count; i++) {
-			if ((lecturer = file::find(lecturer_info, lecturer_info.data[i].pdata[1], nullptr, ON)) == nullptr) continue;
+		for (int i = 0; i < lecturer_list.count; i++) {
+			if ((lecturer = file::find(lecturer_list, lecturer_list.data[i].pdata[1], nullptr, ON)) == nullptr) continue;
 
 			int y = 10 + (++cur) + overflow; row[cur] = i;
 			if (y < 10 || y>27) continue;
@@ -856,66 +805,31 @@ LAYOUT:
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
 		if (KEY_HELP(c)) {
-			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
-			gotoxy(78, 9, 128); std::cout << " New        Ctrl+N  ";
-			gotoxy(78, 10, 128); std::cout << "                    ";
+			gotoxy(78, 8, 128); std::cout << " New       Ctrl+N   ";
+			gotoxy(78, 9, 128); std::cout << " Open      Ctrl+O   ";
+			gotoxy(78,10, 128); std::cout << " Search    Ctrl+F   ";
+			gotoxy(78,11, 128); std::cout << " Delete    Delete   ";
+			gotoxy(78,12, 128); std::cout << "____________________";
+			gotoxy(78,13, 128); std::cout << " Sort      Ctrl+\\,  ";
+			gotoxy(78,14, 128); std::cout << "  - Lecturer ID   1 ";
+			gotoxy(78,15, 128); std::cout << "  - Ranking       2 ";
+			gotoxy(78,16, 128); std::cout << "  - First name    3 ";
+			gotoxy(78,17, 128); std::cout << "                    ";
 			getch();
-			gotoxy(78, 8); std::cout << "                    ";
-			gotoxy(78, 9); std::cout << "                    ";
-			gotoxy(78, 10); std::cout << "                    ";
 			goto LAYOUT;
 		}
-		lecturer = &lecturer_info.data[row[choose]];
-		if (c == KEY_SEARCH) {
-			int old = choose; std::string search;
-			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search lecturer id                                      ";
-			gotoxy(32, 16, 128); std::cout << "                                                         ";
-			gotoxy(32, 17, 128); std::cout << "                                                         ";
-			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
-				std::transform(search.begin(), search.end(), search.begin(), ::tolower);
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-
-					lecturer = file::find(lecturer_info, lecturer_info.data[row[choose]].pdata[1], nullptr, ON);
-
-					if (strstr(lecturer->pdata[1], search.c_str()) ||
-						strstr(lecturer->pdata[2], search.c_str()) ||
-						strstr(lecturer->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
-				} while (choose != old);
-
-				std::transform(search.begin(), search.end(), search.begin(), ::toupper);
-				//search.front() = toupper(search.front());
-				do {
-					if (choose < cur) { if (++choose < cur - 16) overflow--; }
-					else choose = overflow = 0;
-
-					lecturer = file::find(lecturer_info, lecturer_info.data[row[choose]].pdata[1], nullptr, ON);
-
-					if (strstr(lecturer->pdata[1], search.c_str()) ||
-						strstr(lecturer->pdata[2], search.c_str()) ||
-						strstr(lecturer->pdata[3], search.c_str())) goto SUCCESS_SEARCH;
-				} while (choose != old);
-			}
-
-		SUCCESS_SEARCH:
-			gotoxy(32, 15); std::cout << "                                                         ";
-			gotoxy(32, 16); std::cout << "                                                         ";
-			gotoxy(32, 17); std::cout << "                                                         ";
-			continue;
-		}
-		if (c == KEY_ENTER) {
-			nplecturer::info(lecturer->pdata[1], ON);
-			continue;
-		}
-		else if (c == 224 || c == 0) {
+		lecturer = &lecturer_list.data[row[choose]];
+		// KEY_NEW:
+		// KEY_OPEN:
+		if (c == KEY_SEARCH) { nplecturer::search(lecturer_list, cur, choose, overflow, row); goto LAYOUT; }
+		if (c == KEY_FUNCTION) { if (nplecturer::sort()) goto LAYOUT; else goto NO_CHANGE; }
+		if (c == KEY_ENTER) { nplecturer::info(lecturer->pdata[1], ON); goto LAYOUT; }
+		if (c == 224 || c == 0) {
 			c = getch();
+			if (c == KEY_DELETE) { nplecturer::info(lecturer->pdata[1], ON, ON); goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
-			else if (c == KEY_RIGHT) {
-				nplecturer::courses_list(lecturer->pdata[1]);
-				goto LAYOUT;
-			}
+			else if (c == KEY_RIGHT) { nplecturer::courses_list(lecturer->pdata[1]); goto LAYOUT; }
 			else goto NO_CHANGE;
 			continue;
 		}
@@ -972,7 +886,7 @@ int role::calendar(csv_line& user) {
 			int y = 10 + cur - choose;
 			day.tm_mday++; std::mktime(&day);
 
-			WORD COLOR_CODE = (day.tm_mday % 2) ? 112 : 240;
+			WORD COLOR_CODE = (i % 2) ? 112 : 240;
 			if (day.tm_mday == ltm.tm_mday) COLOR_CODE = COLOR_RED_BACKGROUND;
 			if (9 < y && y < 28) {
 				gotoxy(27, y, COLOR_CODE); std::cout << "            |                                      |       |       ";
@@ -1023,7 +937,9 @@ int role::calendar(csv_line& user) {
 			else if (c == KEY_LEFT) return -1;
 			else if (c == KEY_RIGHT) return 1;
 			else goto NO_CHANGE;
+			continue;
 		}
+		goto NO_CHANGE;
 	}
 	return 0;
 }

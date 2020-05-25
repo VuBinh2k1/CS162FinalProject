@@ -1,11 +1,12 @@
 #ifndef ROLES_H
 #define ROLES_H
-#include "control.h"
+#include "csv.h"
+#include "sha256.h"
+#include "lecturer.h"
 #include "student.h"
 #include "course.h"
 #include "attendance.h"
 #include "scoreboard.h"
-#include "lecturer.h"
 
 namespace role {
 	// All roles

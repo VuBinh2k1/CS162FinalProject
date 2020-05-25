@@ -9,10 +9,6 @@
 #include <map>
 #include <stdlib.h>
 
-#include "csv.h"
-#include "layout.h"
-#include "sha256.h"
-
 #define MAX_WEEK 11
 #define WEEK_COLUMN 6
 #define INVALID_MEMORY_ADDRESS 0xcccccccccccccccc
@@ -24,14 +20,20 @@ namespace control {
 	std::string config(const char* DEFINE);
 }
 
+// Function 
 std::string COURSE_PATH(const char* FILE);
 void academicmark();
 void capitalize(std::string& str);
 const char* US_GPA(const char* strsco);
 const char* US_Grade(const char* strsco);
 
+// Funtion pointer
+typedef bool (*comparator)(const char* x, const char* y);
+
 // .config data
 #define ENGLISHNAME atoi(control::config("ENGLISHNAME").c_str())
 #define ACADEMICYEAR control::config("ACADEMICYEAR")
 #define SEMESTER control::config("SEMESTER")
+
+#include "layout.h"
 #endif

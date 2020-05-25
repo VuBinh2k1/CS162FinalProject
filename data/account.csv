@@ -1,17 +1,10 @@
 Status,User ID,Password,Position
-1,hatu,hat123,staff
-1,ntmphuc,654321,staff
-1,ltathao,13579,staff
-1,ngohuy83,huy83,lecturer
-1,nttvan,hcmus2,lecturer
-1,19127012,binh2001,student
-1,19127186,13579,student
-1,19127226,nguyen,student
-1,19127348,12357,student
-1,ltkhoi,123456,lecturer
-1,htphuong,456,lecturer
-1,nkquang,789,lecturer
-1,nmhuy,nmhuy1,lecturer
-1,nttrung,trung,lecturer
-1,ttthinh,thinh,lecturer
-1,vcnam,nam,lecturer
+1,hatu,f05e84255b6f6ce2f9f6dcebfc95f8cac5f276c20a7d9169054a7ede2a2a7115,staff
+1,ntmphuc,0,staff
+1,ltathao,0,staff
+1,ngohuy83,ec54307cfc9bba051b37fe4f7104c2c0739f3d7a771b3a0fdbfd81e201664187,lecturer
+1,nttvan,0,lecturer
+1,19127012,e06d04ca21896aa06d271566899361be3d2f68674eaa0aa0bfc185e9d8d3b6cf,student
+1,19127186,0,student
+1,19127226,0,student
+1,19127348,0,student
