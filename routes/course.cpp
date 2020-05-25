@@ -1,6 +1,6 @@
 #include "..\\controls\\course.h"
 
-void npcourse::info(csv_line& user, const char* course_id, const char* course_cs) {
+void npcourse::info(csv_line& user, const char* course_id, const char* course_cs, bool _DELETE) {
 LAYOUT:
 	csv_file course_list(__COURSE, def_course);
 	csv_line* course = file::find(course_list, course_id, course_cs, OFF);
@@ -32,6 +32,7 @@ LAYOUT:
 	else { colorizing(128 + COLOR_RED); std::cout << "Student can't self enrol"; }
 
 	if (user == "staff") {
+		if (_DELETE == ON) { npcourse::remove(course_id, course_cs); return; }
 		for (int choose = 0;;) {
 			gotoxy(51, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "  Edit  ";
 			gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Remove ";
@@ -44,7 +45,7 @@ LAYOUT:
 					goto LAYOUT;
 				}
 				if (choose == 1) {
-					if (npcourse::remove(course_id, course_cs)) goto END;
+					if (npcourse::remove(course_id, course_cs)) return;
 					goto LAYOUT;
 				}
 			}
@@ -59,21 +60,10 @@ LAYOUT:
 		gotoxy(54, 21, COLOR_WHITE_BACKGROUND); std::cout << "  Schedule  ";
 		uint8_t c = getch();
 		while (c != KEY_ESC && c != KEY_ENTER) c = getch();
-		if (c == KEY_ESC) goto END;
+		if (c == KEY_ESC) return;
 		npcourse::schedule(course_id, course_cs);
 		goto LAYOUT;
 	}
-
-END:
-	gotoxy(32, 13); std::cout << "                                                         ";
-	gotoxy(32, 14); std::cout << "                                                         ";
-	gotoxy(32, 15); std::cout << "                                                         ";
-	gotoxy(32, 16); std::cout << "                                                         ";
-	gotoxy(32, 17); std::cout << "                                                         ";
-	gotoxy(32, 18); std::cout << "                                                         ";
-	gotoxy(32, 19); std::cout << "                                                         ";
-	gotoxy(32, 20); std::cout << "                                                         ";
-	gotoxy(32, 21); std::cout << "                                                         ";
 }
 
 void npcourse::enrol(csv_line& user, const char* course_id, const char* course_cs) {
@@ -203,7 +193,56 @@ END:
 	gotoxy(32, 18); std::cout << "                                                         ";
 }
 
+void npcourse::search(csv_file& course_list, int cur, int& choose, int& overflow, bool* permit) {
+	csv_line* course = nullptr;
+	int old = choose; std::string search;
+	gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
+	gotoxy(32, 16, 128); std::cout << "                                                         ";
+	gotoxy(32, 17, 128); std::cout << "                                                         ";
+	if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
+		if (search.empty() && permit[choose]) return;
+
+		std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+		do {
+			if (choose < cur) { if (++choose < cur - 16) overflow--; }
+			else choose = overflow = 0;
+
+			csv_line* course = &course_list.data[choose];
+			if (strstr(course->pdata[1], search.c_str()) ||
+				strstr(course->pdata[3], search.c_str()) ||
+				strstr(course->pdata[4], search.c_str()) ||
+				strstr(course->pdata[10], search.c_str())) return;
+		} while (choose != old);
+
+		std::transform(search.begin(), search.end(), search.begin(), ::toupper);
+		do {
+			if (choose < cur) { if (++choose < cur - 16) overflow--; }
+			else choose = overflow = 0;
+
+			csv_line* course = &course_list.data[choose];
+			if (strstr(course->pdata[1], search.c_str()) ||
+				strstr(course->pdata[3], search.c_str()) ||
+				strstr(course->pdata[4], search.c_str()) ||
+				strstr(course->pdata[10], search.c_str())) return;
+		} while (choose != old);
+	}
+}
+
 // [EDIT]::course //============================================================================================================================//
+
+bool npcourse::sort() {
+	gotoxy(23, 28, 8); std::cout << "(Ctrl + \\) was pressed. Waiting for second key of chord...";
+	uint8_t c = getch();
+	if (c == '1') file::sort(__COURSE, 1, 3);			// sort: course id
+	else if (c == '2') file::sort(__COURSE, 3, 1);		// sort: class
+	else if (c == '3') file::sort(__COURSE, 4, 1, 3);	// sort: lecturer id
+	else if (c == '4') file::sort(__COURSE, 10, 1, 3);	// sort: room
+	else {
+		gotoxy(23, 28); std::cout << "                                                          ";
+		return 0;
+	}
+	return 1;
+}
 
 bool npcourse::now(const char* course_id, const char* course_cs, std::tm day) {
 	csv_file schedule(SCHEDULE(course_id, course_cs), course_id, course_cs);

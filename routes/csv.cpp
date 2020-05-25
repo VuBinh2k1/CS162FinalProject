@@ -96,34 +96,6 @@ bool file::sort_cmp_default(const char* x, const char* y) {
 	return strcmp(x, y) < 1;
 }
 
-bool file::sort_cmp_class(const char* x, const char* y) {
-	// CLASS ID: year_type_num (Ex: 19 - CLC - 1 = 19CLC1;
-	std::string str[2]; str[0] = x; str[1] = y;
-	std::string year[2], type[2], num[2];
-	for (int t = 0; t < 2; ++t) {	// Convert const char* to std::string year - type - num
-		std::string *cur = &year[t];
-		for (int i = 0; i < str[t].size(); ++i) {
-			if (cur == &year[t]) {
-				if (str[t][i] >= '0' && str[t][i] <= '9') *cur += str[t][i];
-				else cur = &type[t];
-			}
-			if (cur == &type[t]) {
-				if ((str[t][i] >= 'A' && str[t][i] <= 'Z')) *cur += str[t][i];
-				else cur = &num[t];
-			}
-			if (cur == &num[t]) {
-				if (str[t][i] >= '0' && str[t][i] <= '9') *cur += str[t][i];
-				else break;
-			}
-		}
-	}
-
-	if (std::stoi(year[0]) != std::stoi(year[1])) return std::stoi(year[0]) <= std::stoi(year[1]);
-	if (type[0] != type[1]) return type[0] <= type[1];
-	if (std::stoi(num[0]) != std::stoi(num[1])) return std::stoi(num[0]) <= std::stoi(num[1]);
-	return 1;
-}
-
 // [EDIT]::file.csv //==========================================================================================================================//
 
 void file::copy(const char* sre, const char* des) {
@@ -139,8 +111,6 @@ void file::sort(const char* FILE, int col1, int col2, comparator _cmp) { file::s
 // file::sort: main function
 void file::sort(const char* FILE, int col1, int col2, int col3, comparator _cmp) {
 	csv_file file(FILE);
-	std::ofstream out(FILE);
-
 	// Init
 	int n = file.count;
 	int* row = new int[n];
@@ -148,6 +118,7 @@ void file::sort(const char* FILE, int col1, int col2, int col3, comparator _cmp)
 		if (file.data[i].count < max(col1, max(col1, col2)) + 1) { delete[] row; return; }
 		else row[i] = i;
 
+	std::ofstream out(FILE);
 	// Sort O(n^2)
 	for (int i = 0; i < n; ++i) {
 		for (int j = i + 1; j < n; ++j) {

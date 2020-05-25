@@ -75,7 +75,7 @@ LAYOUT:
 	return 0;
 }
 
-void nplecturer::info(const char* lecturer_id, bool EDIT) {
+void nplecturer::info(const char* lecturer_id, bool EDIT, bool _DELETE) {
 LAYOUT:
 	csv_file lecturer_list(__LECTURER);
 	csv_line* lecturer = file::find(lecturer_list, lecturer_id, nullptr, ON);
@@ -83,7 +83,7 @@ LAYOUT:
 		gotoxy(32, 15, COLOR_BLUE_BACKGROUND); std::cout << " Lecturer info                                            ";
 		gotoxy(32, 16, 128); std::cout << "                                                         ";
 		gotoxy(33, 16, 132); std::cout << "This lecturer does not exist";
-		goto END;
+		PAUSE; return;
 	}
 
 	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " Lecturer info                                           ";
@@ -101,6 +101,7 @@ LAYOUT:
 	gotoxy(33, 17, 128); std::cout << "Ranking      : " << lecturer->pdata[4];
 	//nplecturer::courseslist(lecturer->pdata[1]);
 	if (EDIT) {
+		if (_DELETE == ON) { nplecturer::remove(lecturer_id); return; }
 		for (int choose = 0;;) {
 			gotoxy(51, 19, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "  Edit  ";
 			gotoxy(60, 19, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Remove ";
@@ -113,7 +114,7 @@ LAYOUT:
 					goto LAYOUT;
 				}
 				else if (choose == 1) {
-					if (nplecturer::remove(lecturer_id)) goto END;
+					if (nplecturer::remove(lecturer_id)) return;
 					goto LAYOUT;
 				}
 			}
@@ -129,17 +130,54 @@ LAYOUT:
 		uint8_t c = getch();
 		while (c != KEY_ESC && c != KEY_ENTER) c = getch();
 	}
-END:
-	gotoxy(27, 13); std::cout << "                                                                  ";
-	gotoxy(27, 14); std::cout << "                                                                  ";
-	gotoxy(27, 15); std::cout << "                                                                  ";
-	gotoxy(27, 16); std::cout << "                                                                  ";
-	gotoxy(27, 17); std::cout << "                                                                  ";
-	gotoxy(27, 18); std::cout << "                                                                  ";
-	gotoxy(27, 19); std::cout << "                                                                  ";
+}
+
+void nplecturer::search(csv_file& lecturer_list, int cur, int& choose, int& overflow, int* row){
+	int old = choose; std::string search;
+	csv_line* lecturer = nullptr;
+
+	gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
+	gotoxy(32, 16, 128); std::cout << "                                                         ";
+	gotoxy(32, 17, 128); std::cout << "                                                         ";
+	if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
+		std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+		do {
+			if (choose < cur) { if (++choose < cur - 16) overflow--; }
+			else choose = overflow = 0;
+
+			lecturer = &lecturer_list.data[row[choose]];
+			if (strstr(lecturer->pdata[1], search.c_str()) ||
+				strstr(lecturer->pdata[2], search.c_str()) ||
+				strstr(lecturer->pdata[3], search.c_str())) return;
+		} while (choose != old);
+
+		capitalize(search);
+		do {
+			if (choose < cur) { if (++choose < cur - 16) overflow--; }
+			else choose = overflow = 0;
+
+			lecturer = &lecturer_list.data[row[choose]];
+			if (strstr(lecturer->pdata[1], search.c_str()) ||
+				strstr(lecturer->pdata[2], search.c_str()) ||
+				strstr(lecturer->pdata[3], search.c_str())) return;
+		} while (choose != old);
+	}
 }
 
 // [EDIT]::lecturer //==========================================================================================================================//
+
+bool nplecturer::sort() {
+	gotoxy(23, 28, 8); std::cout << "(Ctrl + \\) was pressed. Waiting for second key of chord...";
+	uint8_t c = getch();
+	if (c == '1') file::sort(__LECTURER, 1);			// sort: lecturer id
+	else if (c == '2') file::sort(__LECTURER, 4, 1);	// sort: ranking
+	else if (c == '3') file::sort(__LECTURER, 3, 2);	// sort: first name
+	else {
+		gotoxy(23, 28); std::cout << "                                                          ";
+		return 0;
+	}
+	return 1;
+}
 
 void nplecturer::edit(const char* lecturer_id) {
 	csv_file lecturer_list(__LECTURER);
