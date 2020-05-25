@@ -26,7 +26,6 @@ LAYOUT:
 		for (int i = 0; i < process.count; ++i) {
 			csv_line* student = &process.data[i];
 			if (file::find(__STUDENT, student->pdata[1], nullptr, ON) == -1) continue;
-
 			int y = 10 + (++cur) - choose;
 			if (y < 10 || y > 27) continue;
 			WORD COLOR_CODE = (cur % 2 ? 112 : 240);

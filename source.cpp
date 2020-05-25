@@ -6,7 +6,8 @@ int main(int argc, char* agrv[]) {
     csv_line user;
     while (role::login(user)) {
 		//loading();
-        if (user == "staff") role::staff(user);
+
+		if (user == "staff") role::staff(user);
         if (user == "lecturer") role::lecturer(user);
         if (user == "student") role::student(user);
     }

@@ -5,8 +5,10 @@
 namespace nplecturer {
 	int courses_list(const char* lecturer_id);
 	void info(const char* lecturer_id, bool EDIT = OFF);
-	// EDIT: student
+	// EDIT: lecturer
 	void edit(const char* lecturer_id);
 	int remove(const char* lecturer_id);
+	//NEW: lecturer
+	void newlecturer();
 }
 #endif

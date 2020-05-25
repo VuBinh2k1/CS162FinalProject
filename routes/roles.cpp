@@ -868,7 +868,7 @@ LAYOUT:
 		lecturer = &lecturer_info.data[row[choose]];
 		if (c == KEY_SEARCH) {
 			int old = choose; std::string search;
-			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search                                                  ";
+			gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Search lecturer id                                      ";
 			gotoxy(32, 16, 128); std::cout << "                                                         ";
 			gotoxy(32, 17, 128); std::cout << "                                                         ";
 			if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
@@ -919,7 +919,23 @@ LAYOUT:
 			else goto NO_CHANGE;
 			continue;
 		}
+		else if (c == KEY_NEW)
+		{
+			nplecturer::newlecturer();
+			goto END;
+		}
 		goto NO_CHANGE;
+	END:
+		gotoxy(32, 13); std::cout << "                                                         ";
+		gotoxy(32, 14); std::cout << "                                                         ";
+		gotoxy(32, 15); std::cout << "                                                         ";
+		gotoxy(32, 16); std::cout << "                                                         ";
+		gotoxy(32, 17); std::cout << "                                                         ";
+		gotoxy(32, 18); std::cout << "                                                         ";
+		gotoxy(32, 19); std::cout << "                                                         ";
+		gotoxy(32, 20); std::cout << "                                                         ";
+		gotoxy(32, 21); std::cout << "                                                         ";
+		continue;
 	}
 	delete[] row;
 	return 0;
