@@ -11,5 +11,7 @@ namespace nplecturer {
 	bool sort();
 	void edit(const char* lecturer_id);
 	int remove(const char* lecturer_id);
+	//NEW: lecturer
+	void newlecturer();
 }
 #endif

@@ -818,7 +818,7 @@ LAYOUT:
 			goto LAYOUT;
 		}
 		lecturer = &lecturer_list.data[row[choose]];
-		// KEY_NEW:
+		if (c == KEY_NEW){ nplecturer::newlecturer(); goto LAYOUT; }
 		// KEY_OPEN:
 		if (c == KEY_SEARCH) { nplecturer::search(lecturer_list, cur, choose, overflow, row); goto LAYOUT; }
 		if (c == KEY_FUNCTION) { if (nplecturer::sort()) goto LAYOUT; else goto NO_CHANGE; }

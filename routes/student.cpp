@@ -329,7 +329,7 @@ bool npstudent::sort(const char* FILE) {
 	return 1;
 }
 
-void npstudent::edit(const char* student_id){
+void npstudent::edit(const char* student_id) {
 	csv_file student_list(__STUDENT);
 	csv_line* student = file::find(student_list, student_id, nullptr, ON);
 	if (student == nullptr) return;
@@ -355,7 +355,7 @@ void npstudent::edit(const char* student_id){
 	for (int choose = 0;;) {
 		gotoxy(46, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Save change ";
 		gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "   Cancel    ";
-	
+
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
 		if (c == KEY_ENTER) {
@@ -388,7 +388,7 @@ void npstudent::edit(const char* student_id){
 	}
 }
 
-int npstudent::remove(const char* student_id){
+int npstudent::remove(const char* student_id) {
 	gotoxy(33, 20, 128 + COLOR_RED); std::cout << "Are you sure to remove this student, cannot be undone.";
 	for (int choose = 1;;) {
 		gotoxy(51, 21, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
