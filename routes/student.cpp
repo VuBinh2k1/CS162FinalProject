@@ -329,7 +329,7 @@ bool npstudent::sort(const char* FILE) {
 	return 1;
 }
 
-void npstudent::edit(const char* student_id){
+void npstudent::edit(const char* student_id) {
 	csv_file student_list(__STUDENT);
 	csv_line* student = file::find(student_list, student_id, nullptr, ON);
 	if (student == nullptr) return;
