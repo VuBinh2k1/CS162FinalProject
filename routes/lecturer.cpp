@@ -9,7 +9,7 @@ int nplecturer::courses_list(const char* lecturer_id) {
 	layout minibox_layout(inp);
 	inp.close();
 
-	int choose = 0, cur = -1; int* row = nullptr,overflow=0;
+	int choose = 0, cur = -1; int* row = nullptr;
 LAYOUT:
 	minibox_layout.print();
 	gotoxy(78, 7); std::cout << "[Help]";
@@ -52,12 +52,15 @@ LAYOUT:
 		uint8_t c = getch();
 		if (c == KEY_ESC) break;
 		if (KEY_HELP(c)) {
-			gotoxy(78, 8, 128); std::cout << "                    ";
+			gotoxy(78, 8, 128); std::cout << " Search     Ctrl+F  ";
 			gotoxy(78, 9, 128); std::cout << "                    ";
 			getch();
 			gotoxy(78, 8); std::cout << "                    ";
 			gotoxy(78, 9); std::cout << "                    ";
 			goto LAYOUT;
+		}
+		course = &course_list.data[row[choose]];
+		if (c == KEY_SEARCH) {
 		}
 		if (c == 224 || c == 0) {
 			c = getch();
@@ -230,7 +233,7 @@ int nplecturer::remove(const char* lecturer_id) {
 	for (int choose = 1;;) {
 		gotoxy(51, 19, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
 		gotoxy(60, 19, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Cancel ";
-
+	
 		uint8_t c = getch();
 		if (c == KEY_ESC) return 0;
 		else if (c == KEY_ENTER) {
@@ -255,6 +258,7 @@ int nplecturer::remove(const char* lecturer_id) {
 		}
 	}
 }
+
 void nplecturer::newlecturer()
 {
 	csv_file lecturer_list(__LECTURER);
