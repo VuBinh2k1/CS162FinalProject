@@ -12,6 +12,7 @@
 #define SHOW 0
 #define HIDE 1
 
+// COLOR_CODE
 #define COLOR_DEFAULT 7
 #define COLOR_BLUE 1
 #define COLOR_RED 4
@@ -42,6 +43,8 @@
 #define KEY_EDIT(c) (c == 'E' || c == 'e')
 #define KEY_HELP(c) (c == 'H' || c == 'h')
 #define KEY_EROL(c) (c == 'R' || c == 'r')
+
+// COMMAND
 #define PAUSE Sleep(2000)
 
 typedef struct mess {
@@ -83,6 +86,6 @@ char read(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, bool st
 char type(int x, int y, WORD COLOR_CODE, std::string& str, int max_size, const char* type = ".csv");
 char date(int x, int y, WORD COLOR_CODE, std::string& str);
 char time(int x, int y, WORD COLOR_CODE, std::string& str);
-void loading();
 
+void loading(int x, int y, int length);
 #endif
