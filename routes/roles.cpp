@@ -354,7 +354,7 @@ MENU:
 				goto MENU;
 			}
 			if (choose == 3) {
-				gotoxy(2, 12, 8); std::cout << "  Lecture        ";
+				gotoxy(2, 12, 8); std::cout << "  Lecturer       ";
 				role::lecturer_list();
 				goto MENU;
 			}
