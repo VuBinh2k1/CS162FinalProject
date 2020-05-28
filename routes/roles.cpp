@@ -587,8 +587,8 @@ LAYOUT:
 		}
 	NO_CHANGE:
 		uint8_t c = getch();
+		cls = &class_list.data[choose];
 		if (c == KEY_ESC) break;
-		// KEY_HELP:
 		if (KEY_HELP(c)) {
 			gotoxy(78, 8, 128); std::cout << " New       Ctrl+N   ";
 			gotoxy(78, 9, 128); std::cout << " Search    Ctrl+F   "; 
@@ -605,10 +605,10 @@ LAYOUT:
 		if (c == KEY_FUNCTION) { if (npclass::sort()) goto LAYOUT; else goto NO_CHANGE; }
 		if (c == 224 || c == 0) {
 			c = getch();
-			if (c == KEY_DELETE) { npclass::remove(class_list.data[choose].pdata[1]); choose = overflow = 0; goto LAYOUT; }
+			if (c == KEY_DELETE) { npclass::remove(cls->pdata[1]); choose = overflow = 0; goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
-			else if (c == KEY_RIGHT) { npstudent::list(user, class_list.data[choose].pdata[1]); goto LAYOUT; }
+			else if (c == KEY_RIGHT) { npstudent::list(user, cls->pdata[1]); goto LAYOUT; }
 			else goto NO_CHANGE;
 			continue;
 		}
@@ -684,6 +684,7 @@ LAYOUT:
 		}
 	NO_CHANGE:
 		uint8_t c = getch();
+		course = &course_list.data[choose];
 		if (c == KEY_ESC) break;
 		if (KEY_HELP(c)) {
 			if (user == "staff") {
@@ -716,7 +717,6 @@ LAYOUT:
 			goto LAYOUT;
 		}
 		if (c == KEY_SEARCH) { npcourse::search(course_list, cur, choose, overflow, permit); goto LAYOUT; }
-		course = &course_list.data[choose];
 		// POSITION: STAFF
 		if (user == "staff") {
 			// KEY_NEW:
@@ -778,6 +778,7 @@ LAYOUT:
 	colorizing(COLOR_YELLOW); std::cout << "  Course list    ";
 	// Detail
 	gotoxy(27, 9, COLOR_BLUE_BACKGROUND); std::cout << " No.   | Lecturer ID | Ranking    | Full name                      ";
+
 	while ((cur = -1)) {
 		csv_file lecturer_list(__LECTURER);
 		csv_line* lecturer = nullptr;
@@ -802,6 +803,7 @@ LAYOUT:
 		}
 	NO_CHANGE:
 		uint8_t c = getch();
+		lecturer = &lecturer_list.data[row[choose]];
 		if (c == KEY_ESC) break;
 		if (KEY_HELP(c)) {
 			gotoxy(78, 8, 128); std::cout << " New       Ctrl+N   ";
@@ -817,7 +819,6 @@ LAYOUT:
 			getch();
 			goto LAYOUT;
 		}
-		lecturer = &lecturer_list.data[row[choose]];
 		if (c == KEY_NEW){ nplecturer::newlecturer(); goto LAYOUT; }
 		// KEY_OPEN:
 		if (c == KEY_SEARCH) { nplecturer::search(lecturer_list, cur, choose, overflow, row); goto LAYOUT; }
@@ -946,14 +947,14 @@ void role::settings() {
 	gotoxy(33, 15); std::cout << "Current Academic year      : "; gotoxy(72, 15); std::cout << chsAY;
 	gotoxy(33, 18); std::cout << "Current Academic semester  : "; gotoxy(72, 18); std::cout << chsAS;
 	gotoxy(46, 27); std::cout << "[Save change] [  Cancel   ]";
-	if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << "[Spring]"; }
-	if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << "[Summer]"; }
-	if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << "[Autumn]"; }
-	if (chsAS == 4) { gotoxy(72, 18, 176); std::cout << "[Winter]"; }
+	if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << " Spring "; }
+	if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << " Summer "; }
+	if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << " Autumn "; }
+	if (chsAS == 4) { gotoxy(72, 18, 176); std::cout << " Winter "; }
 
 	while (1) {
-		if (chsEN) { gotoxy(72, 12, COLOR_GREEN_BACKGROUND); std::cout << "[ON]"; colorizing(COLOR_DEFAULT); std::cout << ' '; }
-		else { gotoxy(72, 12, COLOR_RED_BACKGROUND); std::cout << "[OFF]"; }
+		if (chsEN) { gotoxy(72, 12, COLOR_GREEN_BACKGROUND); std::cout << " ON "; colorizing(COLOR_DEFAULT); std::cout << ' '; }
+		else { gotoxy(72, 12, COLOR_RED_BACKGROUND); std::cout << " OFF "; }
 
 		uint8_t c = getch();
 		if (c == KEY_ESC) return;
@@ -964,12 +965,20 @@ void role::settings() {
 			}
 		}
 	}
-	read(72, 15, COLOR_DEFAULT, chsAY, 4, SHOW, ACADEMICYEAR.c_str());
 	while (1) {
-		if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << "[Spring]"; }
-		if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << "[Summer]"; }
-		if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << "[Autumn]"; }
-		if (chsAS == 4) { gotoxy(72, 18, 176); std::cout << "[Winter]"; }
+		gotoxy(72, 15); std::cout << "                       ";
+		read(72, 15, COLOR_DEFAULT, chsAY, 4, SHOW, ACADEMICYEAR.c_str());
+		if (chsAY.empty()) break;
+		if (std::stoi(chsAY) > 3000) { gotoxy(72, 15, COLOR_RED); std::cout << "Academic year so big!"; }
+		else if (std::stoi(chsAY) < 2000) { gotoxy(72, 15, COLOR_RED); std::cout << "Academic year so small!"; }
+		else break;
+		PAUSE;
+	}
+	while (1) {
+		if (chsAS == 1) { gotoxy(72, 18, 192); std::cout << " Spring "; }
+		if (chsAS == 2) { gotoxy(72, 18, 160); std::cout << " Summer "; }
+		if (chsAS == 3) { gotoxy(72, 18, 224); std::cout << " Autumn "; }
+		if (chsAS == 4) { gotoxy(72, 18, 176); std::cout << " Winter "; }
 
 		uint8_t c = getch();
 		if (c == KEY_ESC) return;
@@ -990,7 +999,14 @@ void role::settings() {
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				if (chsAY.empty()) chsAY = ACADEMICYEAR;
+				
+				// Create directory (single folder)
+				std::string Folder = (std::string)".\\data\\course\\" + chsAY + '-' + (char)(chsAS + '0');
+				if (mkdir(Folder.c_str()) || (errno != EEXIST));
+				if (mkdir((Folder + "\\schedule").c_str()) || (errno != EEXIST));
+				if (mkdir((Folder + "\\process").c_str())  || (errno != EEXIST));				
 
+				// Save to ".config"
 				std::ofstream cfg(".config");
 				cfg << "ENGLISHNAME " << chsEN << "\n";
 				cfg << "ACADEMICYEAR " << chsAY << "\n";

@@ -45,6 +45,7 @@ LAYOUT:
 		}
 	NO_CHANGE:
 		uint8_t c = getch();
+		student = &student_list.data[row[choose]];
 		if (c == KEY_ESC) break;
 		// KEY_HELP:
 		if (KEY_HELP(c)) {
@@ -64,10 +65,10 @@ LAYOUT:
 		// KEY_OPEN:
 		if (c == KEY_SEARCH) { npstudent::search(student_list, cur, choose, overflow, row); goto LAYOUT; }
 		if (c == KEY_FUNCTION) { if (npstudent::sort(((std::string)".\\data\\class\\" + class_id + ".csv").c_str())) goto LAYOUT; else goto NO_CHANGE; }
-		if (c == KEY_ENTER) { npstudent::info(student_list.data[row[choose]].pdata[1], ON); goto LAYOUT; }
+		if (c == KEY_ENTER) { npstudent::info(student->pdata[1], ON); goto LAYOUT; }
 		if (c == 224 || c == 0) {
 			c = getch();
-			if (c == KEY_DELETE) { npstudent::info(student_list.data[row[choose]].pdata[1], ON, ON); goto LAYOUT; }
+			if (c == KEY_DELETE) { npstudent::info(student->pdata[1], ON, ON); goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_LEFT) break;
@@ -124,8 +125,8 @@ LAYOUT:
 		}
 	NO_CHANGE:
 		uint8_t c = getch();
+		student = &student_list.data[row[choose]];
 		if (c == KEY_ESC) break;
-		// KEY_HELP:
 		if (KEY_HELP(c)) {
 			if (user == "staff") {
 				gotoxy(78, 8, 128); std::cout << " Search    Ctrl+F   ";
@@ -157,7 +158,7 @@ LAYOUT:
 			// KEY_OPEN:
 		}
 		if (c == KEY_FUNCTION) { if (npstudent::sort(PROCESS(course_id, course_cs))) goto LAYOUT; else goto NO_CHANGE; }
-		if (c == KEY_ENTER) { npstudent::info(student_list.data[row[choose]].pdata[1], OFF); goto LAYOUT; }
+		if (c == KEY_ENTER) { npstudent::info(student->pdata[1], OFF); goto LAYOUT; }
 		if (KEY_EROL(c)) { npcourse::enrol(user, course_id, course_cs); continue; }
 		if (c == 224 || c == 0) {
 			c = getch();
@@ -165,8 +166,8 @@ LAYOUT:
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_RIGHT) {
-				if (user == "staff") if (npattendance::staff(course_id, course_cs) == 0) break;
-				if (user == "lecturer") if (npattendance::lecturer(course_id, course_cs) == 0) break;
+				if (user == "staff") if (npattendance::staff(course_id, course_cs, -overflow) == 0) break;
+				if (user == "lecturer") if (npattendance::lecturer(course_id, course_cs, choose, overflow) == 0) break;
 				if (user == "student") goto NO_CHANGE;
 				goto LAYOUT;
 			}
