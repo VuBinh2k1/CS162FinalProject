@@ -157,7 +157,6 @@
     <ClCompile Include="routes\roles.cpp" />
     <ClCompile Include="routes\scoreboard.cpp" />
     <ClCompile Include="routes\sha256.cpp" />
-    <ClCompile Include="routes\staff.cpp" />
     <ClCompile Include="routes\student.cpp" />
     <ClCompile Include="source.cpp" />
   </ItemGroup>
@@ -172,7 +171,6 @@
     <ClInclude Include="controls\roles.h" />
     <ClInclude Include="controls\scoreboard.h" />
     <ClInclude Include="controls\sha256.h" />
-    <ClInclude Include="controls\staff.h" />
     <ClInclude Include="controls\student.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

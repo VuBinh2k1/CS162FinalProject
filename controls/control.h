@@ -8,6 +8,8 @@
 #include <string>
 #include <map>
 #include <stdlib.h>
+#include <direct.h>
+#include "layout.h"
 
 #define MAX_WEEK 11
 #define WEEK_COLUMN 6
@@ -28,12 +30,10 @@ const char* US_GPA(const char* strsco);
 const char* US_Grade(const char* strsco);
 
 // Funtion pointer
-typedef bool (*comparator)(const char* x, const char* y);
+typedef bool (__cdecl *comparator)(const char* x, const char* y);
 
 // .config data
 #define ENGLISHNAME atoi(control::config("ENGLISHNAME").c_str())
 #define ACADEMICYEAR control::config("ACADEMICYEAR")
 #define SEMESTER control::config("SEMESTER")
-
-#include "layout.h"
 #endif

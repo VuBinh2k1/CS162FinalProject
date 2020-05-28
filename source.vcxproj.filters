@@ -42,9 +42,6 @@
     <ClCompile Include="routes\lecturer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="routes\staff.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="routes\class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -84,9 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="controls\sha256.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="controls\staff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="controls\student.h">
