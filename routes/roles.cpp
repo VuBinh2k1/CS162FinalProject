@@ -659,19 +659,14 @@ LAYOUT:
 
 			// Status
 			if (user == "staff" || (user == "lecturer" && strcmp(user.pdata[1], course->pdata[4]) == 0)) {
-				if (course->pdata[0][0] == '0') {
-					gotoxy(87, y, COLOR_CODE + COLOR_RED); std::cout << "private";
-				}
-				else {
-					gotoxy(87, y, COLOR_CODE + 2); std::cout << "public";
-				}
+				if (course->pdata[0][0] == '0') { gotoxy(87, y, COLOR_CODE + COLOR_RED); std::cout << "private"; }
+				else { gotoxy(87, y, COLOR_CODE + 2); std::cout << "public"; }
 				permit[i] = 1;
 			}
 			if (user == "student") {
 				csv_file my_course(((std::string)".\\data\\student\\" + user.pdata[1] + ".csv").c_str(), def_user);
 
 				for (int j = 0; j < my_course.count; ++j) {
-					
 					if (strcmp(my_course.data[j].pdata[0], ACADEMICYEAR.c_str())) continue;
 					if (strcmp(my_course.data[j].pdata[1], SEMESTER.c_str())) continue;
 					if (strcmp(my_course.data[j].pdata[2], course->pdata[1]) == 0)
@@ -737,7 +732,7 @@ LAYOUT:
 		if (KEY_EROL(c)) { npcourse::enrol(user, course->pdata[1], course->pdata[3]); continue; }
 		if (c == 224 || c == 0) {
 			c = getch();
-			if (c == KEY_DELETE && user == "staff") { npcourse::info(user, course->pdata[1], course->pdata[3], ON); goto LAYOUT; }
+			if (c == KEY_DELETE && user == "staff") { npcourse::info(user, course->pdata[1], course->pdata[3], ON); choose = overflow = 0; goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_RIGHT) {
@@ -745,10 +740,7 @@ LAYOUT:
 					npstudent::list(user, course->pdata[1], course->pdata[3]);
 					goto LAYOUT;
 				}
-				if (user == "student") {
-					delete[] permit;
-					return 1;
-				}
+				if (user == "student") { delete[] permit; return 1; }
 				goto NO_CHANGE;
 			}
 			else goto NO_CHANGE;
@@ -819,14 +811,14 @@ LAYOUT:
 			getch();
 			goto LAYOUT;
 		}
-		if (c == KEY_NEW){ nplecturer::newlecturer(); goto LAYOUT; }
+		if (c == KEY_NEW){ nplecturer::add(); choose = overflow = 0; goto LAYOUT; }
 		// KEY_OPEN:
 		if (c == KEY_SEARCH) { nplecturer::search(lecturer_list, cur, choose, overflow, row); goto LAYOUT; }
 		if (c == KEY_FUNCTION) { if (nplecturer::sort()) goto LAYOUT; else goto NO_CHANGE; }
 		if (c == KEY_ENTER) { nplecturer::info(lecturer->pdata[1], ON); goto LAYOUT; }
 		if (c == 224 || c == 0) {
 			c = getch();
-			if (c == KEY_DELETE) { nplecturer::info(lecturer->pdata[1], ON, ON); goto LAYOUT; }
+			if (c == KEY_DELETE) { nplecturer::info(lecturer->pdata[1], ON, ON); choose = overflow = 0;  goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_RIGHT) { nplecturer::courses_list(lecturer->pdata[1]); goto LAYOUT; }

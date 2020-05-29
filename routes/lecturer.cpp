@@ -41,12 +41,9 @@ LAYOUT:
 			gotoxy(78, y, COLOR_CODE); std::cout << course->pdata[10];
 
 			// Status
-			if (course->pdata[0][0] == '0') {
-				gotoxy(87, y, COLOR_CODE + COLOR_RED); std::cout << "private";
-			}
-			else {
-				gotoxy(87, y, COLOR_CODE + 2); std::cout << "public";
-			}
+			if (course->pdata[0][0] == '0') { gotoxy(87, y, COLOR_CODE + COLOR_RED); std::cout << "private"; }
+			else { gotoxy(87, y, COLOR_CODE + 2); std::cout << "public"; }
+			
 		}
 	NO_CHANGE:
 		uint8_t c = getch();
@@ -87,19 +84,19 @@ LAYOUT:
 	}
 
 	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " Lecturer info                                           ";
-	gotoxy(32, 14, 128); std::cout << "                                                         ";
-	gotoxy(32, 15, 128); std::cout << "                                                         ";
-	gotoxy(32, 16, 128); std::cout << "                                                         ";
-	gotoxy(32, 17, 128); std::cout << "                                                         ";
+	gotoxy(32, 14, 143); std::cout << " Lecturer name:                                          ";
+	gotoxy(32, 15, 143); std::cout << "                                                         ";
+	gotoxy(32, 16, 128); std::cout << " Lecturer id  :                                          ";
+	gotoxy(32, 17, 128); std::cout << " Ranking      :                                          ";
 	gotoxy(32, 18, 128); std::cout << "                                                         ";
 	gotoxy(32, 19, 128); std::cout << "                                                         ";
 
-	gotoxy(33, 14, 143); std::cout << "Lecturer name: ";
+	gotoxy(48, 14, 143);
 	if (ENGLISHNAME) std::cout << lecturer->pdata[3] << ' ' << lecturer->pdata[2];
 	else std::cout << lecturer->pdata[2] << ' ' << lecturer->pdata[3];
-	gotoxy(33, 16, 128); std::cout << "Lecturer id  : " << lecturer->pdata[1];
-	gotoxy(33, 17, 128); std::cout << "Ranking      : " << lecturer->pdata[4];
-	//nplecturer::courseslist(lecturer->pdata[1]);
+	gotoxy(48, 16, 128); std::cout << lecturer->pdata[1];
+	gotoxy(48, 17, 128); std::cout << lecturer->pdata[4];
+	
 	if (EDIT) {
 		if (_DELETE == ON) { nplecturer::remove(lecturer_id); return; }
 		for (int choose = 0;;) {
@@ -166,6 +163,70 @@ void nplecturer::search(csv_file& lecturer_list, int cur, int& choose, int& over
 
 // [EDIT]::lecturer //==========================================================================================================================//
 
+void nplecturer::add() {
+	std::string lname, fname, lecid, rankg;
+
+	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " New lecturer                                            ";
+	gotoxy(32, 18, 128); std::cout << "                                                         ";
+	gotoxy(32, 19, 128); std::cout << "                                                         ";
+	gotoxy(46, 19, 128); std::cout << "    Save     ";
+	gotoxy(60, 19, 128); std::cout << "   Cancel    ";
+	// Get detail
+	gotoxy(32, 14, 143); std::cout << " First name   :                                          ";
+	gotoxy(32, 15, 143); std::cout << " Last name    :                                          ";
+	gotoxy(32, 16, 128); std::cout << " Lecturer id  :                                          ";
+	gotoxy(32, 17, 128); std::cout << " Ranking      :                                          ";
+
+	while (fname.empty()) if (read(48, 14, 143, fname, 20, SHOW) == KEY_ESC) return;
+	while (lname.empty()) if (read(48, 15, 143, lname, 20, SHOW) == KEY_ESC) return;
+	while (1) {
+		if (read(48, 16, 128, lecid, 20, SHOW) == KEY_ESC) return;
+		// default_lecture_id
+		if (lecid.empty()) {
+			lecid = lname[0];
+			for (int i = 1; i < lname.size(); ++i) {
+				if (lname[i - 1] == ' ') lecid += lname[i];
+			}
+			lecid = lecid + fname;
+		}
+		if (file::find(ACCOUNT, lecid.c_str(), nullptr, ON) != -1) continue;
+		gotoxy(48, 16, 128); std::cout << lecid; break;
+	}
+	while (rankg.empty()) if (read(48, 17, 128, rankg, 20, SHOW) == KEY_ESC) return;
+
+	capitalize(fname);
+	capitalize(lname);
+	rankg[0] = toupper(rankg[0]);
+
+	for (int choose = 0;;) {
+		gotoxy(46, 19, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "    Save     ";
+		gotoxy(60, 19, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "   Cancel    ";
+
+		uint8_t c = getch();
+		if (c == KEY_ESC) return;
+		if (c == KEY_ENTER) {
+			if (choose == 0) {
+				std::ofstream lecturer(__LECTURER, std::ios::app);
+				lecturer << "1," << lecid << ',' << lname << ',' << fname << ',' << rankg << '\n';
+				lecturer.close();
+
+				std::ofstream account(ACCOUNT, std::ios::app);
+				account << "1," << lecid << ",0" << ",lecturer\n";
+				account.close();
+
+				gotoxy(46, 19, 128 + COLOR_BLUE); std::cout << " Save successfully.        ";
+				PAUSE;
+			}
+			return;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_RIGHT && choose == 0) choose++;
+			if (c == KEY_LEFT && choose == 1) choose--;
+		}
+	}
+}
+
 bool nplecturer::sort() {
 	gotoxy(23, 28, 8); std::cout << "(Ctrl + \\) was pressed. Waiting for second key of chord...";
 	uint8_t c = getch();
@@ -187,10 +248,10 @@ void nplecturer::edit(const char* lecturer_id) {
 	gotoxy(46, 19, 128); std::cout << " Save change ";
 	gotoxy(60, 19, 128); std::cout << "   Cancel    ";
 	// Get detail
-	gotoxy(32, 14, 143); std::cout << "                                                         ";
-	gotoxy(32, 15, 143); std::cout << "                                                         ";
-	gotoxy(33, 14, 143); std::cout << "Firstname    : "; std::cout << lecturer->pdata[3];
-	gotoxy(33, 15, 143); std::cout << "Lastname     : "; std::cout << lecturer->pdata[2];
+	gotoxy(32, 14, 143); std::cout << " Firstname    :                                          ";
+	gotoxy(32, 15, 143); std::cout << " Lastname     :                                          ";
+	gotoxy(48, 14, 143); std::cout << lecturer->pdata[3];
+	gotoxy(48, 15, 143); std::cout << lecturer->pdata[2];
 
 	std::string fname, lname, rankg;
 
@@ -255,87 +316,6 @@ int nplecturer::remove(const char* lecturer_id) {
 			c = getch();
 			if (c == KEY_LEFT && choose == 1) choose--;
 			else if (c == KEY_RIGHT && choose == 0) choose++;
-		}
-	}
-}
-
-void nplecturer::newlecturer()
-{
-	csv_file lecturer_list(__LECTURER);
-	csv_file account(ACCOUNT);
-	std::string lname, fname, ranking,id;
-LAYOUT:
-	gotoxy(32, 15, COLOR_BLUE_BACKGROUND); std::cout << "Add new lecturer                                         ";
-
-	gotoxy(32, 16, 128); std::cout << "First name     :                                         ";
-	gotoxy(32, 17, 128); std::cout << "Last name      :                                         ";
-	gotoxy(32, 18, 128); std::cout << "Ranking        :                                         ";
-	gotoxy(32, 19, 128); std::cout << "                                                         ";
-	gotoxy(32, 20, 128); std::cout << "                                                         ";
-	gotoxy(32, 21, 128); std::cout << "                                                         ";
-
-	gotoxy(51, 21,128); std::cout << "Save";
-	gotoxy(60, 21,128); std::cout << "Cancel";
-
-
-	if (read(48, 16, 143, fname, 20, SHOW) == KEY_ESC) return;
-	if (read(48, 17, 143, lname, 20, SHOW) == KEY_ESC) return;
-	if (read(48, 18, 128, ranking, 20, SHOW) == KEY_ESC) return;
-	id= lname[0];
-	ranking[0] = toupper(ranking[0]);
-	lname[0] = toupper(lname[0]);
-	
-	for (int i = 1; i < lname.size() + 1; i++)
-	{
-		if (lname[i - 1]==' ')
-		{
-			id+= lname[i];
-			lname[i] = toupper(lname[i]);
-		}
-	}
-	id = id + fname;
-	fname[0] = toupper(fname[0]);
-	gotoxy(32, 19, 128); std::cout << "Lecturer id    :                                         ";
-	gotoxy(48, 19, 143); std::cout << id;
-	std::string new_id;
-	if (read(48, 19, 128, new_id, 20, SHOW) == KEY_ESC) return;
-	else if (read(48, 19, 128, new_id, 20, SHOW) != KEY_ENTER)
-		id = new_id;
-	for (int choose = 0;;)
-	{
-		gotoxy(51, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "Save";
-		gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "Cancel";
-		uint8_t c = getch();
-		if (c == KEY_ESC)return;
-		else if (c == KEY_ENTER)
-		{
-			if (choose == 0)
-			{
-				for (int i = 0; i < account.count; i++)
-				{
-					if (strcmp(id.c_str(), account.data[i].pdata[1]) == 0&&atoi(account.data[i].pdata[0])==1)
-					{
-						gotoxy(50, 20, 128 + COLOR_RED); std::cout << "This id is exist";
-						PAUSE; goto LAYOUT;
-					}
-				}
-				std::ofstream lecturer_out(__LECTURER,std::ios::app);
-				lecturer_out << lecturer_list.count+1<<","<< id.c_str()<<","<< lname.c_str()<<","<< fname.c_str()<<","<< ranking.c_str()<<"\n";
-				lecturer_out.close();
-				std::ofstream account_out(ACCOUNT,std::ios::app);
-
-				account_out << "1," << id.c_str() << ",0" <<","<<"lecturer"<<"\n";
-				account_out.close();
-				gotoxy(46, 20, 128 + COLOR_BLUE); std::cout << "Save change successfully";
-				PAUSE; return;
-			}
-			return;
-		}
-		else if (c == 224 || c == 0)
-		{
-			c = getch();
-			if (c == KEY_RIGHT && choose == 0)choose++;
-			if (c == KEY_LEFT && choose == 1)choose--;
 		}
 	}
 }
