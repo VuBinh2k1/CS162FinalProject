@@ -711,12 +711,9 @@ LAYOUT:
 			getch();
 			goto LAYOUT;
 		}
+		if (c == KEY_NEW && user == "staff") { npcourse::add(); choose = overflow = 0; goto LAYOUT; }
+		if (c == KEY_OPEN && user == "staff") { npcourse::open(); choose = overflow = 0; goto LAYOUT; }
 		if (c == KEY_SEARCH) { npcourse::search(course_list, cur, choose, overflow, permit); goto LAYOUT; }
-		// POSITION: STAFF
-		if (user == "staff") {
-			// KEY_NEW:
-			// KEY_OPEN:
-		}
 		if (c == KEY_FUNCTION) { if (npcourse::sort()) goto LAYOUT; else goto NO_CHANGE; }
 		if (c == KEY_ENTER) {
 			if (user == "staff" || (user == "lecturer" && strcmp(user.pdata[1], course->pdata[4]) == 0)) {
@@ -725,11 +722,11 @@ LAYOUT:
 			}
 			if (user == "student") {
 				npcourse::chkin(user, course->pdata[1], course->pdata[3]);
-				continue;
+				goto LAYOUT;
 			}
 			goto NO_CHANGE;
 		}
-		if (KEY_EROL(c)) { npcourse::enrol(user, course->pdata[1], course->pdata[3]); continue; }
+		if (KEY_EROL(c)) { npcourse::enrol(user, course->pdata[1], course->pdata[3]); goto LAYOUT; }
 		if (c == 224 || c == 0) {
 			c = getch();
 			if (c == KEY_DELETE && user == "staff") { npcourse::info(user, course->pdata[1], course->pdata[3], ON); choose = overflow = 0; goto LAYOUT; }
@@ -958,11 +955,11 @@ void role::settings() {
 		}
 	}
 	while (1) {
-		gotoxy(72, 15); std::cout << "                       ";
+		gotoxy(72, 15); std::cout << "                        ";
 		read(72, 15, COLOR_DEFAULT, chsAY, 4, SHOW, ACADEMICYEAR.c_str());
 		if (chsAY.empty()) break;
-		if (std::stoi(chsAY) > 3000) { gotoxy(72, 15, COLOR_RED); std::cout << "Academic year so big!"; }
-		else if (std::stoi(chsAY) < 2000) { gotoxy(72, 15, COLOR_RED); std::cout << "Academic year so small!"; }
+		if (std::stoi(chsAY) > 3000) { gotoxy(72, 15, COLOR_RED); std::cout << "Academic year too big!"; }
+		else if (std::stoi(chsAY) < 2000) { gotoxy(72, 15, COLOR_RED); std::cout << "Academic year too small!"; }
 		else break;
 		PAUSE;
 	}

@@ -8,7 +8,7 @@ namespace nplecturer {
 	void info(const char* lecturer_id, bool EDIT = OFF, bool _DELETE = OFF);
 	void search(csv_file& lecturer_list, int cur, int& choose, int& overflow, int* row);
 	// EDIT: lecturer
-	void add();		//void newlecturer();
+	void add();		
 	bool sort();
 	void edit(const char* lecturer_id);
 	int remove(const char* lecturer_id);

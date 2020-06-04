@@ -25,6 +25,11 @@ namespace control {
 // Function 
 std::string COURSE_PATH(const char* FILE);
 void academicmark();
+// Lower all letters of std::string
+void lowercase(std::string& str);
+// Upper all letters of std::string
+void uppercase(std::string& str);
+// Capital first letters of std::string
 void capitalize(std::string& str);
 const char* US_GPA(const char* strsco);
 const char* US_Grade(const char* strsco);

@@ -40,7 +40,7 @@ NEW:
 
 	std::string class_id;
 	if (read(45, 16, 128, class_id, 10, SHOW) == KEY_ESC) return;
-	std::transform(class_id.begin(), class_id.end(), class_id.begin(), ::toupper);
+	uppercase(class_id);
 	gotoxy(32, 17, 128); std::cout << "                                                         ";
 
 	if (file::find(__CLASS, class_id.c_str(), nullptr, OFF) != -1) {
@@ -102,7 +102,7 @@ void npclass::search(csv_file& class_list, int cur, int& choose, int& overflow) 
 	gotoxy(32, 16, 128); std::cout << "                                                         ";
 	gotoxy(32, 17, 128); std::cout << "                                                         ";
 	if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
-		std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+		lowercase(search);
 		do {
 			if (choose < cur) { if (++choose < cur - 16) overflow--; }
 			else choose = overflow = 0;
@@ -112,7 +112,7 @@ void npclass::search(csv_file& class_list, int cur, int& choose, int& overflow) 
 				strstr(cls->pdata[2], search.c_str()))) return;
 		} while (choose != old);
 
-		std::transform(search.begin(), search.end(), search.begin(), ::toupper);
+		uppercase(search);
 		do {
 			if (choose < cur) { if (++choose < cur - 16) overflow--; }
 			else choose = overflow = 0;
@@ -128,8 +128,8 @@ bool npclass::change(csv_line& user, const char* class_from, const char* class_t
 	std::string fm = class_from;
 	std::string to = class_to;
 	std::string path;
-	std::transform(fm.begin(), fm.end(), fm.begin(), ::toupper);
-	std::transform(to.begin(), to.end(), to.begin(), ::toupper);
+	uppercase(fm);
+	uppercase(to);
 	if (fm == to) return 1;
 	if (to.size()) { if (file::find(__CLASS, to.c_str(), nullptr, OFF) == -1) return 0; }
 	else return 1;

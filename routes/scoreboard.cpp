@@ -269,26 +269,22 @@ OPEN:
 		if (score != nullptr) {
 			if (student == nullptr) app << score << ',';
 			else file::update(PROCESS(course_id, course_cs), student->id, 2, score);
-		}
-		else if (student == nullptr) app << ',';
+		} else if (student == nullptr) app << ',';
 		// Lab score
 		if ((score = file::find(imfile, i, "Lab")) != nullptr) {
 			if (student == nullptr) app << score << ',';
 			else file::update(PROCESS(course_id, course_cs), student->id, 3, score);
-		}
-		else if (student == nullptr) app << ',';
+		} else if (student == nullptr) app << ',';
 		// Bonus score
 		if ((score = file::find(imfile, i, "Bonus")) != nullptr) {
 			if (student == nullptr) app << score << ',';
 			else file::update(PROCESS(course_id, course_cs), student->id, 4, score);
-		}
-		else if (student == nullptr) app << ',';
+		} else if (student == nullptr) app << ',';
 		// Final score
 		if ((score = file::find(imfile, i, "Final")) != nullptr) {
 			if (student == nullptr) app << score << ',';
 			else file::update(PROCESS(course_id, course_cs), student->id, 5, score);
-		}
-		else if (student == nullptr) app << ',';
+		} else if (student == nullptr) app << ',';
 
 		// Fill checkin region
 		if (student == nullptr) { for (int i = 6; i < process.mark.count - 1; ++i) app << "0,"; app << "0\n"; }
@@ -298,8 +294,7 @@ OPEN:
 		Sleep(500);
 	}
 
-	gotoxy(32, 17, 128); std::cout << "                                                         ";
-	gotoxy(33, 17, 129); std::cout << "Import file success.";
+	gotoxy(32, 17, 129); std::cout << " Import file success.                                    ";
 	PAUSE;
 }
 

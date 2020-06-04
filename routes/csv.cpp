@@ -201,12 +201,11 @@ bool file::exists(const char* FILE) {
 }
 
 void file::mksche(const char* course_id, const char* course_cs) {
-	csv_file course_list(COURSE_PATH("__course.csv").c_str(), def_course);
+	csv_file course_list(__COURSE, def_course);
 	csv_line* course = file::find(course_list, course_id, course_cs, OFF);
 	if (course == nullptr) return;
 
-	std::string schpath = COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv";
-	csv_file schedule(schpath.c_str(), def_schedule);
+	csv_file schedule(SCHEDULE(course_id, course_cs), def_schedule);
 	if (strcmp(course->pdata[5], "0") == 0) return;
 	if (strcmp(course->pdata[6], "0") == 0) return;
 
@@ -234,9 +233,9 @@ void file::mksche(const char* course_id, const char* course_cs) {
 		if (cur.tm_mon < 9) data += '0'; data += std::to_string(cur.tm_mon + 1) + '/';
 		data += std::to_string(cur.tm_year + 1900);
 
-		file::update(schpath.c_str(), week, 1, data.c_str());
-		file::update(schpath.c_str(), week, 2, course->pdata[8]);
-		file::update(schpath.c_str(), week, 3, course->pdata[9]);
+		file::update(SCHEDULE(course_id, course_cs), week, 1, data.c_str());
+		file::update(SCHEDULE(course_id, course_cs), week, 2, course->pdata[8]);
+		file::update(SCHEDULE(course_id, course_cs), week, 3, course->pdata[9]);
 		cur.tm_mday += 7;
 		std::mktime(&cur);
 	}

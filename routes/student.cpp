@@ -250,7 +250,7 @@ void npstudent::search(csv_file& student_list, int cur, int& choose, int& overfl
 	gotoxy(32, 16, 128); std::cout << "                                                         ";
 	gotoxy(32, 17, 128); std::cout << "                                                         ";
 	if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
-		std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+		lowercase(search);
 		do {
 			if (choose < cur) { if (++choose < cur - 16) overflow--; }
 			else choose = overflow = 0;

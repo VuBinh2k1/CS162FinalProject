@@ -137,7 +137,17 @@ void nplecturer::search(csv_file& lecturer_list, int cur, int& choose, int& over
 	gotoxy(32, 16, 128); std::cout << "                                                         ";
 	gotoxy(32, 17, 128); std::cout << "                                                         ";
 	if (read(33, 16, 128, search, 55, SHOW) != KEY_ESC) {
-		std::transform(search.begin(), search.end(), search.begin(), ::tolower);
+		do {
+			if (choose < cur) { if (++choose < cur - 16) overflow--; }
+			else choose = overflow = 0;
+
+			lecturer = &lecturer_list.data[row[choose]];
+			if (strstr(lecturer->pdata[1], search.c_str()) ||
+				strstr(lecturer->pdata[2], search.c_str()) ||
+				strstr(lecturer->pdata[3], search.c_str())) return;
+		} while (choose != old);
+
+		lowercase(search);
 		do {
 			if (choose < cur) { if (++choose < cur - 16) overflow--; }
 			else choose = overflow = 0;

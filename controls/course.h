@@ -8,6 +8,8 @@ namespace npcourse {
 	void chkin(csv_line& user, const char* course_id, const char* course_cs);
 	void search(csv_file& course_list, int cur, int& choose, int& overflow, bool* permit);
 	// EDIT: course
+	void add();
+	void open();
 	bool sort();
 	bool now(const char* course_id, const char* course_cs, std::tm day);
 	void edit(const char* course_id, const char* course_cs);

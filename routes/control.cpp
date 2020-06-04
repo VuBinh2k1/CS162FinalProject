@@ -72,6 +72,14 @@ void academicmark() {
 	if (atoi(SEMESTER.c_str()) == 4) { gotoxy(2, 2, 176); std::cout << " Winter "; }
 }
 
+void lowercase(std::string& str) {
+	std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+}
+
+void uppercase(std::string& str) {
+	std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+}
+
 void capitalize(std::string& str) {
 	for (int i = 0; i < str.size(); ++i) {
 		if (i == 0 || str[i - 1] == ' ') str[i] = toupper(str[i]);
