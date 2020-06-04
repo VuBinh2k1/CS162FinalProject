@@ -72,12 +72,12 @@ void npcourse::enrol(csv_line& user, const char* course_id, const char* course_c
 	std::string studentid;
 
 ENROL_DATA:
-	gotoxy(32, 16, 128); std::cout << " Student ID:                                             ";
-	gotoxy(32, 17, 128); std::cout << " Course ID :               Class:                        ";
-	gotoxy(45, 17, 128); std::cout << course_id;
-	gotoxy(66, 17, 128); std::cout << course_cs;
-	if (user == "student") studentid = user.pdata[1]; else if (read(45, 16, 128, studentid, 8, SHOW) == KEY_ESC) return;
-	gotoxy(45, 16, 128); std::cout << studentid;
+	gotoxy(32, 16, 143); std::cout << " Student ID  :                                           ";
+	gotoxy(32, 17, 128); std::cout << " Course ID   :               Class:                      ";
+	gotoxy(47, 17, 128); std::cout << course_id;
+	gotoxy(68, 17, 128); std::cout << course_cs;
+	if (user == "student") studentid = user.pdata[1]; else if (read(47, 16, 143, studentid, 8, SHOW) == KEY_ESC) return;
+	gotoxy(47, 16, 128); std::cout << studentid;
 	gotoxy(32, 18, 128); std::cout << "                                                         ";
 
 	// Check student exist "__student.csv"
@@ -150,7 +150,6 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 	}
 	for (int i = 0; i < schedule.count; ++i) {
 		csv_line* date = &schedule.data[i];
-		//if (strcmp(date->pdata[1], "0") == 0) npcourse::mksch(course_id, course_cs);	//////////////////////
 
 		int now = control::now(date->pdata[1], date->pdata[2], date->pdata[3]);
 		if (now == 0) {

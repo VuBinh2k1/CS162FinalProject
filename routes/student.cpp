@@ -47,7 +47,6 @@ LAYOUT:
 		uint8_t c = getch();
 		student = &student_list.data[row[choose]];
 		if (c == KEY_ESC) break;
-		// KEY_HELP:
 		if (KEY_HELP(c)) {
 			gotoxy(78, 8, 128); std::cout << " New       Ctrl+N   ";
 			gotoxy(78, 9, 128); std::cout << " Open      Ctrl+O   ";
@@ -153,16 +152,13 @@ LAYOUT:
 			goto LAYOUT;
 		}
 		if (c == KEY_SEARCH) { npstudent::search(student_list, cur, choose, overflow, row); goto LAYOUT; }
-		// POSITION: STAFF
-		if (user == "staff") {
-			// KEY_OPEN:
-		}
+		if (c == KEY_OPEN && user == "staff") { }
 		if (c == KEY_FUNCTION) { if (npstudent::sort(PROCESS(course_id, course_cs))) goto LAYOUT; else goto NO_CHANGE; }
 		if (c == KEY_ENTER) { npstudent::info(student->pdata[1], OFF); goto LAYOUT; }
-		if (KEY_EROL(c)) { npcourse::enrol(user, course_id, course_cs); continue; }
+		if (KEY_EROL(c)) { npcourse::enrol(user, course_id, course_cs); goto LAYOUT; }
 		if (c == 224 || c == 0) {
 			c = getch();
-			//if (c == KEY_DELETE && user == "staff") { goto LAYOUT; }
+			if (c == KEY_DELETE && user == "staff") { npstudent::remove(student->pdata[1], course_id, course_cs);  goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_RIGHT) {
@@ -192,22 +188,22 @@ LAYOUT:
 	}
 
 	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " Student info                                            ";
-	gotoxy(32, 14, 128); std::cout << "                                                         ";
+	gotoxy(32, 14, 143); std::cout << " Student name:                                           ";
 	gotoxy(32, 15, 128); std::cout << "                                                         ";
-	gotoxy(32, 16, 128); std::cout << "                                                         ";
-	gotoxy(32, 17, 128); std::cout << "                                                         ";
-	gotoxy(32, 18, 128); std::cout << "                                                         ";
-	gotoxy(32, 19, 128); std::cout << "                                                         ";
+	gotoxy(32, 16, 128); std::cout << " Student id  :                                           ";
+	gotoxy(32, 17, 128); std::cout << " Class       :                                           ";
+	gotoxy(32, 18, 128); std::cout << " Day of birth:                                           ";
+	gotoxy(32, 19, 128); std::cout << " Gender      :                                           ";
 	gotoxy(32, 20, 128); std::cout << "                                                         ";
 	gotoxy(32, 21, 128); std::cout << "                                                         ";
 
-	gotoxy(33, 14, 143); std::cout << "Student name: ";
+	gotoxy(47, 14, 143);
 	if (ENGLISHNAME) std::cout << student->pdata[3] << ' ' << student->pdata[2];
 	else std::cout << student->pdata[2] << ' ' << student->pdata[3];
-	gotoxy(33, 16, 128); std::cout << "Student id  : " << student->pdata[1];
-	gotoxy(33, 17, 128); std::cout << "Class       : " << student->pdata[6];
-	gotoxy(33, 18, 128); std::cout << "Day of birth: " << student->pdata[5];
-	gotoxy(33, 19, 128); std::cout << "Gender      : " << student->pdata[4];
+	gotoxy(47, 16, 128); std::cout << student->pdata[1];
+	gotoxy(47, 17, 128); std::cout << student->pdata[6];
+	gotoxy(47, 18, 128); std::cout << student->pdata[5];
+	gotoxy(47, 19, 128); std::cout << student->pdata[4];
 
 	if (EDIT) {
 		if (_DELETE == ON) { npstudent::remove(student_id); return; }
@@ -402,6 +398,51 @@ int npstudent::remove(const char* student_id) {
 				file::remove(__STUDENT, file::find(__STUDENT, student_id, nullptr, ON));
 				file::remove(ACCOUNT, file::find(ACCOUNT, student_id, nullptr, ON));
 				gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
+				PAUSE; return 1;
+			}
+			return 0;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_LEFT && choose == 1) choose--;
+			else if (c == KEY_RIGHT && choose == 0) choose++;
+		}
+	}
+}
+
+int npstudent::remove(const char* student_id, const char* course_id, const char* course_cs) {
+	gotoxy(32, 15, COLOR_BLUE_BACKGROUND); std::cout << " Remove                                                  ";
+	gotoxy(32, 16, 143); std::cout << " Student ID  :                                           ";
+	gotoxy(32, 17, 128); std::cout << " Course ID   :               Class:                      ";
+	gotoxy(32, 18, 128); std::cout << "                                                         ";
+	gotoxy(32, 19, 128); std::cout << "                                                         ";
+	gotoxy(47, 16, 143); std::cout << student_id;
+	gotoxy(47, 17, 128); std::cout << course_id;
+	gotoxy(68, 17, 128); std::cout << course_cs;
+
+	gotoxy(33, 18, 128 + COLOR_RED); std::cout << "Are you sure to remove this student, cannot be undone.";
+	for (int choose = 1;;) {
+		gotoxy(51, 19, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
+		gotoxy(60, 19, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Cancel ";
+
+		uint8_t c = getch();
+		if (c == KEY_ESC) return 0;
+		if (c == KEY_ENTER) {
+			if (choose == 0) {
+				file::remove(PROCESS(course_id, course_cs), file::find(PROCESS(course_id, course_cs), student_id, nullptr, OFF));
+
+				std::string stupath = (std::string)".\\data\\student\\" + student_id + ".csv";
+				csv_file my_course(stupath.c_str(), def_user);
+				for (int i = 0; i < my_course.count; ++i) {
+					csv_line* mycou = &my_course.data[i];
+					if (strcmp(mycou->pdata[0], ACADEMICYEAR.c_str()) != 0) continue;
+					if (strcmp(mycou->pdata[1], SEMESTER.c_str()) != 0) continue;
+					if (strcmp(mycou->pdata[2], course_id) != 0) continue;
+					if (strcmp(mycou->pdata[3], course_cs) != 0) continue;
+					file::remove(stupath.c_str(), mycou->id);
+					break;
+				}
+				gotoxy(46, 19, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
 				PAUSE; return 1;
 			}
 			return 0;

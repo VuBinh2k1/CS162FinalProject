@@ -15,5 +15,6 @@ namespace npstudent {
 	bool sort(const char* FILE);
 	void edit(const char* student_id);
 	int remove(const char* student_id);
+	int remove(const char* student_id, const char* course_id, const char* course_cs);
 }
 #endif

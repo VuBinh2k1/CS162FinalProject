@@ -74,8 +74,7 @@ bool role::profile(csv_line& user) {
 	layout profile_layout(inp);
 	inp.close();
 
-	std::string position = user.pdata[3];
-	std::string infopath = (std::string)(".\\data\\") + position + "\\__" + position + ".csv";
+	std::string infopath = (std::string)(".\\data\\") + user.pdata[3] + "\\__" + user.pdata[3] + ".csv";
 	csv_file infofile(infopath.c_str());
 	csv_line* infouser = nullptr;
 	for (int i = 0; i < infofile.count; ++i) {
@@ -97,17 +96,13 @@ PROFILE:
 	else {
 
 		WORD COLOR_CODE = 0;
-		if (position == "staff") COLOR_CODE = COLOR_RED;
-		if (position == "lecturer") COLOR_CODE = COLOR_BLUE;
-		if (position == "student") COLOR_CODE = COLOR_GREEN;
+		if (user == "staff") COLOR_CODE = COLOR_RED;
+		if (user == "lecturer") COLOR_CODE = COLOR_BLUE;
+		if (user == "student") COLOR_CODE = COLOR_GREEN;
 
 		gotoxy(47, 9, COLOR_CODE);
-		if (ENGLISHNAME) {
-			std::cout << infouser->pdata[3] << ' ' << infouser->pdata[2];
-		}
-		else {
-			std::cout << infouser->pdata[2] << ' ' << infouser->pdata[3];
-		}
+		if (ENGLISHNAME) std::cout << infouser->pdata[3] << ' ' << infouser->pdata[2];
+		else std::cout << infouser->pdata[2] << ' ' << infouser->pdata[3];
 
 		gotoxy(33, 11); std::cout << infofile.mark.pdata[1]; gotoxy(45, 11); std::cout << ": " << infouser->pdata[1];
 		for (int i = 4; i < infofile.mark.count; ++i) {
@@ -313,7 +308,8 @@ MENU:
 		colorizing(COLOR_RED);
 		if (strcmp(infouser->pdata[4], "male") == 0) std::cout << "Mr.";
 		else std::cout << "Ms.";
-		std::cout << infouser->pdata[3];
+		if (ENGLISHNAME) std::cout << infouser->pdata[3] << ' ' << infouser->pdata[2];
+		else std::cout << infouser->pdata[2] << ' ' << infouser->pdata[3];
 		colorizing(COLOR_YELLOW); std::cout << " to CS162FinalProject";
 	}
 
@@ -405,7 +401,9 @@ MENU:
 	}
 	else {
 		gotoxy(33, 9, COLOR_YELLOW); std::cout << "Welcome ";
-		colorizing(COLOR_BLUE); std::cout << infouser->pdata[4] << '.' << infouser->pdata[3];
+		colorizing(COLOR_BLUE); std::cout << infouser->pdata[4] << '.';
+		if (ENGLISHNAME) std::cout << infouser->pdata[3] << ' ' << infouser->pdata[2];
+		else std::cout << infouser->pdata[2] << ' ' << infouser->pdata[3];
 		colorizing(COLOR_YELLOW); std::cout << " to CS162FinalProject";
 	}
 
@@ -481,12 +479,8 @@ MENU:
 		gotoxy(33, 9, COLOR_YELLOW); std::cout << "Welcome ";
 		colorizing(COLOR_GREEN);
 		std::cout << "St.";
-		if (ENGLISHNAME) {
-			std::cout << infouser->pdata[3] << ' ' << infouser->pdata[2];
-		}
-		else {
-			std::cout << infouser->pdata[2] << ' ' << infouser->pdata[3];
-		}
+		if (ENGLISHNAME) std::cout << infouser->pdata[3] << ' ' << infouser->pdata[2];
+		else std::cout << infouser->pdata[2] << ' ' << infouser->pdata[3];
 		colorizing(COLOR_YELLOW); std::cout << " to CS162FinalProject";
 	}
 
