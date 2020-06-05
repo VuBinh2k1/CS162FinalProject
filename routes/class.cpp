@@ -127,7 +127,6 @@ void npclass::search(csv_file& class_list, int cur, int& choose, int& overflow) 
 bool npclass::change(csv_line& user, const char* class_from, const char* class_to) {
 	std::string fm = class_from;
 	std::string to = class_to;
-	std::string path;
 	uppercase(fm);
 	uppercase(to);
 	if (fm == to) return 1;
@@ -136,19 +135,17 @@ bool npclass::change(csv_line& user, const char* class_from, const char* class_t
 
 	// Update class1.csv	[NULL: dont have class]
 	if (fm.size() && file::find(__CLASS, fm.c_str(), nullptr, OFF) != -1) {
-		path = (std::string)(".\\data\\class\\") + fm + ".csv";
-		file::remove(path.c_str(), file::find(path.c_str(), user.pdata[1], nullptr, OFF));
+		file::remove(CLASS(fm), file::find(CLASS(fm), user.pdata[1], nullptr, OFF));
 	}
 
 	// Update class2.csv
-	path = (std::string)(".\\data\\class\\") + to + ".csv";
-	csv_file student_list(path.c_str(), def_class);
+	csv_file student_list(CLASS(to), def_class);
 	csv_line* student = file::find(student_list, user.pdata[1], nullptr, OFF);
 	if (student != nullptr) {
-		file::update(path.c_str(), student->id, 0, "1");
+		file::update(CLASS(to), student->id, 0, "1");
 		return 1;
 	}
-	std::ofstream out(path, std::ios::app);
+	std::ofstream out(CLASS(to), std::ios::app);
 	out << "1," << user.pdata[1] << '\n';
 	out.close();
 	return 1;

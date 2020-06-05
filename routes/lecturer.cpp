@@ -190,7 +190,7 @@ void nplecturer::add() {
 	while (fname.empty()) if (read(48, 14, 143, fname, 20, SHOW) == KEY_ESC) return;
 	while (lname.empty()) if (read(48, 15, 143, lname, 20, SHOW) == KEY_ESC) return;
 	while (1) {
-		if (read(48, 16, 128, lecid, 20, SHOW) == KEY_ESC) return;
+		if (read(48, 16, 128, lecid, 20, SHOW, "                    ") == KEY_ESC) return;
 		// default_lecture_id
 		if (lecid.empty()) {
 			lecid = lname[0];

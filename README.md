@@ -3,7 +3,7 @@ Student management system
 
 Start Project Date: April 18, 2020
 
-End Project Date:
+End Project Date: June 13, 2020
 ## Team
 - **`19127012` Vũ Nguyễn Thái Bình**
   - **Contact:** 0946687733
@@ -26,8 +26,8 @@ End Project Date:
   - **Email:** buicongdanh213@gmail.com
 ## Project Planner
 - [x] **All roles**
-- [ ] **Academic staff-Class**
-- [ ] **Academic staff-Course**
+- [x] **Academic staff-Class**
+- [x] **Academic staff-Course**
 - [x] **Academic staff-Score board**
 - [x] **Academic staff-Attendance list**
 - [x] **Lecturer**

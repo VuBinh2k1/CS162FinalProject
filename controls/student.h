@@ -11,6 +11,8 @@ namespace npstudent {
 	void info(const char* student_id, bool EDIT = OFF, bool _DELETE = OFF);
 	void search(csv_file& student_list, int cur, int& choose, int& overflow, int* row);
 	// EDIT: student
+	void add(const char* class_id);
+	void open(const char* class_id);
 	void sort(const char* FILE, int col1, int col2 = -1, int col3 = -1);
 	bool sort(const char* FILE);
 	void edit(const char* student_id);

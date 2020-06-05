@@ -25,6 +25,7 @@
 #define __STUDENT ".\\data\\student\\__student.csv"
 #define __LECTURER ".\\data\\lecturer\\__lecturer.csv"
 #define __COURSE COURSE_PATH("__course.csv").c_str()
+#define CLASS(class_id) ((std::string) ".\\data\\class\\" + class_id + ".csv").c_str()
 #define PROCESS(course_id, course_cs) (COURSE_PATH("process\\") + course_id + '_' + course_cs + ".csv").c_str()
 #define SCHEDULE(course_id, course_cs) (COURSE_PATH("schedule\\") + course_id + '_' + course_cs + ".csv").c_str()
 

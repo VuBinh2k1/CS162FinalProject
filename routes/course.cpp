@@ -146,7 +146,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 	csv_line* mycou = nullptr;
 	if ((mycou = file::find(process, user.pdata[1], nullptr, OFF)) == nullptr) {
 		gotoxy(33, 18, 128 + COLOR_RED); std::cout << "You have not enrolled in this course.";
-		return;
+		goto END;
 	}
 	for (int i = 0; i < schedule.count; ++i) {
 		csv_line* date = &schedule.data[i];
@@ -159,7 +159,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 				gotoxy(57, 18, COLOR_BLUE_BACKGROUND); std::cout << "[Check in]";
 				if (getch() != KEY_ENTER) {
 					gotoxy(33, 18, 128 + COLOR_YELLOW); std::cout << "You will miss class if you don't take attendance.";
-					return;
+					goto END;
 				}
 
 				mycou->pdata[WEEK_COLUMN + i][0] = '1';
@@ -173,11 +173,13 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 			// The nearest day the course will start
 			gotoxy(45, 17, 128); std::cout << date->pdata[1] << " (" << date->pdata[2] << " - " << date->pdata[3] << ")";
 			gotoxy(33, 18, 128); std::cout << "This course has not started.";
-			return;
+			goto END;
 		}
 	}
 	// The last day of the course has ended
 	gotoxy(33, 18, 128); std::cout << "The course has ended.";
+END:
+	getch();
 }
 
 void npcourse::search(csv_file& course_list, int cur, int& choose, int& overflow, bool* permit) {

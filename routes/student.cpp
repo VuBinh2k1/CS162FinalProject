@@ -60,14 +60,14 @@ LAYOUT:
 			getch();
 			goto LAYOUT;
 		}
-		// KEY_NEW:
-		// KEY_OPEN:
+		if (c == KEY_NEW) { npstudent::add(class_id); choose = overflow = 0; goto LAYOUT; }
+		if (c == KEY_OPEN) { npstudent::open(class_id); choose = overflow = 0; goto LAYOUT; }
 		if (c == KEY_SEARCH) { npstudent::search(student_list, cur, choose, overflow, row); goto LAYOUT; }
 		if (c == KEY_FUNCTION) { if (npstudent::sort(((std::string)".\\data\\class\\" + class_id + ".csv").c_str())) goto LAYOUT; else goto NO_CHANGE; }
 		if (c == KEY_ENTER) { npstudent::info(student->pdata[1], ON); goto LAYOUT; }
 		if (c == 224 || c == 0) {
 			c = getch();
-			if (c == KEY_DELETE) { npstudent::info(student->pdata[1], ON, ON); goto LAYOUT; }
+			if (c == KEY_DELETE) { npstudent::info(student->pdata[1], ON, ON); choose = overflow = 0; goto LAYOUT; }
 			if (c == KEY_UP && choose > 0) { if (--choose + overflow < 0) overflow++; }
 			else if (c == KEY_DOWN && choose < cur) { if (++choose < cur - 16) overflow--; }
 			else if (c == KEY_LEFT) break;
@@ -271,6 +271,183 @@ void npstudent::search(csv_file& student_list, int cur, int& choose, int& overfl
 }
 
 // [EDIT]::student //===========================================================================================================================//
+
+void npstudent::add(const char* class_id) {
+	std::string fname, lname, stuid, birth, gende;
+
+	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " New student                                             ";
+	gotoxy(32, 20, 128); std::cout << "                                                         ";
+	gotoxy(32, 21, 128); std::cout << "                                                         ";
+	gotoxy(46, 21, 128); std::cout << "    Save     ";
+	gotoxy(60, 21, 128); std::cout << "   Cancel    ";
+	// Get detail
+	gotoxy(32, 14, 143); std::cout << " First name  :                                           ";
+	gotoxy(32, 15, 143); std::cout << " Last name   :                                           ";
+	gotoxy(32, 16, 128); std::cout << " Student id  :                                           ";
+	gotoxy(32, 17, 128); std::cout << " Class       :                                           ";
+	gotoxy(32, 18, 128); std::cout << " Day of birth:                                           ";
+	gotoxy(32, 19, 128); std::cout << " Gender      :                                           ";
+	gotoxy(47, 17, 128); std::cout << class_id;
+
+	while (fname.empty()) if (read(47, 14, 143, fname, 20, SHOW) == KEY_ESC) return;
+	while (lname.empty()) if (read(47, 15, 143, lname, 20, SHOW) == KEY_ESC) return;
+	while (1) {
+		if (read(47, 16, 128, stuid, 8, SHOW, "        ") == KEY_ESC) return;
+		if (file::find(ACCOUNT, stuid.c_str(), nullptr, ON) != -1) continue;
+		gotoxy(47, 16, 128); std::cout << stuid; break;
+	}
+	while (birth.size() != 10) if (date(47, 18, 128, birth) == KEY_ESC) return;
+	if (read(47, 19, 128, gende, 6, SHOW) == KEY_ESC) return;
+
+	capitalize(fname);
+	capitalize(lname);
+
+	for (int choose = 0;;) {
+		gotoxy(46, 21, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "    Save     ";
+		gotoxy(60, 21, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "   Cancel    ";
+
+		uint8_t c = getch();
+		if (c == KEY_ESC) return;
+		if (c == KEY_ENTER) {
+			if (choose == 0) {
+				std::ofstream student(__STUDENT, std::ios::app);
+				student << "1," << stuid << ',' << lname << ',' << fname << ',' << gende << ',' << birth << ',' << class_id << '\n';
+				student.close();
+
+				std::ofstream account(ACCOUNT, std::ios::app);
+				account << "1," << stuid << ",0" << ",student\n";
+				account.close();
+
+				std::ofstream class_student_list(CLASS(class_id), std::ios::app);
+				class_student_list << "1," << stuid << '\n';
+				class_student_list.close();
+
+				gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Save successfully.        ";
+				PAUSE;
+			}
+			return;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_RIGHT && choose == 0) choose++;
+			if (c == KEY_LEFT && choose == 1) choose--;
+		}
+	}
+}
+
+void npstudent::open(const char* class_id) {
+	gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Open                                                    ";
+	gotoxy(32, 17, 128); std::cout << "                                                         ";
+
+OPEN:
+	gotoxy(32, 16, 128); std::cout << " File:                                                   ";
+
+	std::string path;
+	if (type(39, 16, 128, path, 48) == KEY_ESC) return;
+	gotoxy(32, 17, 128); std::cout << "                                                         ";
+	if (!file::exists(path.c_str())) {
+		gotoxy(33, 17, 132); std::cout << "Can't open file!";
+		goto OPEN;
+	}
+
+	// Check title:
+	csv_file imfile(path.c_str());
+	if (file::find(imfile, 0, "Student ID") == nullptr) { gotoxy(33, 17, 132); std::cout << "Can't find \"Student ID\""; goto OPEN; }
+	if (file::find(imfile, 0, "Firstname") == nullptr && 
+		file::find(imfile, 0, "First name") == nullptr &&
+		file::find(imfile, 0, "Fullname") == nullptr &&
+		file::find(imfile, 0, "Full name") == nullptr &&
+		file::find(imfile, 0, "Name") == nullptr) { gotoxy(33, 17, 132); std::cout << "Can't find name of student"; goto OPEN; }
+	csv_file student_list(__STUDENT);
+
+	for (int i = 0; i < imfile.count; ++i) {
+		const char* student_id = file::find(imfile, i, "Student ID");
+		csv_line* student = file::find(student_list, student_id, nullptr, ON);
+
+		// Add new student
+		std::ofstream app;
+		if (student == nullptr) { app.open(__STUDENT, std::ios::app); app << "1," << student_id << ','; }
+
+		const char* __str = nullptr;
+		// Course name
+		__str = file::find(imfile, i, "Fullname");
+		if (__str == nullptr) __str = file::find(imfile, i, "Full name");
+		if (__str == nullptr) __str = file::find(imfile, i, "Name");
+		if (__str != nullptr) {
+			char* name = (char*)__str;
+			for (int j = strlen(name) - 2; j >= 0; --j) {
+				if (name[j] == ' ') {
+					name[j] = '\0';
+					if (student == nullptr) app << name << ',' << name + j + 1 << ',';
+					else {
+						file::update(__STUDENT, student->id, 2, name);
+						file::update(__STUDENT, student->id, 3, name + j + 1);
+					}
+					name = nullptr;
+					break;
+				}
+			}
+			if (name) {
+				if (student == nullptr) app << ',' << name << ',';
+				else {
+					file::update(__STUDENT, student->id, 2, "");
+					file::update(__STUDENT, student->id, 3, name);
+				}
+			}
+		}
+		else {
+			__str = file::find(imfile, 0, "Lastname");
+			if (__str == nullptr) __str = file::find(imfile, 0, "Last name");
+			if (__str != nullptr) {
+				if (student == nullptr) app << __str << ',';
+				else file::update(__STUDENT, student->id, 2, __str);
+			} else if (student == nullptr) app << ',';
+
+			__str = file::find(imfile, 0, "Firstname");
+			if (__str == nullptr) __str = file::find(imfile, 0, "First name");
+			if (__str != nullptr) {
+				if (student == nullptr) app << __str << ',';
+				else file::update(__STUDENT, student->id, 3, __str);
+			} else if (student == nullptr) app << ',';
+		}
+		// Student gender
+		if ((__str = file::find(imfile, i, "Gender")) != nullptr) {
+			if (student == nullptr) app << __str << ',';
+			else file::update(__STUDENT, student->id, 4, __str);
+		} else if (student == nullptr) app << ',';
+		// Student DoB
+		__str = file::find(imfile, i, "DoB");
+		if (__str == nullptr) __str = file::find(imfile, i, "Date of Birth");
+		if (__str == nullptr) __str = file::find(imfile, i, "Birth Date");
+		if (__str != nullptr) {
+			if (student == nullptr) app << __str << ',';
+			else file::update(__STUDENT, student->id, 5, __str);
+		} else if (student == nullptr) app << "0,";
+		// Student class
+		if (student == nullptr) app << class_id << '\n';
+		else if (npclass::change(*student, student->pdata[6], class_id)) file::update(__STUDENT, student->id, 6, class_id);
+
+		// Save to other files
+		if (file::find(ACCOUNT, student_id, nullptr, ON) == -1) {
+			std::ofstream account(ACCOUNT, std::ios::app);
+			account << "1," << student_id << ",0" << ",student\n";
+			account.close();
+		} else file::update(ACCOUNT, file::find(ACCOUNT, student_id, nullptr, ON), 2, "0");
+
+		if (file::find(CLASS(class_id), student_id, nullptr, ON) == -1) {
+			std::ofstream class_student_list(CLASS(class_id), std::ios::app);
+			class_student_list << "1," << student_id << '\n';
+			class_student_list.close();
+		} else file::update(CLASS(class_id), file::find(CLASS(class_id), student_id, nullptr, ON), 0, "1");
+
+		gotoxy(32, 17, 128); std::cout << "                                                         ";
+		gotoxy(33, 17, 129); std::cout << "Success add "; colorizing(134); std::cout << student_id;
+		Sleep(500);
+	}
+
+	gotoxy(32, 17, 129); std::cout << " Import file success.                                    ";
+	PAUSE;
+}
 
 void npstudent::sort(const char* FILE, int col1, int col2, int col3) {
 	csv_file file(FILE);
