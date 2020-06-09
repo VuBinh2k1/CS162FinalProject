@@ -396,15 +396,15 @@ OPEN:
 			}
 		}
 		else {
-			__str = file::find(imfile, 0, "Lastname");
-			if (__str == nullptr) __str = file::find(imfile, 0, "Last name");
+			__str = file::find(imfile, i, "Lastname");
+			if (__str == nullptr) __str = file::find(imfile, i, "Last name");
 			if (__str != nullptr) {
 				if (student == nullptr) app << __str << ',';
 				else file::update(__STUDENT, student->id, 2, __str);
 			} else if (student == nullptr) app << ',';
 
-			__str = file::find(imfile, 0, "Firstname");
-			if (__str == nullptr) __str = file::find(imfile, 0, "First name");
+			__str = file::find(imfile, i, "Firstname");
+			if (__str == nullptr) __str = file::find(imfile, i, "First name");
 			if (__str != nullptr) {
 				if (student == nullptr) app << __str << ',';
 				else file::update(__STUDENT, student->id, 3, __str);
