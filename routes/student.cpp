@@ -595,3 +595,47 @@ int npstudent::remove(const char* student_id, const char* class_id) {
 	}
 }
 
+int npstudent::remove(const char* student_id, const char* course_id, const char* course_cs) {
+	gotoxy(32, 15, COLOR_BLUE_BACKGROUND); std::cout << " Remove                                                  ";
+	gotoxy(32, 16, 143); std::cout << " Student ID  :                                           ";
+	gotoxy(32, 17, 128); std::cout << " Course ID   :               Class:                      ";
+	gotoxy(32, 18, 128); std::cout << "                                                         ";
+	gotoxy(32, 19, 128); std::cout << "                                                         ";
+	gotoxy(47, 16, 143); std::cout << student_id;
+	gotoxy(47, 17, 128); std::cout << course_id;
+	gotoxy(68, 17, 128); std::cout << course_cs;
+
+	gotoxy(33, 18, 128 + COLOR_RED); std::cout << "Are you sure to remove this student, cannot be undone.";
+	for (int choose = 1;;) {
+		gotoxy(51, 19, (choose == 0) ? COLOR_RED_BACKGROUND : 128); std::cout << " Remove ";
+		gotoxy(60, 19, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << " Cancel ";
+
+		uint8_t c = getch();
+		if (c == KEY_ESC) return 0;
+		if (c == KEY_ENTER) {
+			if (choose == 0) {
+				file::remove(PROCESS(course_id, course_cs), file::find(PROCESS(course_id, course_cs), student_id, nullptr, OFF));
+
+				std::string stupath = (std::string)".\\data\\student\\" + student_id + ".csv";
+				csv_file my_course(stupath.c_str(), def_user);
+				for (int i = 0; i < my_course.count; ++i) {
+					csv_line* mycou = &my_course.data[i];
+					if (strcmp(mycou->pdata[0], ACADEMICYEAR.c_str()) != 0) continue;
+					if (strcmp(mycou->pdata[1], SEMESTER.c_str()) != 0) continue;
+					if (strcmp(mycou->pdata[2], course_id) != 0) continue;
+					if (strcmp(mycou->pdata[3], course_cs) != 0) continue;
+					file::remove(stupath.c_str(), mycou->id);
+					break;
+				}
+				gotoxy(46, 19, 128 + COLOR_BLUE); std::cout << " Remove successfully.";
+				PAUSE; return 1;
+			}
+			return 0;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_LEFT && choose == 1) choose--;
+			else if (c == KEY_RIGHT && choose == 0) choose++;
+		}
+	}
+}
