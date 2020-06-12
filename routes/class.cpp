@@ -150,3 +150,4 @@ bool npclass::change(csv_line& user, const char* class_from, const char* class_t
 	out.close();
 	return 1;
 }
+x cx c 
