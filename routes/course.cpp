@@ -533,6 +533,7 @@ int npcourse::remove(const char* course_id, const char* course_cs) {
 	}
 }
 
+
 void npcourse::schedule(const char* course_id, const char* course_cs) {
 	if (file::find(__COURSE, course_id, course_cs, OFF) == -1) return;
 	gotoxy(32, 17, COLOR_BLUE_BACKGROUND); std::cout << " Schedule                                                ";
