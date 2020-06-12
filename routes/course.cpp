@@ -219,7 +219,88 @@ void npcourse::search(csv_file& course_list, int cur, int& choose, int& overflow
 
 // [EDIT]::course //============================================================================================================================//
 
+void npcourse::add() {
+	std::string cname, couid, clsid, lectu, sdate, fdate, wdays, stime, ftime, iroom;
+	
+	gotoxy(32, 13, COLOR_BLUE_BACKGROUND); std::cout << " New course                                              ";
+	gotoxy(32, 21, 128); std::cout << "                                                         ";
+	gotoxy(32, 22, 128); std::cout << "                                                         ";
+	gotoxy(46, 22, 128); std::cout << "    Save     ";
+	gotoxy(60, 22, 128); std::cout << "   Cancel    ";
+	// Get detail
+	gotoxy(32, 14, 143); std::cout << " Course name:                                            ";
+	gotoxy(32, 15, 128); std::cout << " Course id  :                                            ";
+	gotoxy(32, 16, 128); std::cout << " Class id   :                                            ";
+	gotoxy(32, 17, 128); std::cout << " Lecturer   :                                            ";
+	gotoxy(32, 18, 128); std::cout << " Timeline   :                                            ";
+	gotoxy(32, 19, 128); std::cout << " Weekdays   :                                            ";
+	gotoxy(32, 20, 128); std::cout << " Room       :                                            ";
+	
+	while (cname.empty()) if (read(46, 14, 143, cname, 30, SHOW) == KEY_ESC) return;
+	while (couid.empty()) if (read(46, 15, 128, couid,  8, SHOW) == KEY_ESC) return;
+	while (clsid.empty()) if (read(46, 16, 128, clsid, 10, SHOW) == KEY_ESC) return;
+	while (lectu.empty()) if (read(46, 17, 128, lectu, 42, SHOW) == KEY_ESC) return;
+	while (sdate.size() != 10) if (date(46, 18, 128, sdate) == KEY_ESC) return; std::cout << " to ";
+	while (fdate.size() != 10) if (date(60, 18, 128, fdate) == KEY_ESC) return;
+	while (1) {
+		if (read(46, 19, 128, wdays, 3, SHOW, "   ") == KEY_ESC) return;
+		if (wdays.size()) wdays[0] = toupper(wdays[0]);
+		if (wdays == "Mon" || wdays == "Tue" || wdays == "Wed" || wdays == "Thu" || wdays == "Fri" || wdays == "Sat" || wdays == "Sun") break;
+	}
+	std::cout << " (      -      )";
+	while (stime.size() != 5) if (time(51, 19, 128, stime) == KEY_ESC) return;
+	while (ftime.size() != 5) if (time(59, 19, 128, ftime) == KEY_ESC) return;
+	while (iroom.empty()) if (read(46, 20, 128, iroom, 10, SHOW) == KEY_ESC) return;
 
+	capitalize(cname);
+	uppercase(couid);
+	uppercase(clsid);
+	uppercase(iroom);
+
+	for (int choose = 0;;) {
+		gotoxy(46, 22, (choose == 0) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "    Save     ";
+		gotoxy(60, 22, (choose == 1) ? COLOR_WHITE_BACKGROUND : 128); std::cout << "   Cancel    ";
+
+		uint8_t c = getch();
+		if (c == KEY_ESC) return;
+		if (c == KEY_ENTER) {
+			if (choose == 0) {
+				// Save: "__course.csv"
+				if (file::find(__COURSE, couid.c_str(), clsid.c_str(), OFF) != -1) {
+					gotoxy(46, 22, 134); std::cout << couid << '-' << clsid << " ";
+					colorizing(128 + COLOR_RED); std::cout << " exists! ";
+					PAUSE;
+					return;
+				}
+				else {
+					std::ofstream course(__COURSE, std::ios::app);
+					course << "1," << couid << ',' << cname << ',' << clsid << ',' << lectu << ',' << sdate << ',' << fdate << ',' << wdays << ',' << stime << ',' << ftime << ',' << iroom << '\n';
+					course.close();
+				}
+
+				// Save: "__lecturer.csv"
+				if (file::find(__LECTURER, lectu.c_str(), nullptr, ON) == -1) {
+					std::ofstream lecturer(__LECTURER, std::ios::app);
+					lecturer << "1," << lectu << ",,,\n";
+					lecturer.close();
+
+					std::ofstream account(ACCOUNT, std::ios::app);
+					account << "1," << lectu << ",0" << ",lecturer\n";
+					account.close();
+				}
+
+				gotoxy(46, 22, 128 + COLOR_BLUE); std::cout << " Save successfully.        ";
+				PAUSE;
+			}
+			return;
+		}
+		if (c == 224 || c == 0) {
+			c = getch();
+			if (c == KEY_RIGHT && choose == 0) choose++;
+			if (c == KEY_LEFT && choose == 1) choose--;
+		}
+	}
+}
 
 void npcourse::open() {
 	gotoxy(32, 15, COLOR_BLUE_BACKGROUND);  std::cout << " Open                                                    ";
