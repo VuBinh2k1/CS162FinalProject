@@ -428,7 +428,8 @@ void npcourse::edit(const char* course_id, const char* course_cs) {
 	gotoxy(32, 14, 143); std::cout << "                                                         ";
 	std::string cname, lectu, sdate, fdate, wdays, stime, ftime, iroom;
 
-	if (read(33, 14, 143, cname, 30, SHOW, course->pdata[2]) == KEY_ESC) return; std::cout << " - " << course->pdata[1] << "(" << course->pdata[3] << ")";
+	if (read(33, 14, 143, cname, 30, SHOW, course->pdata[2]) == KEY_ESC) return; 
+	if (cname.size() == 0) std::cout << course->pdata[2]; std::cout << " - " << course->pdata[1] << "(" << course->pdata[3] << ")";
 	if (read(46, 15, 128, lectu, 42, SHOW, course->pdata[4]) == KEY_ESC) return;
 	while (sdate != "1" && sdate.size() != 10) if (date(46, 16, 128, sdate) == KEY_ESC) return;
 	if (sdate.size() != 10) { gotoxy(46, 16, 128); std::cout << course->pdata[5]; } std::cout << " to ";
@@ -479,7 +480,6 @@ void npcourse::edit(const char* course_id, const char* course_cs) {
 		if (c == KEY_ENTER) {
 			if (choose == 0) {
 				// Update: __course.csv
-				
 				capitalize(cname);
 				file::update(__COURSE, course->id, 0, (status ? "1" : "0"));
 				if (cname.size()) file::update(__COURSE, course->id, 2, cname.c_str());
@@ -490,6 +490,8 @@ void npcourse::edit(const char* course_id, const char* course_cs) {
 				if (fdate.size() ==10) file::update(__COURSE, course->id, 6, fdate.c_str());
 				if (stime.size() == 5) file::update(__COURSE, course->id, 8, stime.c_str());
 				if (ftime.size() == 5) file::update(__COURSE, course->id, 9, ftime.c_str());
+				// Update: schedule.csv
+				file::mksche(course_id, course_cs);
 
 				gotoxy(46, 21, 128 + COLOR_BLUE); std::cout << " Save changes successfully.";
 				PAUSE; break;
