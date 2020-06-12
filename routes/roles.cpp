@@ -883,9 +883,12 @@ int role::calendar(csv_line& user){
 
 				for (int k = 0; k < course_list.count; ++k) {
 					if (strcmp(course->pdata[2], course_list.data[k].pdata[1])) continue;
-					std::cout << course_list.data[k].pdata[2];
-					gotoxy(80, y, COLOR_CODE); std::cout << course_list.data[k].pdata[8];
-					gotoxy(88, y, COLOR_CODE); std::cout << course_list.data[k].pdata[9];
+
+					csv_line* mycou = file::find(course_list, course->pdata[2], course->pdata[3], OFF);
+					if (mycou == nullptr) continue;
+					std::cout << mycou->pdata[2];
+					gotoxy(80, y, COLOR_CODE); std::cout << mycou->pdata[8];
+					gotoxy(88, y, COLOR_CODE); std::cout << mycou->pdata[9];
 					break;
 				}
 				cur++;  empty = 0;
