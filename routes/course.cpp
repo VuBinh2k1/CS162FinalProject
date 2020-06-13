@@ -156,7 +156,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 			gotoxy(45, 17, 128); std::cout << date->pdata[1] << " (" << date->pdata[2] << " - " << date->pdata[3] << ")";
 
 			if (mycou->pdata[WEEK_COLUMN + i][0] == '0') {
-				gotoxy(57, 18, COLOR_BLUE_BACKGROUND); std::cout << "[Check in]";
+				gotoxy(57, 18, COLOR_BLUE_BACKGROUND); std::cout << " Check in ";
 				if (getch() != KEY_ENTER) {
 					gotoxy(33, 18, 128 + COLOR_YELLOW); std::cout << "You will miss class if you don't take attendance.";
 					goto END;
@@ -167,7 +167,7 @@ void npcourse::chkin(csv_line& user, const char* course_id, const char* course_c
 			}
 
 			gotoxy(33, 18, 128 + COLOR_BLUE); std::cout << "You have already checked in this course.";
-			return;
+			goto END;
 		}
 		else if (now == -1) {
 			// The nearest day the course will start
